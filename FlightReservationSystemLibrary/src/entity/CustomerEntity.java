@@ -30,6 +30,9 @@ public class CustomerEntity implements Serializable {
     private String address;
     private String password;
 
+    public CustomerEntity() {
+    }
+    
     public CustomerEntity(Long customerId, String username, String firstName, String lastName, String email, String phoneNum, String address, String password) {
         this.customerId = customerId;
         this.username = username;
