@@ -22,6 +22,13 @@ public class CustomerEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long customerId;
+    private String username;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String phoneNum;
+    private String address;
+    private String password;
 
     public Long getCustomerId() {
         return customerId;
