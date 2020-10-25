@@ -30,6 +30,10 @@ public class CustomerEntity implements Serializable {
     private String address;
     private String password;
 
+    public CustomerEntity() {
+    }
+    
+
     public Long getCustomerId() {
         return customerId;
     }
