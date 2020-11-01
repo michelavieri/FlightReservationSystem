@@ -22,11 +22,11 @@ import javax.persistence.OneToOne;
 @Entity
 public class FlightEntity implements Serializable {
 
-    @OneToMany(mappedBy = "flight")
-    private List<FlightSchedulePlanEntity> flightSchedulePlans;
+    @ManyToOne
+    private AircraftConfigurationEntity aircraftConfigurationEntity;
 
     @OneToMany(mappedBy = "flight")
-    private List<SeatsInventoryEntity> seatsInventories;
+    private List<FlightSchedulePlanEntity> flightSchedulePlans;
     
     @ManyToOne
     private FlightRouteEntity route;
@@ -36,10 +36,12 @@ public class FlightEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String flightCode;
     private boolean disabled;
+    
     @OneToOne(mappedBy = "departureFlight")
     private FlightEntity returnFlight;
+    
     @OneToOne
-    private FlightEntity departureFlight;
+    private FlightEntity departureFlight;//?
 
     public String getFlightCode() {
         return flightCode;
@@ -114,20 +116,6 @@ public class FlightEntity implements Serializable {
      */
     public void setDepartureFlight(FlightEntity departureFlight) {
         this.departureFlight = departureFlight;
-    }
-
-    /**
-     * @return the seatsInventories
-     */
-    public List<SeatsInventoryEntity> getSeatsInventories() {
-        return seatsInventories;
-    }
-
-    /**
-     * @param seatsInventories the seatsInventories to set
-     */
-    public void setSeatsInventories(List<SeatsInventoryEntity> seatsInventories) {
-        this.seatsInventories = seatsInventories;
     }
 
     /**

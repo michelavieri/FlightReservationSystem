@@ -2,10 +2,12 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 
 @Entity
@@ -17,10 +19,25 @@ public class AircraftTypeEntity implements Serializable {
     private Long id;
     private String name;
     private int maxCapacity;
+    
+    @OneToMany(mappedBy = "type")
+    private List<AircraftConfigurationEntity> aircraftConfigurationEntitys;
 
     public AircraftTypeEntity() {
     }
-    
+
+    public AircraftTypeEntity(String name, int maxCapacity) {
+        this.name = name;
+        this.maxCapacity = maxCapacity;
+    }
+
+    public List<AircraftConfigurationEntity> getAircraftConfigurationEntitys() {
+        return aircraftConfigurationEntitys;
+    }
+
+    public void setAircraftConfigurationEntitys(List<AircraftConfigurationEntity> aircraftConfigurationEntitys) {
+        this.aircraftConfigurationEntitys = aircraftConfigurationEntitys;
+    }
 
     public Long getId() {
         return id;

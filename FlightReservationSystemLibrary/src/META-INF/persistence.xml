@@ -8,6 +8,14 @@
     <class>entity.ReservationsEntity</class>
     <class>entity.AircraftConfigurationEntity</class>
     <class>entity.AircraftTypeEntity</class>
+    <class>entity.AirportEntity</class>
+    <class>entity.CustomerEntity</class>
+    <class>entity.FlightEntity</class>
+    <class>entity.FlightRouteEntity</class>
+    <class>entity.FlightScheduleEntity</class>
+    <class>entity.FlightSchedulePlanEntity</class>
+    <class>entity.PartnerEntity</class>
+    <class>entity.SeatsInventoryEntity</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/flightreservationsystem?zeroDateTimeBehavior=CONVERT_TO_NULL"/>
       <property name="javax.persistence.jdbc.user" value="root"/>

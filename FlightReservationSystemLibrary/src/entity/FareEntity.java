@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 
 @Entity
@@ -17,6 +18,12 @@ public class FareEntity implements Serializable {
     private Long fairId;
     private String fareBasisCode;
     private String amount;
+    
+    @ManyToOne
+    private FlightSchedulePlanEntity flightSchedulePlan;
+    
+    @ManyToOne
+    private CabinClassConfigurationEntity cabinClass;
 
     public FareEntity() {
     }

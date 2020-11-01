@@ -7,11 +7,14 @@ package entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 /**
@@ -20,6 +23,9 @@ import javax.persistence.OneToOne;
  */
 @Entity
 public class FlightScheduleEntity implements Serializable {
+
+    @OneToMany(mappedBy = "flightSchedule")
+    private List<SeatsInventoryEntity> seatsInventoryEntitys;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -30,6 +36,7 @@ public class FlightScheduleEntity implements Serializable {
     private int duration;
     private String arrTime;
     private Date arrivalDate;
+    
     @OneToOne(mappedBy = "departureSchedule")
     private FlightScheduleEntity returnSchedule;
     @OneToOne
@@ -38,6 +45,9 @@ public class FlightScheduleEntity implements Serializable {
     @ManyToOne
     private FlightSchedulePlanEntity plan;
 
+    @ManyToMany(mappedBy = "flightSchedules")
+    private List<ReservationsEntity> reservations;
+    
     public Long getScheduleId() {
         return scheduleId;
     }

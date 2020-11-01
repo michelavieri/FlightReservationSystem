@@ -23,6 +23,9 @@ import util.enumeration.FlightSchedulePlanTypeEnum;
 @Entity
 public class FlightSchedulePlanEntity implements Serializable {
 
+    @OneToMany(mappedBy = "flightSchedulePlan")
+    private List<FareEntity> fareEntitys;
+
     @OneToMany(mappedBy = "plan")
     private List<FlightScheduleEntity> flightSchedules;
 

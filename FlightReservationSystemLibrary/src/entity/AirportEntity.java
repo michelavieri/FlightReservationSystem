@@ -20,22 +20,35 @@ import javax.persistence.OneToMany;
 @Entity
 public class AirportEntity implements Serializable {
 
-    @OneToMany(mappedBy = "arrivalAirport")
-    private List<FlightRouteEntity> arrivalRoutes;
-
-    @OneToMany(mappedBy = "departureAirport")
-    private List<FlightRouteEntity> departureRoutes;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private String airportCode;
+    private String airportCode;//inserted manually?
     private String airportName;
     private String airportCity;
     private String airportState;
     private String airportCountry;
     private int timeZone;
 
+    @OneToMany(mappedBy = "arrivalAirport")
+    private List<FlightRouteEntity> arrivalRoutes;
+
+    @OneToMany(mappedBy = "departureAirport")
+    private List<FlightRouteEntity> departureRoutes;
+    
+    
+    public AirportEntity() {
+    }
+
+    public AirportEntity(String airportCode, String airportName, String airportCity, String airportState, String airportCountry, int timeZone) {
+        this.airportName = airportName;
+        this.airportCity = airportCity;
+        this.airportState = airportState;
+        this.airportCountry = airportCountry;
+        this.timeZone = timeZone;
+    }
+
+    
     public String getAirportCode() {
         return airportCode;
     }

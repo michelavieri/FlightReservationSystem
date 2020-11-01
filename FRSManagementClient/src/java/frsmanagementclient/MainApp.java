@@ -5,6 +5,8 @@
  */
 package frsmanagementclient;
 
+import ejb.session.stateless.EmployeeEntitySessionBeanRemote;
+import entity.EmployeeEntity;
 import java.util.Scanner;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.InvalidUsernameException;
@@ -15,7 +17,10 @@ import util.exception.WrongPasswordException;
  * @author miche
  */
 public class MainApp {
+    
     private EmployeeEntity currentEmployee;
+    
+    private EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote;
     
     public MainApp() {
     }
@@ -80,7 +85,7 @@ public class MainApp {
 
         while (true) {
             System.out.println("*** FRS Management Application ***");
-            System.out.println("You are login as " + currentEmployee.getName() + " with " + currentEmployee.getAccessRight().toString() + " rights");
+            System.out.println("You are login as " + currentEmployee.getName() + " with " + currentEmployee.getRole().toString() + " rights");
             System.out.println("1: Create Customer");
             System.out.println("2: Open Deposit Account");
             System.out.println("3: Issue ATM Card");

@@ -6,10 +6,12 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -18,12 +20,33 @@ import javax.persistence.Id;
 @Entity
 public class PartnerEntity implements Serializable {
 
+    @OneToMany(mappedBy = "partner")
+    private List<ReservationsEntity> reservationsEntitys;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String username;
     private String name;
     private String password;
+
+    public PartnerEntity() {
+    }
+
+    public PartnerEntity(String username, String name, String password) {
+        this.username = username;
+        this.name = name;
+        this.password = password;
+    }
+
+    
+    public List<ReservationsEntity> getReservationsEntitys() {
+        return reservationsEntitys;
+    }
+
+    public void setReservationsEntitys(List<ReservationsEntity> reservationsEntitys) {
+        this.reservationsEntitys = reservationsEntitys;
+    }
 
     public String getUsername() {
         return username;
