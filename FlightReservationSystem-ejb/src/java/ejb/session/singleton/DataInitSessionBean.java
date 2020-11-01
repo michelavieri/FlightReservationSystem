@@ -53,7 +53,7 @@ public class DataInitSessionBean {
     @PostConstruct
     public void postConstruct() {
         try {
-            employeeEntitySessionBeanLocal.retrieveEmployeeByUsername("employee");//name of employee?
+            employeeEntitySessionBeanLocal.retrieveEmployeeByUsername("employee");
         } catch (EmployeeNotFoundException ex) {
             initializeData();
         }
@@ -62,6 +62,14 @@ public class DataInitSessionBean {
     private void initializeData() {
         try {
             employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("employee", "Default Employee", "password", UserRoleEnum.EMPLOYEE));
+            
+            employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("fleetManager", "Default Fleet Manager", "password", UserRoleEnum.FLEET_MANAGER));
+            
+            employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("routePlanner", "Default Route Planner", "password", UserRoleEnum.ROUTE_PLANNER));
+            
+            employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("salesManager", "Default Sales Manager", "password", UserRoleEnum.SALES_MANAGER));
+            
+            employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("scheduleManager", "Default Schedule Manager", "password", UserRoleEnum.SCHEDULE_MANAGER));
 
             partnerEntitySessionBeanLocal.createNewPartner(new PartnerEntity("holidayReservation", "Holiday Reservation System", "password"));
 
