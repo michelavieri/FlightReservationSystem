@@ -5,17 +5,27 @@
  */
 package frsmanagementclient;
 
+import ejb.session.stateless.AircraftTypeEntitySessionBeanRemote;
+import ejb.session.stateless.AirportEntitySessionBeanRemote;
+import ejb.session.stateless.CabinClassConfigurationSessionBeanRemote;
 import ejb.session.stateless.EmployeeEntitySessionBeanRemote;
+import ejb.session.stateless.PartnerEntitySessionBeanRemote;
+import entity.AircraftConfigurationEntity;
 import entity.AircraftTypeEntity;
 import entity.CabinClassConfigurationEntity;
 import entity.EmployeeEntity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import util.enumeration.CabinClassTypeEnum;
 import util.enumeration.UserRoleEnum;
-import util.exception.InvalidLoginCredentialException;
+import util.exception.AircraftTypeNotFoundException;
+import util.exception.InvalidLoginCredentialsException;
 import util.exception.InvalidUsernameException;
 import util.exception.WrongPasswordException;
+import ejb.session.stateless.AircraftConfigurationEntitySessionBeanRemote;
+import entity.FlightEntity;
+import util.exception.AircraftConfigurationNotFoundException;
 
 /**
  *
@@ -27,7 +37,31 @@ public class MainApp {
 
     private EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote;
 
+    private PartnerEntitySessionBeanRemote partnerEntitySessionBeanRemote;
+
+    private AirportEntitySessionBeanRemote airportEntitySessionBeanRemote;
+
+    private AircraftTypeEntitySessionBeanRemote aircraftTypeEntitySessionBeanRemote;
+
+    private CabinClassConfigurationSessionBeanRemote cabinClassConfigurationSessionBeanRemote;
+
+    private AircraftConfigurationEntitySessionBeanRemote aircraftConfigurationEntitySessionBeanRemote;
+
     public MainApp() {
+    }
+
+    public MainApp(PartnerEntitySessionBeanRemote partnerEntitySessionBeanRemote,
+            EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote,
+            AirportEntitySessionBeanRemote airportEntitySessionBeanRemote,
+            AircraftTypeEntitySessionBeanRemote aircraftTypeEntitySessionBeanRemote,
+            CabinClassConfigurationSessionBeanRemote cabinClassConfigurationSessionBeanRemote,
+            AircraftConfigurationEntitySessionBeanRemote aircraftConfigurationEntitySessionBeanRemote) {
+        this.partnerEntitySessionBeanRemote = partnerEntitySessionBeanRemote;
+        this.employeeEntitySessionBeanRemote = employeeEntitySessionBeanRemote;
+        this.airportEntitySessionBeanRemote = airportEntitySessionBeanRemote;
+        this.aircraftTypeEntitySessionBeanRemote = aircraftTypeEntitySessionBeanRemote;
+        this.cabinClassConfigurationSessionBeanRemote = cabinClassConfigurationSessionBeanRemote;
+        this.aircraftConfigurationEntitySessionBeanRemote = aircraftConfigurationEntitySessionBeanRemote;
     }
 
     public void runApp() {
@@ -49,7 +83,7 @@ public class MainApp {
                         System.out.println("Login successful!");
 
                         menuMain(sc);
-                    } catch (InvalidUsernameException | WrongPasswordException | InvalidLoginCredentialException ex) {
+                    } catch (InvalidUsernameException | WrongPasswordException | InvalidLoginCredentialsException ex) {
                         System.out.println("Invalid login credential: " + ex.getMessage());
                     }
                 } else if (response == 2) {
@@ -64,7 +98,7 @@ public class MainApp {
         }
     }
 
-    public void doLogin(Scanner sc) throws InvalidUsernameException, WrongPasswordException, InvalidLoginCredentialException {
+    public void doLogin(Scanner sc) throws InvalidUsernameException, WrongPasswordException, InvalidLoginCredentialsException {
         System.out.println("*** FRS Employee :: Login ***");
         sc.nextLine();
         System.out.print("Enter username> ");
@@ -81,7 +115,7 @@ public class MainApp {
                 throw new WrongPasswordException(ex.getMessage());
             }
         } else {
-            throw new InvalidLoginCredentialException("Missing login credential!");
+            throw new InvalidLoginCredentialsException("Missing login credential!");
         }
     }
 
@@ -106,7 +140,7 @@ public class MainApp {
 
         while (true) {
             System.out.println("*** FRS Management Application ***");
-            System.out.println("You are login as " + currentEmployee.getName() + " with Fleet Manager rights");
+            System.out.println("You are logged in as " + currentEmployee.getName() + " with Fleet Manager rights");
             System.out.println("1: Create Aircraft Configuration");
             System.out.println("2: View All Aircraft Configurations");
             System.out.println("3: View Aircraft Configuration Details");
@@ -120,16 +154,23 @@ public class MainApp {
                 if (response == 1) {
                     System.out.println("*** FRS Fleet Manager :: Create New Aircraft Configuration ***");
                     sc.nextLine();
-                    System.out.println("Here are the available lists of aircraft types:")
-                    List<AircraftTypeEntity> types = aircraftTypeEntitySessionBean.retrieveAllTypes();
+                    System.out.println("Here are the available lists of aircraft types:");
+                    List<AircraftTypeEntity> types = aircraftTypeEntitySessionBeanRemote.retrieveAllTypes();
                     for (AircraftTypeEntity a : types) {
-                        System.out.println("- " + a);
+                        System.out.println("- " + a.getName());
                     }
                     System.out.print("Enter aircraft type> ");
                     String type = sc.nextLine();
-                    System.out.print("Enter aircraft code> ");
+                    AircraftTypeEntity aircraftType = null;
+                    try {
+                        aircraftType = aircraftTypeEntitySessionBeanRemote.retrieveAircraftTypeByName(type);
+                    } catch (AircraftTypeNotFoundException ex) {
+                        System.out.println(ex.getMessage());
+                        break;
+                    }
+                    System.out.print("Enter aircraft configuration code> ");
                     String code = sc.nextLine();
-                    System.out.print("Enter aircraft name> ");
+                    System.out.print("Enter aircraft configuration name> ");
                     String name = sc.nextLine();
                     int numOfClasses = 0;
                     while (numOfClasses < 1 || numOfClasses > 4) {
@@ -139,6 +180,7 @@ public class MainApp {
                             System.out.println("Please enter a number from 1-4!");
                         }
                     }
+                    int totalMaxCapacity = 0;
                     List<CabinClassConfigurationEntity> classes = new ArrayList<CabinClassConfigurationEntity>();
                     System.out.println("Here are the list of cabin class types:");
                     System.out.println("1: First Class");
@@ -151,16 +193,22 @@ public class MainApp {
                         CabinClassTypeEnum classType = CabinClassTypeEnum.FIRST_CLASS;
                         while (response2 < 1 || response2 > 4) {
                             System.out.print(i + "> ");
-                            if (response2 == 1) {
-                                classType = CabinClassTypeEnum.FIRST_CLASS;
-                            } else if (response2 == 2) {
-                                classType = CabinClassTypeEnum.BUSINESS_CLASS;
-                            } else if (response2 == 3) {
-                                classType = CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS;
-                            } else if (response2 == 4) {
-                                classType = CabinClassTypeEnum.ECONOMY_CLASS;
-                            } else {
-                                System.out.println("Please enter numbers from 1-4!");
+                            switch (response2) {
+                                case 1:
+                                    classType = CabinClassTypeEnum.FIRST_CLASS;
+                                    break;
+                                case 2:
+                                    classType = CabinClassTypeEnum.BUSINESS_CLASS;
+                                    break;
+                                case 3:
+                                    classType = CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS;
+                                    break;
+                                case 4:
+                                    classType = CabinClassTypeEnum.ECONOMY_CLASS;
+                                    break;
+                                default:
+                                    System.out.println("Please enter numbers from 1-4!");
+                                    break;
                             }
 
                             System.out.println("***Create Cabin Class Configuration***");
@@ -175,25 +223,74 @@ public class MainApp {
                             classes.add(cabinClassConfigurationSessionBeanRemote.
                                     createNewCabinClassConfiguration(
                                             new CabinClassConfigurationEntity(aisles, rows, abreast, maxCapacity, classType)));
+                            totalMaxCapacity += maxCapacity;
                         }
                     }
 
-                    aircraftConfigurationEntitySessionBeanRemote.createAircraftConfiguration(code, name, numOfClasses, type, classes);
+                    if (totalMaxCapacity > aircraftType.getMaxCapacity()) {
+                        System.out.println("The total maximum capacity for all cabin classes exceeds the aircraft type's maximum seat capacity");
+                    } else {
+                        aircraftConfigurationEntitySessionBeanRemote.createAircraftConfiguration(
+                                new AircraftConfigurationEntity(code, name, numOfClasses, aircraftType, classes));
+                    }
                 } else if (response == 2) {
-
+                    System.out.println("*** FRS Fleet Manager :: View All Aircraft Configurations ***");
+                    sc.nextLine();
+                    List<AircraftConfigurationEntity> configurations
+                            = aircraftConfigurationEntitySessionBeanRemote.retrieveAllAircraftConfigurations();
+                    for (int i = 1; i <= configurations.size(); i++) {
+                        System.out.print(i + ". ");
+                        System.out.println("CODE: " + configurations.get(i - 1).getCode());
+                        System.out.println("   NAME: " + configurations.get(i - 1).getName());
+                        System.out.println("   AIRCRAFT TYPE: " + configurations.get(i - 1).getName());
+                        System.out.println("   NUMBER OF CABIN CLASSES: " + configurations.get(i - 1).getNumCabinClass());
+                    }
                 } else if (response == 3) {
+                    System.out.println("*** FRS Fleet Manager :: View Aircraft Configuration Details ***");
+                    sc.nextLine();
+                    System.out.println("Enter aircraft configuration code> ");
+                    String code = sc.nextLine();
+                    AircraftConfigurationEntity aircraftConfig = null;
+                    try {
+                        aircraftConfig = aircraftConfigurationEntitySessionBeanRemote.retrieveAircraftTypeByCode(code);
+                    } catch (AircraftConfigurationNotFoundException ex) {
+                        System.out.println(ex.getMessage());
+                        break;
+                    }
+                    List<FlightEntity> flights = aircraftConfigurationEntitySessionBeanRemote.getFlightEntities(aircraftConfig);
+                    List<CabinClassConfigurationEntity> classes = aircraftConfigurationEntitySessionBeanRemote.getCabinClassConfig(aircraftConfig);
 
+                    System.out.println("*** Aircraft Configuration Details of " + code + " ***");
+                    System.out.println("- CODE: " + aircraftConfig.getCode());
+                    System.out.println("- NAME: " + aircraftConfig.getName());
+                    System.out.println("- AIRCRAFT TYPE: " + aircraftConfig.getType());
+                    System.out.println("- NUMBER OF CABIN CLASSES: " + aircraftConfig.getNumCabinClass());
+                    System.out.print("- FLIGHTS (Flight Code): ");
+                    if (flights.isEmpty()) {
+                        System.out.println("No flights registered for this aircraft configuration");
+                    } else {
+                        System.out.println();
+                        for (FlightEntity f : flights) {
+                            System.out.println("   " + f.getFlightCode());
+                        }
+                    }
+                    System.out.println("- Cabin Classes: ");
+                    for (CabinClassConfigurationEntity c : classes) {
+                        System.out.println("   " + c.getClass().toString());
+                        System.out.println("   - Number of aisles: " + c.getNumAisle());
+                        System.out.println("   - Number of rows: " + c.getNumRow());
+                        System.out.println("   - Number of seats abreast: " + c.getNumSeatAbreast());
+                        System.out.println("   - Maximum Capacity: " + c.getMaxCapacity());
+                        System.out.println();
+                    }
+                    System.out.println("******END OF AIRCRAFT CONFIGURATION DETAILS******");
                 } else if (response == 4) {
-
-                } else if (response == 5) {
-
-                } else if (response == 6) {
                     break;
                 } else {
                     System.out.println("Invalid response!");
                 }
             }
-            if (response == 6) {
+            if (response == 4) {
                 break;
             }
         }
@@ -204,7 +301,7 @@ public class MainApp {
 
         while (true) {
             System.out.println("*** FRS Management Application ***");
-            System.out.println("You are login as " + currentEmployee.getName() + " with Route Planner rights");
+            System.out.println("You are logged in as " + currentEmployee.getName() + " with Route Planner rights");
             System.out.println("1: Create Flight Route");
             System.out.println("2: View All Flight Routes");
             System.out.println("3: Delete Flight Route");
@@ -238,7 +335,7 @@ public class MainApp {
 
         while (true) {
             System.out.println("*** FRS Management Application ***");
-            System.out.println("You are login as " + currentEmployee.getName() + " with Schedule Manager rights");
+            System.out.println("You are logged in as " + currentEmployee.getName() + " with Schedule Manager rights");
             System.out.println("1: Create Flight");
             System.out.println("2: View All Flights");
             System.out.println("3: View Flight Details");
@@ -281,7 +378,7 @@ public class MainApp {
 
         while (true) {
             System.out.println("*** FRS Management Application ***");
-            System.out.println("You are login as " + currentEmployee.getName() + " with Sales Manager rights");
+            System.out.println("You are logged in as " + currentEmployee.getName() + " with Sales Manager rights");
             System.out.println("1: View Seats Inventory");
             System.out.println("2: View Flight Reservations");
             System.out.println("3: Logout");
@@ -310,7 +407,7 @@ public class MainApp {
     public void menuMainEmployee(Scanner sc) {
         while (true) {
             System.out.println("*** FRS Management Application ***");
-            System.out.println("You are login as " + currentEmployee.getName() + " with " + currentEmployee.getRole().toString() + " rights");
+            System.out.println("You are logged in as " + currentEmployee.getName() + " with " + currentEmployee.getRole().toString() + " rights");
             System.out.println("1: Logout");
             int response = 0;
 

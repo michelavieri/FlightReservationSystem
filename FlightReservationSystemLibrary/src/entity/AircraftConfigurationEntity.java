@@ -2,6 +2,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
 
 @Entity
@@ -42,6 +42,7 @@ public class AircraftConfigurationEntity implements Serializable {
         this.numCabinClass = numCabinClass;
         this.type = type;
         this.cabinClassConfigurationEntitys = cabinClassConfigurationEntitys;
+        this.flightEntitys = new ArrayList<>();
     }
     
 
@@ -101,6 +102,48 @@ public class AircraftConfigurationEntity implements Serializable {
     @Override
     public String toString() {
         return "entity.AircraftConfigurationEntity[ id=" + id + " ]";
+    }
+
+    /**
+     * @return the type
+     */
+    public AircraftTypeEntity getType() {
+        return type;
+    }
+
+    /**
+     * @param type the type to set
+     */
+    public void setType(AircraftTypeEntity type) {
+        this.type = type;
+    }
+
+    /**
+     * @return the cabinClassConfigurationEntitys
+     */
+    public List<CabinClassConfigurationEntity> getCabinClassConfigurationEntitys() {
+        return cabinClassConfigurationEntitys;
+    }
+
+    /**
+     * @param cabinClassConfigurationEntitys the cabinClassConfigurationEntitys to set
+     */
+    public void setCabinClassConfigurationEntitys(List<CabinClassConfigurationEntity> cabinClassConfigurationEntitys) {
+        this.cabinClassConfigurationEntitys = cabinClassConfigurationEntitys;
+    }
+
+    /**
+     * @return the flightEntitys
+     */
+    public List<FlightEntity> getFlightEntitys() {
+        return flightEntitys;
+    }
+
+    /**
+     * @param flightEntitys the flightEntitys to set
+     */
+    public void setFlightEntitys(List<FlightEntity> flightEntitys) {
+        this.flightEntitys = flightEntitys;
     }
     
 }

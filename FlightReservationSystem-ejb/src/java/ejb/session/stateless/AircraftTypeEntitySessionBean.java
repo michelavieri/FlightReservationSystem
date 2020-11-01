@@ -6,6 +6,8 @@
 package ejb.session.stateless;
 
 import entity.AircraftTypeEntity;
+import java.util.ArrayList;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -52,7 +54,7 @@ public class AircraftTypeEntitySessionBean implements AircraftTypeEntitySessionB
 
     @Override
     public AircraftTypeEntity retrieveAircraftTypeByName(String name) throws AircraftTypeNotFoundException {
-        Query query = entityManager.createQuery("SELECT a FROM AircraftTypeEntity a WHERE a.name = :inName");
+        Query query = entityManager.createQuery("SELECT a FROM AircraftTypeEntity a WHERE a.name = :inUsername");
         query.setParameter("inUsername", name);
 
         try {
@@ -61,4 +63,18 @@ public class AircraftTypeEntitySessionBean implements AircraftTypeEntitySessionB
             throw new AircraftTypeNotFoundException("Aircraft Type " + name + " does not exist!");
         }
     }
+
+    @Override
+    public List<AircraftTypeEntity> retrieveAllTypes() {
+        Query query = entityManager.createQuery("SELECT a FROM AircraftTypeEntity a");
+        List<AircraftTypeEntity> types = new ArrayList<AircraftTypeEntity>();
+        try {
+            types = query.getResultList();
+        } catch (NoResultException ex) {
+            return types;
+        }
+        return types;
+    }
+    
+    
 }
