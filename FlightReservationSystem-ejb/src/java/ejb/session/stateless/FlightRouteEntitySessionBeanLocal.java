@@ -5,10 +5,12 @@
  */
 package ejb.session.stateless;
 
+import entity.AirportEntity;
 import entity.FlightEntity;
 import entity.FlightRouteEntity;
 import java.util.List;
 import javax.ejb.Local;
+import util.exception.FlightRouteNotFoundException;
 
 /**
  *
@@ -26,5 +28,10 @@ public interface FlightRouteEntitySessionBeanLocal {
     List<FlightRouteEntity> retrieveAllRoutes();
 
     List<FlightEntity> retrieveAllFlights(FlightRouteEntity route);
-    
+
+    public FlightRouteEntity retrieveRouteByAirport(AirportEntity originAirport, AirportEntity destinationAirport) throws FlightRouteNotFoundException;
+
+    void deleteRoute(FlightRouteEntity route);
+
+    void disable(FlightRouteEntity route);
 }

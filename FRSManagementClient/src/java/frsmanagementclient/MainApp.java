@@ -29,8 +29,11 @@ import ejb.session.stateless.FlightRouteEntitySessionBeanRemote;
 import entity.AirportEntity;
 import entity.FlightEntity;
 import entity.FlightRouteEntity;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import util.exception.AircraftConfigurationNotFoundException;
 import util.exception.AirportNotFoundException;
+import util.exception.FlightRouteNotFoundException;
 
 /**
  *
@@ -377,6 +380,12 @@ public class MainApp {
                         System.out.println("ROUTE: " + routes.get(i - 1).getOriginAirport().getAirportCode() + " - "
                                 + routes.get(i - 1).getDestinationAirport().getAirportCode());
                         List<FlightEntity> flights = flightRouteEntitySessionBeanRemote.retrieveAllFlights(routes.get(i - 1));
+                        System.out.print("   DISABLED: ");
+                        if (routes.get(i-1).isDisabled()) {
+                            System.out.println("TRUE");
+                        } else {
+                            System.out.println("FALSE");
+                        }
                         System.out.print("   FLIGHTS (FLIGHT CODE): ");
                         if (flights.isEmpty()) {
                             System.out.println("No available flights for this route");
@@ -395,7 +404,7 @@ public class MainApp {
                     String originAirportCode = sc.nextLine();
                     System.out.println("Enter flight route's destination airport code> ");
                     String destinationAirportCode = sc.nextLine();
-                    
+
                     AirportEntity originAirport = null;
                     try {
                         originAirport = airportEntitySessionBeanRemote.retrieveAirportByCode(originAirportCode);
@@ -403,7 +412,7 @@ public class MainApp {
                         System.out.println(ex.getMessage());
                         break;
                     }
-                    
+
                     AirportEntity destinationAirport = null;
                     try {
                         destinationAirport = airportEntitySessionBeanRemote.retrieveAirportByCode(destinationAirportCode);
@@ -411,13 +420,21 @@ public class MainApp {
                         System.out.println(ex.getMessage());
                         break;
                     }
-                    
-                    FlightRouteEntity route = airportEntitySessionBeanRemote.retrieveRouteByAirport(originAirport, destinationAirport);
-                    
+
+                    FlightRouteEntity route;
+                    try {
+                        route = flightRouteEntitySessionBeanRemote.retrieveRouteByAirport(originAirport, destinationAirport);
+                    } catch (FlightRouteNotFoundException ex) {
+                        System.out.println(ex.getMessage());
+                        break;
+                    }
+
                     if (flightRouteEntitySessionBeanRemote.retrieveAllFlights(route).isEmpty()) {
                         flightRouteEntitySessionBeanRemote.deleteRoute(route);
+                        System.out.println("Route successfully deleted");
                     } else {
                         flightRouteEntitySessionBeanRemote.disable(route);
+                        System.out.println("Route successfully disabled");
                     }
                 } else if (response == 4) {
                     break;
