@@ -5,9 +5,12 @@
  */
 package ejb.session.stateless;
 
+import entity.AircraftConfigurationEntity;
 import entity.AircraftTypeEntity;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -75,6 +78,17 @@ public class AircraftTypeEntitySessionBean implements AircraftTypeEntitySessionB
         }
         return types;
     }
-    
-    
+
+    @Override
+    public void addAircraftConfiguration(AircraftTypeEntity type, AircraftConfigurationEntity newAircraftConfig) {
+        entityManager.find(AircraftTypeEntity.class, type.getId());
+        type.getAircraftConfigurationEntitys().size();
+        
+        List<AircraftConfigurationEntity> configurations = type.getAircraftConfigurationEntitys();
+        
+        configurations.add(newAircraftConfig);
+        
+        type.setAircraftConfigurationEntitys(configurations);
+        
+    }
 }

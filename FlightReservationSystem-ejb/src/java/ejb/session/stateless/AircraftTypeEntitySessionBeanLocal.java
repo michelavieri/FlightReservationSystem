@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.AircraftConfigurationEntity;
 import entity.AircraftTypeEntity;
 import java.util.List;
 import javax.ejb.Local;
@@ -24,5 +25,7 @@ public interface AircraftTypeEntitySessionBeanLocal {
     public AircraftTypeEntity retrieveAircraftTypeByName(String name) throws AircraftTypeNotFoundException;
 
     List<AircraftTypeEntity> retrieveAllTypes();
+
+    void addAircraftConfiguration(AircraftTypeEntity type, AircraftConfigurationEntity newAircraftConfig);
     
 }

@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.AirportEntity;
+import entity.FlightRouteEntity;
 import javax.ejb.Local;
 import util.exception.AirportNameExistException;
 import util.exception.AirportNotFoundException;
@@ -21,5 +22,10 @@ public interface AirportEntitySessionBeanLocal {
     public String createNewAirport(AirportEntity newAirportEntity) throws AirportNameExistException, UnknownPersistenceException;
 
     public AirportEntity retrieveAirportByName(String name) throws AirportNotFoundException;
+
+    AirportEntity retrieveAirportByCode(String code) throws AirportNotFoundException;
+
+    void addDepartureRoute(AirportEntity airport, FlightRouteEntity departureRoute);
     
+    void addArrivalRoute(AirportEntity airport, FlightRouteEntity arrivalRoute);
 }

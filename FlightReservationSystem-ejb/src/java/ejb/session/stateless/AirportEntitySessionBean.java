@@ -6,6 +6,10 @@
 package ejb.session.stateless;
 
 import entity.AirportEntity;
+import entity.FlightRouteEntity;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -60,5 +64,39 @@ public class AirportEntitySessionBean implements AirportEntitySessionBeanRemote,
         } catch (NoResultException | NonUniqueResultException ex) {
             throw new AirportNotFoundException("Airport name " + name + " does not exist!");
         }
+    }
+    
+    @Override
+    public AirportEntity retrieveAirportByCode(String code) throws AirportNotFoundException {
+        Query query = entityManager.createQuery("SELECT a FROM AirportEntity a WHERE a.airportCode = :inCode");
+        query.setParameter("inCode", code);
+
+        try {
+            return (AirportEntity) query.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            throw new AirportNotFoundException("Airport name " + code + " does not exist!");
+        }
+    }
+
+    @Override
+    public void addDepartureRoute(AirportEntity airport, FlightRouteEntity departureRoute) {
+        entityManager.find(AirportEntity.class, airport.getAirportId());
+        airport.getDepartureRoutes().size();
+        List<FlightRouteEntity> departureRoutes = airport.getDepartureRoutes();
+        
+        departureRoutes.add(departureRoute);
+        
+        airport.setDepartureRoutes(departureRoutes);
+    }
+    
+    @Override
+    public void addArrivalRoute(AirportEntity airport, FlightRouteEntity arrivalRoute) {
+        entityManager.find(AirportEntity.class, airport.getAirportId());
+        airport.getArrivalRoutes().size();
+        List<FlightRouteEntity> arrivalRoutes = airport.getArrivalRoutes();
+        
+        arrivalRoutes.add(arrivalRoute);
+        
+        airport.setArrivalRoutes(arrivalRoutes);
     }
 }

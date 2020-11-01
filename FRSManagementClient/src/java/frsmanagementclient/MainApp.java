@@ -24,8 +24,13 @@ import util.exception.InvalidLoginCredentialsException;
 import util.exception.InvalidUsernameException;
 import util.exception.WrongPasswordException;
 import ejb.session.stateless.AircraftConfigurationEntitySessionBeanRemote;
+import ejb.session.stateless.FlightEntitySessionBeanRemote;
+import ejb.session.stateless.FlightRouteEntitySessionBeanRemote;
+import entity.AirportEntity;
 import entity.FlightEntity;
+import entity.FlightRouteEntity;
 import util.exception.AircraftConfigurationNotFoundException;
+import util.exception.AirportNotFoundException;
 
 /**
  *
@@ -47,6 +52,10 @@ public class MainApp {
 
     private AircraftConfigurationEntitySessionBeanRemote aircraftConfigurationEntitySessionBeanRemote;
 
+    private FlightEntitySessionBeanRemote flightEntitySessionBeanRemote;
+
+    private FlightRouteEntitySessionBeanRemote flightRouteEntitySessionBeanRemote;
+
     public MainApp() {
     }
 
@@ -55,13 +64,17 @@ public class MainApp {
             AirportEntitySessionBeanRemote airportEntitySessionBeanRemote,
             AircraftTypeEntitySessionBeanRemote aircraftTypeEntitySessionBeanRemote,
             CabinClassConfigurationSessionBeanRemote cabinClassConfigurationSessionBeanRemote,
-            AircraftConfigurationEntitySessionBeanRemote aircraftConfigurationEntitySessionBeanRemote) {
+            AircraftConfigurationEntitySessionBeanRemote aircraftConfigurationEntitySessionBeanRemote,
+            FlightEntitySessionBeanRemote flightEntitySessionBeanRemote,
+            FlightRouteEntitySessionBeanRemote flightRouteEntitySessionBeanRemote) {
         this.partnerEntitySessionBeanRemote = partnerEntitySessionBeanRemote;
         this.employeeEntitySessionBeanRemote = employeeEntitySessionBeanRemote;
         this.airportEntitySessionBeanRemote = airportEntitySessionBeanRemote;
         this.aircraftTypeEntitySessionBeanRemote = aircraftTypeEntitySessionBeanRemote;
         this.cabinClassConfigurationSessionBeanRemote = cabinClassConfigurationSessionBeanRemote;
         this.aircraftConfigurationEntitySessionBeanRemote = aircraftConfigurationEntitySessionBeanRemote;
+        this.flightEntitySessionBeanRemote = flightEntitySessionBeanRemote;
+        this.flightRouteEntitySessionBeanRemote = flightRouteEntitySessionBeanRemote;
     }
 
     public void runApp() {
@@ -147,7 +160,7 @@ public class MainApp {
             System.out.println("4: Logout");
             response = 0;
 
-            while (response < 1 || response > 6) {
+            while (response < 1 || response > 4) {
                 System.out.print("> ");
                 response = sc.nextInt();
 
@@ -230,8 +243,9 @@ public class MainApp {
                     if (totalMaxCapacity > aircraftType.getMaxCapacity()) {
                         System.out.println("The total maximum capacity for all cabin classes exceeds the aircraft type's maximum seat capacity");
                     } else {
-                        aircraftConfigurationEntitySessionBeanRemote.createAircraftConfiguration(
+                        AircraftConfigurationEntity newAircraftConfiguration = aircraftConfigurationEntitySessionBeanRemote.createAircraftConfiguration(
                                 new AircraftConfigurationEntity(code, name, numOfClasses, aircraftType, classes));
+                        aircraftTypeEntitySessionBeanRemote.addAircraftConfiguration(aircraftType, newAircraftConfiguration);
                     }
                 } else if (response == 2) {
                     System.out.println("*** FRS Fleet Manager :: View All Aircraft Configurations ***");
@@ -308,23 +322,110 @@ public class MainApp {
             System.out.println("4: Logout");
             response = 0;
 
-            while (response < 1 || response > 6) {
+            while (response < 1 || response > 4) {
                 System.out.print("> ");
                 response = sc.nextInt();
 
                 if (response == 1) {
+                    System.out.println("*** FRS Route Planner :: Create Flight Route ***");
+                    sc.nextLine();
+                    System.out.println("Enter origin airport> ");
+                    String origin = sc.nextLine();
+                    AirportEntity originAirport = null;
+                    try {
+                        originAirport = airportEntitySessionBeanRemote.retrieveAirportByCode(origin);
+                    } catch (AirportNotFoundException ex) {
+                        System.out.println(ex.getMessage());
+                        break;
+                    }
 
+                    System.out.println("Enter destination airport> ");
+                    String destination = sc.nextLine();
+                    AirportEntity destinationAirport = null;
+                    try {
+                        destinationAirport = airportEntitySessionBeanRemote.retrieveAirportByCode(destination);
+                    } catch (AirportNotFoundException ex) {
+                        System.out.println(ex.getMessage());
+                        break;
+                    }
+
+                    FlightRouteEntity departureRoute = flightRouteEntitySessionBeanRemote.createFlightRouteEntity(new FlightRouteEntity(originAirport, destinationAirport));
+                    airportEntitySessionBeanRemote.addDepartureRoute(originAirport, departureRoute);
+                    airportEntitySessionBeanRemote.addArrivalRoute(destinationAirport, departureRoute);
+
+                    String returnRouteConfirmation = "A";
+                    while (!returnRouteConfirmation.equals("Y") && !returnRouteConfirmation.equals("N")) {
+                        System.out.println("Do you want to create a complementary return route? (Y/N)> ");
+                        returnRouteConfirmation = sc.nextLine();
+                    }
+
+                    if (returnRouteConfirmation.equals("Y")) {
+                        FlightRouteEntity returnRoute = flightRouteEntitySessionBeanRemote.createFlightRouteEntity(new FlightRouteEntity(originAirport, destinationAirport));
+                        flightRouteEntitySessionBeanRemote.setReturnFlightRoute(departureRoute, returnRoute);
+                        flightRouteEntitySessionBeanRemote.setDepartureFlightRoute(departureRoute, returnRoute);
+                        airportEntitySessionBeanRemote.addDepartureRoute(destinationAirport, departureRoute);
+                        airportEntitySessionBeanRemote.addArrivalRoute(originAirport, departureRoute);
+                        System.out.println("Return flight from " + destination + " to " + origin + " has been created!");
+                    }
                 } else if (response == 2) {
-
+                    System.out.println("*** FRS Route Planner :: View All Flight Routes ***");
+                    sc.nextLine();
+                    List<FlightRouteEntity> routes
+                            = flightRouteEntitySessionBeanRemote.retrieveAllRoutes();
+                    for (int i = 1; i <= routes.size(); i++) {
+                        System.out.print(i + ". ");
+                        System.out.println("ROUTE: " + routes.get(i - 1).getOriginAirport().getAirportCode() + " - "
+                                + routes.get(i - 1).getDestinationAirport().getAirportCode());
+                        List<FlightEntity> flights = flightRouteEntitySessionBeanRemote.retrieveAllFlights(routes.get(i - 1));
+                        System.out.print("   FLIGHTS (FLIGHT CODE): ");
+                        if (flights.isEmpty()) {
+                            System.out.println("No available flights for this route");
+                        } else {
+                            System.out.println();
+                            for (FlightEntity f : flights) {
+                                System.out.println("    - " + f.getFlightCode());
+                            }
+                            System.out.println();
+                        }
+                    }
                 } else if (response == 3) {
-
+                    System.out.println("*** FRS Route Planner :: Delete Flight Route ***");
+                    sc.nextLine();
+                    System.out.println("Enter flight route's origin airport code> ");
+                    String originAirportCode = sc.nextLine();
+                    System.out.println("Enter flight route's destination airport code> ");
+                    String destinationAirportCode = sc.nextLine();
+                    
+                    AirportEntity originAirport = null;
+                    try {
+                        originAirport = airportEntitySessionBeanRemote.retrieveAirportByCode(originAirportCode);
+                    } catch (AirportNotFoundException ex) {
+                        System.out.println(ex.getMessage());
+                        break;
+                    }
+                    
+                    AirportEntity destinationAirport = null;
+                    try {
+                        destinationAirport = airportEntitySessionBeanRemote.retrieveAirportByCode(destinationAirportCode);
+                    } catch (AirportNotFoundException ex) {
+                        System.out.println(ex.getMessage());
+                        break;
+                    }
+                    
+                    FlightRouteEntity route = airportEntitySessionBeanRemote.retrieveRouteByAirport(originAirport, destinationAirport);
+                    
+                    if (flightRouteEntitySessionBeanRemote.retrieveAllFlights(route).isEmpty()) {
+                        flightRouteEntitySessionBeanRemote.deleteRoute(route);
+                    } else {
+                        flightRouteEntitySessionBeanRemote.disable(route);
+                    }
                 } else if (response == 4) {
                     break;
                 } else {
                     System.out.println("Invalid response!");
                 }
             }
-            if (response == 6) {
+            if (response == 4) {
                 break;
             }
         }
