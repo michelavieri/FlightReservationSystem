@@ -25,13 +25,23 @@ public class AircraftConfigurationEntity implements Serializable {
     
     @ManyToOne
     private AircraftTypeEntity type;
+    
     @OneToMany(mappedBy = "aircraftConfig")
     private List<CabinClassConfigurationEntity> cabinClassConfigurationEntitys;
+    
     @OneToMany(mappedBy = "aircraftConfigurationEntity")
     private List<FlightEntity> flightEntitys;
 
     
     public AircraftConfigurationEntity() {
+    }
+
+    public AircraftConfigurationEntity(String code, String name, int numCabinClass, AircraftTypeEntity type, List<CabinClassConfigurationEntity> cabinClassConfigurationEntitys) {
+        this.code = code;
+        this.name = name;
+        this.numCabinClass = numCabinClass;
+        this.type = type;
+        this.cabinClassConfigurationEntitys = cabinClassConfigurationEntitys;
     }
     
 

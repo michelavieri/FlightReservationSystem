@@ -27,15 +27,18 @@ public class SeatsInventoryEntity implements Serializable {
     private int availableSeatsSize;
     private int reservedSeatsSize;
     private int balanceSeatsSize;
-    
-    @OneToOne(mappedBy = "seatsInventory")
-    private CabinClassConfigurationEntity cabinClassConfigurationEntity;
 
     @ManyToOne
     private FlightScheduleEntity flightSchedule;
 
     
     public SeatsInventoryEntity() {
+    }
+
+    public SeatsInventoryEntity(int availableSeatsSize, int reservedSeatsSize, int balanceSeatsSize) {
+        this.availableSeatsSize = availableSeatsSize;
+        this.reservedSeatsSize = reservedSeatsSize;
+        this.balanceSeatsSize = balanceSeatsSize;
     }
 
     
