@@ -1,4 +1,3 @@
-
 package entity;
 
 import java.io.Serializable;
@@ -10,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import util.enumeration.CabinClassTypeEnum;
-
 
 @Entity
 public class CabinClassConfigurationEntity implements Serializable {
@@ -24,19 +22,19 @@ public class CabinClassConfigurationEntity implements Serializable {
     private int numSeatAbreast;
     private int maxCapacity;
     private CabinClassTypeEnum type;
+
     private int[] arrOfConfig;
-    
+
     @ManyToOne
     private AircraftConfigurationEntity aircraftConfig;
-    
+
     @OneToMany(mappedBy = "cabinClass")
     private List<FareEntity> fareEntitys;
 
-    
     public CabinClassConfigurationEntity() {
     }
 
-    public CabinClassConfigurationEntity(int numAisle, int numRow, 
+    public CabinClassConfigurationEntity(int numAisle, int numRow,
             int numSeatAbreast, int maxCapacity, CabinClassTypeEnum type,
             int[] arrOfConfig) {
         this.numAisle = numAisle;
@@ -47,7 +45,6 @@ public class CabinClassConfigurationEntity implements Serializable {
         this.arrOfConfig = arrOfConfig;
     }
 
-    
     public Long getId() {
         return id;
     }
@@ -87,7 +84,6 @@ public class CabinClassConfigurationEntity implements Serializable {
     public void setMaxCapacity(int maxCapacity) {
         this.maxCapacity = maxCapacity;
     }
-    
 
     @Override
     public int hashCode() {
@@ -169,5 +165,5 @@ public class CabinClassConfigurationEntity implements Serializable {
     public void setFareEntitys(List<FareEntity> fareEntitys) {
         this.fareEntitys = fareEntitys;
     }
-    
+
 }
