@@ -6,7 +6,9 @@
 package ejb.session.stateless;
 
 import entity.FlightEntity;
+import java.util.List;
 import javax.ejb.Remote;
+import util.exception.FlightNotFoundException;
 
 /**
  *
@@ -17,4 +19,12 @@ public interface FlightEntitySessionBeanRemote {
 
     public FlightEntity createFlightEntity(FlightEntity newFlight);
 
+    public List<FlightEntity> retrieveAllFlights();
+   
+    public void setReturnFlight(FlightEntity departureFlight, FlightEntity returnFlight);
+
+    public void setDepartureFlight(FlightEntity returnFlight, FlightEntity departureFlight);
+    
+    public FlightEntity retrieveFlightByCode(String code) throws FlightNotFoundException;
+    
 }

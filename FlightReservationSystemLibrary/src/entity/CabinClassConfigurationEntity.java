@@ -45,6 +45,30 @@ public class CabinClassConfigurationEntity implements Serializable {
     }
 
     
+    public CabinClassTypeEnum getType() {
+        return type;
+    }
+
+    public void setType(CabinClassTypeEnum type) {
+        this.type = type;
+    }
+
+    public AircraftConfigurationEntity getAircraftConfig() {
+        return aircraftConfig;
+    }
+
+    public void setAircraftConfig(AircraftConfigurationEntity aircraftConfig) {
+        this.aircraftConfig = aircraftConfig;
+    }
+
+    public List<FareEntity> getFareEntitys() {
+        return fareEntitys;
+    }
+
+    public void setFareEntitys(List<FareEntity> fareEntitys) {
+        this.fareEntitys = fareEntitys;
+    }
+
     public Long getId() {
         return id;
     }

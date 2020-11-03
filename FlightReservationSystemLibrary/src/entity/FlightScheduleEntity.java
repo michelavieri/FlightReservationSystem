@@ -28,11 +28,9 @@ public class FlightScheduleEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long scheduleId;
-    private String departureTime;
-    private Date departureDate;
-    private int duration;
-    private String arrTime;
-    private Date arrivalDate;
+    private String departureDateTime;
+    private String duration;
+    private String arrivalDateTime;
       
     @OneToMany(mappedBy = "flightSchedule")
     private List<SeatsInventoryEntity> seatsInventoryEntitys;
@@ -51,6 +49,11 @@ public class FlightScheduleEntity implements Serializable {
 
     
     public FlightScheduleEntity() {
+    }
+
+    public FlightScheduleEntity(String departureDateTime, String duration) {
+        this.departureDateTime = departureDateTime;
+        this.duration = duration;
     }
     
     
@@ -88,73 +91,45 @@ public class FlightScheduleEntity implements Serializable {
     }
 
     /**
-     * @return the departureTime
-     */
-    public String getDepartureTime() {
-        return departureTime;
-    }
-
-    /**
-     * @param departureTime the departureTime to set
-     */
-    public void setDepartureTime(String departureTime) {
-        this.departureTime = departureTime;
-    }
-
-    /**
      * @return the departureDate
      */
-    public Date getDepartureDate() {
-        return departureDate;
+    public String getDepartureDateTime() {
+        return departureDateTime;
     }
 
     /**
      * @param departureDate the departureDate to set
      */
-    public void setDepartureDate(Date departureDate) {
-        this.departureDate = departureDate;
+    public void setDepartureDateTime(String departureDateTime) {
+        this.departureDateTime = departureDateTime;
     }
 
     /**
      * @return the duration
      */
-    public int getDuration() {
+    public String getDuration() {
         return duration;
     }
 
     /**
      * @param duration the duration to set
      */
-    public void setDuration(int duration) {
+    public void setDuration(String duration) {
         this.duration = duration;
-    }
-
-    /**
-     * @return the arrTime
-     */
-    public String getArrTime() {
-        return arrTime;
-    }
-
-    /**
-     * @param arrTime the arrTime to set
-     */
-    public void setArrTime(String arrTime) {
-        this.arrTime = arrTime;
     }
 
     /**
      * @return the arrivalDate
      */
-    public Date getArrivalDate() {
-        return arrivalDate;
+    public String getArrivalDateTime() {
+        return arrivalDateTime;
     }
 
     /**
      * @param arrivalDate the arrivalDate to set
      */
-    public void setArrivalDate(Date arrivalDate) {
-        this.arrivalDate = arrivalDate;
+    public void setArrivalDate(String arrivalDateTime) {
+        this.arrivalDateTime = arrivalDateTime;
     }
 
     /**

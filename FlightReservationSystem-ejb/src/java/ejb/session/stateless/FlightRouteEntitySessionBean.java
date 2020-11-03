@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.AirportEntity;
 import entity.FlightEntity;
 import entity.FlightRouteEntity;
 import java.util.ArrayList;
@@ -12,8 +13,11 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.FlightRouteDisabled;
+import util.exception.FlightRouteNotFoundException;
 
 /**
  *
@@ -68,6 +72,36 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
         return route.getFlights();
     }
     
-    
+    @Override
+    public FlightRouteEntity findFlightRoute(AirportEntity origin, AirportEntity destination) throws FlightRouteNotFoundException {
+        Query query = entityManager.createQuery("SELECT r from FlightRouteEntity r WHERE r.originAirport = :inOrigin AND r.destinationAirport = :inDestination");
+        query.setParameter("inOrigin", origin);
+        query.setParameter("inDestination", destination);
+        
+        try
+        {
+            return (FlightRouteEntity)query.getSingleResult();
+        }
+        catch(NoResultException | NonUniqueResultException ex)
+        {
+            throw new FlightRouteNotFoundException("Flight route from " + origin + " to " + destination + " does not exist!");
+        }
+    }
 
+    @Override
+    public boolean isDisabled(FlightRouteEntity route) throws FlightRouteDisabled {
+        if(route.isDisabled()) {
+            throw new FlightRouteDisabled("This flight route is disabled!");
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean checkReturnRouteAvailability(FlightRouteEntity route) {
+        if(route.getReturnFlightRoute() != null || route.getDepartureFlightRoute() != null) {
+            return true;
+        }
+        
+        return false;
+    }
 }

@@ -5,10 +5,13 @@
  */
 package ejb.session.stateless;
 
+import entity.AirportEntity;
 import entity.FlightEntity;
 import entity.FlightRouteEntity;
 import java.util.List;
 import javax.ejb.Remote;
+import util.exception.FlightRouteDisabled;
+import util.exception.FlightRouteNotFoundException;
 
 /**
  *
@@ -26,5 +29,11 @@ public interface FlightRouteEntitySessionBeanRemote {
     List<FlightRouteEntity> retrieveAllRoutes();
 
     List<FlightEntity> retrieveAllFlights(FlightRouteEntity route);
+    
+    public FlightRouteEntity findFlightRoute(AirportEntity origin, AirportEntity destination) throws FlightRouteNotFoundException;
+    
+    public boolean isDisabled(FlightRouteEntity route) throws FlightRouteDisabled;
+    
+    public boolean checkReturnRouteAvailability(FlightRouteEntity route);
     
 }

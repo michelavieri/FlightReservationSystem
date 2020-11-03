@@ -43,6 +43,16 @@ public class FlightEntity implements Serializable {
     
     @OneToOne
     private FlightEntity departureFlight;
+    
+
+    public FlightEntity() {
+    }
+
+    public FlightEntity(int flightNumber, AircraftConfigurationEntity aircraftConfigurationEntity, FlightRouteEntity route) {
+        this.flightCode = "ML " + flightNumber;
+        this.aircraftConfigurationEntity = aircraftConfigurationEntity;
+        this.route = route;
+    }
 
     
     public AircraftConfigurationEntity getAircraftConfigurationEntity() {

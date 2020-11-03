@@ -29,8 +29,13 @@ import ejb.session.stateless.FlightRouteEntitySessionBeanRemote;
 import entity.AirportEntity;
 import entity.FlightEntity;
 import entity.FlightRouteEntity;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import util.exception.AircraftConfigurationNotFoundException;
 import util.exception.AirportNotFoundException;
+import util.exception.FlightNotFoundException;
+import util.exception.FlightRouteDisabled;
+import util.exception.FlightRouteNotFoundException;
 
 /**
  *
@@ -55,6 +60,8 @@ public class MainApp {
     private FlightEntitySessionBeanRemote flightEntitySessionBeanRemote;
 
     private FlightRouteEntitySessionBeanRemote flightRouteEntitySessionBeanRemote;
+    
+    private FlightOperationModule flightOperationModule;
 
     public MainApp() {
     }
@@ -434,6 +441,9 @@ public class MainApp {
     public void menuMainSchedule(Scanner sc) {
         Integer response = 0;
 
+        flightOperationModule
+            = new FlightOperationModule(airportEntitySessionBeanRemote, aircraftTypeEntitySessionBeanRemote, cabinClassConfigurationSessionBeanRemote, aircraftConfigurationEntitySessionBeanRemote, flightEntitySessionBeanRemote, flightRouteEntitySessionBeanRemote);
+        
         while (true) {
             System.out.println("*** FRS Management Application ***");
             System.out.println("You are logged in as " + currentEmployee.getName() + " with Schedule Manager rights");
@@ -451,13 +461,13 @@ public class MainApp {
                 response = sc.nextInt();
 
                 if (response == 1) {
-
+                    flightOperationModule.createFlight(sc);
                 } else if (response == 2) {
-
+                    flightOperationModule.viewAllFlights(sc);
                 } else if (response == 3) {
-
+                    flightOperationModule.viewFlightDetails(sc);
                 } else if (response == 4) {
-
+                    flightOperationModule.createFlightSchedulePlan(sc);
                 } else if (response == 5) {
 
                 } else if (response == 6) {
