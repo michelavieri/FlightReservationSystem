@@ -26,6 +26,8 @@ import util.exception.WrongPasswordException;
 import ejb.session.stateless.AircraftConfigurationEntitySessionBeanRemote;
 import ejb.session.stateless.FlightEntitySessionBeanRemote;
 import ejb.session.stateless.FlightRouteEntitySessionBeanRemote;
+import ejb.session.stateless.FlightScheduleEntitySessionBeanRemote;
+import ejb.session.stateless.FlightSchedulePlanEntitySessionBeanRemote;
 import entity.AirportEntity;
 import entity.FlightEntity;
 import entity.FlightRouteEntity;
@@ -57,6 +59,12 @@ public class MainApp {
     private FlightEntitySessionBeanRemote flightEntitySessionBeanRemote;
 
     private FlightRouteEntitySessionBeanRemote flightRouteEntitySessionBeanRemote;
+    
+    private FlightScheduleEntitySessionBeanRemote flightScheduleEntitySessionBeanRemote;
+    
+    private FlightSchedulePlanEntitySessionBeanRemote flightSchedulePlanEntitySessionBeanRemote;
+    
+    private FlightOperationModule flightOperationModule;
 
     public MainApp() {
     }
@@ -68,7 +76,9 @@ public class MainApp {
             CabinClassConfigurationSessionBeanRemote cabinClassConfigurationSessionBeanRemote,
             AircraftConfigurationEntitySessionBeanRemote aircraftConfigurationEntitySessionBeanRemote,
             FlightEntitySessionBeanRemote flightEntitySessionBeanRemote,
-            FlightRouteEntitySessionBeanRemote flightRouteEntitySessionBeanRemote) {
+            FlightRouteEntitySessionBeanRemote flightRouteEntitySessionBeanRemote,
+            FlightScheduleEntitySessionBeanRemote flightScheduleEntitySessionBeanRemote,
+            FlightSchedulePlanEntitySessionBeanRemote flightSchedulePlanEntitySessionBeanRemote) {
         this.partnerEntitySessionBeanRemote = partnerEntitySessionBeanRemote;
         this.employeeEntitySessionBeanRemote = employeeEntitySessionBeanRemote;
         this.airportEntitySessionBeanRemote = airportEntitySessionBeanRemote;
@@ -77,6 +87,8 @@ public class MainApp {
         this.aircraftConfigurationEntitySessionBeanRemote = aircraftConfigurationEntitySessionBeanRemote;
         this.flightEntitySessionBeanRemote = flightEntitySessionBeanRemote;
         this.flightRouteEntitySessionBeanRemote = flightRouteEntitySessionBeanRemote;
+        this.flightScheduleEntitySessionBeanRemote = flightScheduleEntitySessionBeanRemote;
+        this.flightSchedulePlanEntitySessionBeanRemote = flightSchedulePlanEntitySessionBeanRemote;
     }
 
     public void runApp() {
@@ -480,6 +492,12 @@ public class MainApp {
     public void menuMainSchedule(Scanner sc) {
         Integer response = 0;
 
+        flightOperationModule
+            = new FlightOperationModule(airportEntitySessionBeanRemote, aircraftTypeEntitySessionBeanRemote, 
+                    cabinClassConfigurationSessionBeanRemote, aircraftConfigurationEntitySessionBeanRemote, 
+                    flightEntitySessionBeanRemote, flightRouteEntitySessionBeanRemote,
+                    flightScheduleEntitySessionBeanRemote, flightSchedulePlanEntitySessionBeanRemote);
+        
         while (true) {
             System.out.println("*** FRS Management Application ***");
             System.out.println("You are logged in as " + currentEmployee.getName() + " with Schedule Manager rights");
@@ -497,13 +515,13 @@ public class MainApp {
                 response = sc.nextInt();
 
                 if (response == 1) {
-
+                    flightOperationModule.createFlight(sc);
                 } else if (response == 2) {
-
+                    flightOperationModule.viewAllFlights(sc);
                 } else if (response == 3) {
-
+                    flightOperationModule.viewFlightDetails(sc);
                 } else if (response == 4) {
-
+                    flightOperationModule.createFlightSchedulePlan(sc);
                 } else if (response == 5) {
 
                 } else if (response == 6) {

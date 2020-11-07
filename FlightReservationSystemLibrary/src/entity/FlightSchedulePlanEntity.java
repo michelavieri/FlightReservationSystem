@@ -28,24 +28,39 @@ public class FlightSchedulePlanEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long schedulePlanId;
     private FlightSchedulePlanTypeEnum type;
-    private Date startDate;
-    private Date endDate;
+    private String startDate;
+    private String endDate;
     private boolean disabled;
     private int layoverDuration;
-    
+
     @OneToMany(mappedBy = "flightSchedulePlan")
     private List<FareEntity> fareEntitys;
 
     @OneToMany(mappedBy = "plan")
     private List<FlightScheduleEntity> flightSchedules;
-    
+
     @ManyToOne
     private FlightEntity flight;
 
-    
     public FlightSchedulePlanEntity() {
     }
-    
+
+    public FlightSchedulePlanEntity(FlightSchedulePlanTypeEnum type, String startDate, int layoverDuration, FlightEntity flight) {
+        this.type = type;
+        this.startDate = startDate;
+        this.layoverDuration = layoverDuration;
+        this.flight = flight;
+        this.disabled = false;
+    }
+
+    public FlightSchedulePlanEntity(FlightSchedulePlanTypeEnum type, String startDate, String endDate, int layoverDuration, FlightEntity flight) {
+        this.type = type;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.layoverDuration = layoverDuration;
+        this.flight = flight;
+        this.disabled = false;
+    }
 
     public Long getSchedulePlanId() {
         return schedulePlanId;
@@ -97,28 +112,28 @@ public class FlightSchedulePlanEntity implements Serializable {
     /**
      * @return the startDate
      */
-    public Date getStartDate() {
+    public String getStartDate() {
         return startDate;
     }
 
     /**
      * @param startDate the startDate to set
      */
-    public void setStartDate(Date startDate) {
+    public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
 
     /**
      * @return the endDate
      */
-    public Date getEndDate() {
+    public String getEndDate() {
         return endDate;
     }
 
     /**
      * @param endDate the endDate to set
      */
-    public void setEndDate(Date endDate) {
+    public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
 
@@ -177,5 +192,5 @@ public class FlightSchedulePlanEntity implements Serializable {
     public void setFlight(FlightEntity flight) {
         this.flight = flight;
     }
-    
+
 }

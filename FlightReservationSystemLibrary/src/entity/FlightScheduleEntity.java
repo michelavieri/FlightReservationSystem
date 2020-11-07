@@ -28,11 +28,9 @@ public class FlightScheduleEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long scheduleId;
-    private String departureTime;
-    private Date departureDate;
+    private String departureDateTime;
     private int duration;
-    private String arrTime;
-    private Date arrivalDate;
+    private String arrivalDateTime;
       
     @OneToMany(mappedBy = "flightSchedule")
     private List<SeatsInventoryEntity> seatsInventoryEntitys;
@@ -51,6 +49,12 @@ public class FlightScheduleEntity implements Serializable {
 
     
     public FlightScheduleEntity() {
+    }
+
+    public FlightScheduleEntity(String departureDateTime, int duration, String arrivalDateTime) {
+        this.departureDateTime = departureDateTime;
+        this.duration = duration;
+        this.arrivalDateTime = arrivalDateTime;
     }
     
     
@@ -88,31 +92,17 @@ public class FlightScheduleEntity implements Serializable {
     }
 
     /**
-     * @return the departureTime
-     */
-    public String getDepartureTime() {
-        return departureTime;
-    }
-
-    /**
-     * @param departureTime the departureTime to set
-     */
-    public void setDepartureTime(String departureTime) {
-        this.departureTime = departureTime;
-    }
-
-    /**
      * @return the departureDate
      */
-    public Date getDepartureDate() {
-        return departureDate;
+    public String getDepartureDateTime() {
+        return departureDateTime;
     }
 
     /**
      * @param departureDate the departureDate to set
      */
-    public void setDepartureDate(Date departureDate) {
-        this.departureDate = departureDate;
+    public void setDepartureDateTime(String departureDateTime) {
+        this.departureDateTime = departureDateTime;
     }
 
     /**
@@ -130,31 +120,17 @@ public class FlightScheduleEntity implements Serializable {
     }
 
     /**
-     * @return the arrTime
-     */
-    public String getArrTime() {
-        return arrTime;
-    }
-
-    /**
-     * @param arrTime the arrTime to set
-     */
-    public void setArrTime(String arrTime) {
-        this.arrTime = arrTime;
-    }
-
-    /**
      * @return the arrivalDate
      */
-    public Date getArrivalDate() {
-        return arrivalDate;
+    public String getArrivalDateTime() {
+        return arrivalDateTime;
     }
 
     /**
      * @param arrivalDate the arrivalDate to set
      */
-    public void setArrivalDate(Date arrivalDate) {
-        this.arrivalDate = arrivalDate;
+    public void setArrivalDate(String arrivalDateTime) {
+        this.arrivalDateTime = arrivalDateTime;
     }
 
     /**
@@ -190,6 +166,27 @@ public class FlightScheduleEntity implements Serializable {
      */
     public FlightSchedulePlanEntity getPlan() {
         return plan;
+    }
+
+    /**
+     * @param plan the plan to set
+     */
+    public void setPlan(FlightSchedulePlanEntity plan) {
+        this.plan = plan;
+    }
+
+    /**
+     * @return the seatsInventoryEntitys
+     */
+    public List<SeatsInventoryEntity> getSeatsInventoryEntitys() {
+        return seatsInventoryEntitys;
+    }
+
+    /**
+     * @param seatsInventoryEntitys the seatsInventoryEntitys to set
+     */
+    public void setSeatsInventoryEntitys(List<SeatsInventoryEntity> seatsInventoryEntitys) {
+        this.seatsInventoryEntitys = seatsInventoryEntitys;
     }
     
 }

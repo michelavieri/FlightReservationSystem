@@ -70,7 +70,7 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
         route.getFlights().size();
         return route.getFlights();
     }
-
+    
     @Override
     public FlightRouteEntity retrieveRouteByAirport(AirportEntity originAirport, AirportEntity destinationAirport) throws FlightRouteNotFoundException {
         Query query = entityManager.createQuery("SELECT r FROM FlightRouteEntity r WHERE r.originAirport = :inOriginAirport AND "

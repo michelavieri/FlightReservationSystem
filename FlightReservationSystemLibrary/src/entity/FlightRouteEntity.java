@@ -52,6 +52,7 @@ public class FlightRouteEntity implements Serializable {
         this.originAirport = originAirport;
         this.destinationAirport = destinationAirport;
         this.flights = new ArrayList<>();
+        this.disabled = false;
     }
 
     
