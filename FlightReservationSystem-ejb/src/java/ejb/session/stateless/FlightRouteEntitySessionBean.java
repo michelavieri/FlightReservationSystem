@@ -68,6 +68,7 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
 
     @Override
     public List<FlightEntity> retrieveAllFlights(FlightRouteEntity route) {
+        route = entityManager.find(FlightRouteEntity.class, route.getRouteId());
         route.getFlights().size();
         return route.getFlights();
     }
@@ -89,7 +90,7 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
 
     @Override
     public void deleteRoute(FlightRouteEntity route) {
-        entityManager.find(FlightRouteEntity.class, route.getRouteId());
+        route = entityManager.find(FlightRouteEntity.class, route.getRouteId());
         AirportEntity originAirport = route.getOriginAirport();
         originAirport.getDepartureRoutes().size();
         List<FlightRouteEntity> departureRoutes = originAirport.getDepartureRoutes();

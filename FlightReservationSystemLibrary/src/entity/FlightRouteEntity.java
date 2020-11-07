@@ -8,6 +8,7 @@ package entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -32,10 +33,10 @@ public class FlightRouteEntity implements Serializable {
     @OneToMany(mappedBy = "route")
     private List<FlightEntity> flights;
 
-    @OneToOne(mappedBy = "departureFlightRoute")
+    @OneToOne(mappedBy = "departureFlightRoute", cascade = CascadeType.REMOVE)
     private FlightRouteEntity returnFlightRoute;
     
-    @OneToOne
+    @OneToOne (cascade = CascadeType.REMOVE)
     private FlightRouteEntity departureFlightRoute;
     
     @ManyToOne

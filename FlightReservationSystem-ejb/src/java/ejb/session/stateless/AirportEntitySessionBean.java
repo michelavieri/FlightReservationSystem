@@ -80,7 +80,7 @@ public class AirportEntitySessionBean implements AirportEntitySessionBeanRemote,
 
     @Override
     public void addDepartureRoute(AirportEntity airport, FlightRouteEntity departureRoute) {
-        entityManager.find(AirportEntity.class, airport.getAirportId());
+        airport = entityManager.find(AirportEntity.class, airport.getAirportId());
         airport.getDepartureRoutes().size();
         List<FlightRouteEntity> departureRoutes = airport.getDepartureRoutes();
         
@@ -91,7 +91,7 @@ public class AirportEntitySessionBean implements AirportEntitySessionBeanRemote,
     
     @Override
     public void addArrivalRoute(AirportEntity airport, FlightRouteEntity arrivalRoute) {
-        entityManager.find(AirportEntity.class, airport.getAirportId());
+        airport = entityManager.find(AirportEntity.class, airport.getAirportId());
         airport.getArrivalRoutes().size();
         List<FlightRouteEntity> arrivalRoutes = airport.getArrivalRoutes();
         

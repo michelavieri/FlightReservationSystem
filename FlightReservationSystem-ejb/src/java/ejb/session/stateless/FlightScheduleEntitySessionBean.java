@@ -5,7 +5,9 @@
  */
 package ejb.session.stateless;
 
+import entity.AircraftConfigurationEntity;
 import entity.CabinClassConfigurationEntity;
+import entity.FlightEntity;
 import entity.FlightScheduleEntity;
 import entity.FlightSchedulePlanEntity;
 import entity.SeatsInventoryEntity;
@@ -52,8 +54,17 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
     public void associateNewSeatsInventory(FlightScheduleEntity schedule) {
 
         schedule = entityManager.find(FlightScheduleEntity.class, schedule.getScheduleId());
-
-        List<CabinClassConfigurationEntity> cabinClasses = schedule.getPlan().getFlight().getAircraftConfigurationEntity().getCabinClassConfigurationEntitys();
+        FlightSchedulePlanEntity plan = schedule.getPlan();
+        
+        plan = entityManager.find(FlightSchedulePlanEntity.class, plan.getSchedulePlanId());
+        FlightEntity flight = plan.getFlight();
+        
+        flight = entityManager.find(FlightEntity.class, flight.getFlightId());
+        AircraftConfigurationEntity aircraftConfig = flight.getAircraftConfigurationEntity();
+        
+        aircraftConfig = entityManager.find(AircraftConfigurationEntity.class, aircraftConfig.getId());
+        
+        List<CabinClassConfigurationEntity> cabinClasses = aircraftConfig.getCabinClassConfigurationEntitys();
 
         for (CabinClassConfigurationEntity cabinClass : cabinClasses) {
 

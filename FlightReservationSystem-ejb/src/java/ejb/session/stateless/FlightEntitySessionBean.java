@@ -5,8 +5,10 @@
  */
 package ejb.session.stateless;
 
+import entity.AirportEntity;
+import entity.CabinClassConfigurationEntity;
 import entity.FlightEntity;
-import entity.FlightScheduleEntity;
+import entity.FlightRouteEntity;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -78,6 +80,31 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanRemote, F
     public void setDepartureFlight(FlightEntity returnFlight, FlightEntity departureFlight) {
         FlightEntity returning = entityManager.find(FlightEntity.class, returnFlight.getFlightId());
         
-        returning.setDepartureFlight(returnFlight);
+        returning.setDepartureFlight(departureFlight);
+    }
+    
+    @Override
+    public List<CabinClassConfigurationEntity> retrieveCabinClassByFlight(FlightEntity flight) {
+        flight = entityManager.find(FlightEntity.class, flight.getFlightId());
+        
+        List<CabinClassConfigurationEntity> cabinClass = flight.getAircraftConfigurationEntity().getCabinClassConfigurationEntitys();
+        cabinClass.size();
+        
+        return cabinClass;
+    }
+    
+    @Override
+    public String retrieveTimeZoneByFlight(FlightEntity flight) {
+        flight = entityManager.find(FlightEntity.class, flight.getFlightId());    
+        FlightRouteEntity route = flight.getRoute();
+        
+        route = entityManager.find(FlightRouteEntity.class, route.getRouteId());
+        AirportEntity airport = route.getOriginAirport();
+        
+        airport = entityManager.find(AirportEntity.class, airport.getAirportId());
+        airport.getArrivalRoutes().size();
+        String zone = airport.getTimeZone();
+        
+        return zone;
     }
 }

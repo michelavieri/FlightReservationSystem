@@ -421,7 +421,7 @@ public class MainApp {
                     }
 
                     if (returnRouteConfirmation.equals("Y")) {
-                        FlightRouteEntity returnRoute = flightRouteEntitySessionBeanRemote.createFlightRouteEntity(new FlightRouteEntity(originAirport, destinationAirport));
+                        FlightRouteEntity returnRoute = flightRouteEntitySessionBeanRemote.createFlightRouteEntity(new FlightRouteEntity(destinationAirport, originAirport));
                         flightRouteEntitySessionBeanRemote.setReturnFlightRoute(departureRoute, returnRoute);
                         flightRouteEntitySessionBeanRemote.setDepartureFlightRoute(departureRoute, returnRoute);
                         airportEntitySessionBeanRemote.addDepartureRoute(destinationAirport, departureRoute);
@@ -549,7 +549,7 @@ public class MainApp {
                     System.out.println("Invalid response!");
                 }
             }
-            if (response == 6) {
+            if (response == 7) {
                 break;
             }
         }

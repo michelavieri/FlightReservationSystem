@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.CabinClassConfigurationEntity;
 import entity.FlightEntity;
 import java.util.List;
 import javax.ejb.Remote;
@@ -26,5 +27,9 @@ public interface FlightEntitySessionBeanRemote {
     public void setDepartureFlight(FlightEntity returnFlight, FlightEntity departureFlight);
     
     public FlightEntity retrieveFlightByCode(String code) throws FlightNotFoundException;
+    
+    public List<CabinClassConfigurationEntity> retrieveCabinClassByFlight(FlightEntity flight);
+    
+    public String retrieveTimeZoneByFlight(FlightEntity flight);
     
 }
