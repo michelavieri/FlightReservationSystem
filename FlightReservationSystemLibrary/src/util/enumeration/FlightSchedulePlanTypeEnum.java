@@ -7,7 +7,7 @@ package util.enumeration;
 
 /**
  *
- * @author Chrisya
+ * @author miche
  */
 public enum FlightSchedulePlanTypeEnum {
     SINGLE,

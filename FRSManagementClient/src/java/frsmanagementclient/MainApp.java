@@ -226,6 +226,7 @@ public class MainApp {
                                     System.out.println("Please enter numbers from 1-4!");
                                     break;
                             }
+
                             if (response2 < 1 || response2 > 4) {
                                 continue;
                             }
@@ -260,9 +261,9 @@ public class MainApp {
                             for (int j = 0; j < arrOfConfig.length; j++) {
                                 abreast += arrOfConfig[j];
                             }
-
-                            int maxCapacity = abreast * rows;
-
+                            
+                            int maxCapacity = abreast*rows;
+                            
                             classes.add(cabinClassConfigurationSessionBeanRemote.
                                     createNewCabinClassConfiguration(
                                             new CabinClassConfigurationEntity(aisles, rows, abreast, maxCapacity, classType, arrOfConfig)));

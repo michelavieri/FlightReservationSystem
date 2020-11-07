@@ -7,7 +7,7 @@ package util.exception;
 
 /**
  *
- * @author Chrisya
+ * @author miche
  */
 public class WrongPasswordException extends Exception {
 
