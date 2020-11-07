@@ -1,4 +1,3 @@
-
 package entity;
 
 import java.io.Serializable;
@@ -9,9 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import util.enumeration.CabinClassTypeEnum;
-
 
 @Entity
 public class CabinClassConfigurationEntity implements Serializable {
@@ -25,15 +22,15 @@ public class CabinClassConfigurationEntity implements Serializable {
     private int numSeatAbreast;
     private int maxCapacity;
     private CabinClassTypeEnum type;
+
     private int[] arrOfConfig;
-    
+
     @ManyToOne
     private AircraftConfigurationEntity aircraftConfig;
-    
+
     @OneToMany(mappedBy = "cabinClass")
     private List<FareEntity> fareEntitys;
 
-    
     public CabinClassConfigurationEntity() {
     }
 
@@ -48,7 +45,6 @@ public class CabinClassConfigurationEntity implements Serializable {
         this.arrOfConfig = arrOfConfig;
     }
 
-    
     public Long getId() {
         return id;
     }
@@ -88,7 +84,6 @@ public class CabinClassConfigurationEntity implements Serializable {
     public void setMaxCapacity(int maxCapacity) {
         this.maxCapacity = maxCapacity;
     }
-    
 
     @Override
     public int hashCode() {

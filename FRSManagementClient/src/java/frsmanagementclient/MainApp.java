@@ -207,7 +207,7 @@ public class MainApp {
                         int response2 = 0;
                         CabinClassTypeEnum classType = CabinClassTypeEnum.FIRST_CLASS;
                         while (response2 < 1 || response2 > 4) {
-                             System.out.print(i + " > ");
+                            System.out.print(i + " > ");
                             response2 = sc.nextInt();
                             switch (response2) {
                                 case 1:
@@ -226,7 +226,8 @@ public class MainApp {
                                     System.out.println("Please enter numbers from 1-4!");
                                     break;
                             }
-if (response2 < 1 || response2 > 4) {
+
+                            if (response2 < 1 || response2 > 4) {
                                 continue;
                             }
                             System.out.println("***Create Cabin Class Configuration***");
@@ -234,7 +235,7 @@ if (response2 < 1 || response2 > 4) {
                             int aisles = sc.nextInt();
                             System.out.print("Enter number of rows> ");
                             int rows = sc.nextInt();
-                             switch (aisles) {
+                            switch (aisles) {
                                 case 0:
                                     System.out.println("Enter the seating configuration in an 'A' format. e.g. '3'");
                                     break;
@@ -260,9 +261,9 @@ if (response2 < 1 || response2 > 4) {
                             for (int j = 0; j < arrOfConfig.length; j++) {
                                 abreast += arrOfConfig[j];
                             }
-
+                            
                             int maxCapacity = abreast*rows;
-
+                            
                             classes.add(cabinClassConfigurationSessionBeanRemote.
                                     createNewCabinClassConfiguration(
                                             new CabinClassConfigurationEntity(aisles, rows, abreast, maxCapacity, classType, arrOfConfig)));
@@ -276,7 +277,7 @@ if (response2 < 1 || response2 > 4) {
                         AircraftConfigurationEntity newAircraftConfiguration = aircraftConfigurationEntitySessionBeanRemote.createAircraftConfiguration(
                                 new AircraftConfigurationEntity(code, name, numOfClasses, aircraftType, classes));
                         aircraftTypeEntitySessionBeanRemote.addAircraftConfiguration(aircraftType, newAircraftConfiguration);
-                         System.out.println("An Aircraft Configuration has been successfully created!");
+                        System.out.println("An Aircraft Configuration has been successfully created!");
                     }
                 } else if (response == 2) {
                     System.out.println("*** FRS Fleet Manager :: View All Aircraft Configurations ***");

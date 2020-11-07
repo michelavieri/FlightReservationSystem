@@ -1,4 +1,4 @@
-
+ 
 package entity;
 
 import java.io.Serializable;
@@ -23,6 +23,7 @@ public class AircraftConfigurationEntity implements Serializable {
     private String name;
     private int numCabinClass;
     
+    
     @ManyToOne
     private AircraftTypeEntity type;
     
@@ -36,7 +37,9 @@ public class AircraftConfigurationEntity implements Serializable {
     public AircraftConfigurationEntity() {
     }
 
-    public AircraftConfigurationEntity(String code, String name, int numCabinClass, AircraftTypeEntity type, List<CabinClassConfigurationEntity> cabinClassConfigurationEntitys) {
+    public AircraftConfigurationEntity(String code, String name, 
+            int numCabinClass, AircraftTypeEntity type, 
+            List<CabinClassConfigurationEntity> cabinClassConfigurationEntitys) {
         this.code = code;
         this.name = name;
         this.numCabinClass = numCabinClass;
