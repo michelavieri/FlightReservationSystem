@@ -10,6 +10,7 @@ import entity.FlightEntity;
 import entity.FlightRouteEntity;
 import java.util.List;
 import javax.ejb.Remote;
+import util.exception.FlightRouteDisabled;
 import util.exception.FlightRouteNotFoundException;
 
 /**
@@ -34,5 +35,9 @@ public interface FlightRouteEntitySessionBeanRemote {
     void deleteRoute(FlightRouteEntity route);
 
     void disable(FlightRouteEntity route);
+    
+    public boolean isDisabled(FlightRouteEntity route) throws FlightRouteDisabled;
+
+    public boolean checkReturnRouteAvailability(FlightRouteEntity route);
 
 }

@@ -98,7 +98,7 @@ public class FlightOperationModule {
 
         FlightRouteEntity route = null;
         try {
-            route = flightRouteEntitySessionBeanRemote.findFlightRoute(originAirport, destinationAirport);
+            route = flightRouteEntitySessionBeanRemote.retrieveRouteByAirport(originAirport, destinationAirport);
             boolean disabled = flightRouteEntitySessionBeanRemote.isDisabled(route);
         } catch (FlightRouteNotFoundException | FlightRouteDisabled ex) {
             System.out.println(ex.getMessage());

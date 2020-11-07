@@ -10,6 +10,7 @@ import entity.FlightEntity;
 import entity.FlightRouteEntity;
 import java.util.List;
 import javax.ejb.Local;
+import util.exception.FlightRouteDisabled;
 import util.exception.FlightRouteNotFoundException;
 
 /**
@@ -34,4 +35,8 @@ public interface FlightRouteEntitySessionBeanLocal {
     void deleteRoute(FlightRouteEntity route);
 
     void disable(FlightRouteEntity route);
+    
+    public boolean isDisabled(FlightRouteEntity route) throws FlightRouteDisabled;
+
+    public boolean checkReturnRouteAvailability(FlightRouteEntity route);
 }

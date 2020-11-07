@@ -16,6 +16,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.FlightRouteDisabled;
 import util.exception.FlightRouteNotFoundException;
 
 /**
@@ -42,14 +43,14 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
     @Override
     public void setReturnFlightRoute(FlightRouteEntity departureFlightRoute, FlightRouteEntity returnFlightRoute) {
         FlightRouteEntity route = entityManager.find(FlightRouteEntity.class, departureFlightRoute.getRouteId());
-        
+
         route.setReturnFlightRoute(returnFlightRoute);
     }
-    
+
     @Override
     public void setDepartureFlightRoute(FlightRouteEntity departureFlightRoute, FlightRouteEntity returnFlightRoute) {
         FlightRouteEntity route = entityManager.find(FlightRouteEntity.class, returnFlightRoute.getRouteId());
-        
+
         route.setDepartureFlightRoute(departureFlightRoute);
     }
 
@@ -70,19 +71,19 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
         route.getFlights().size();
         return route.getFlights();
     }
-    
+
     @Override
     public FlightRouteEntity retrieveRouteByAirport(AirportEntity originAirport, AirportEntity destinationAirport) throws FlightRouteNotFoundException {
         Query query = entityManager.createQuery("SELECT r FROM FlightRouteEntity r WHERE r.originAirport = :inOriginAirport AND "
                 + "r.destinationAirport = :inDestinationAirport");
         query.setParameter("inOriginAirport", originAirport);
         query.setParameter("inDestinationAirport", destinationAirport);
-        
+
         try {
             return (FlightRouteEntity) query.getSingleResult();
         } catch (NoResultException | NonUniqueResultException ex) {
-            throw new FlightRouteNotFoundException("Flight Route " + originAirport.getAirportCode() + 
-                    " - " + destinationAirport.getAirportCode() + " does not exist!");
+            throw new FlightRouteNotFoundException("Flight Route " + originAirport.getAirportCode()
+                    + " - " + destinationAirport.getAirportCode() + " does not exist!");
         }
     }
 
@@ -92,14 +93,14 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
         AirportEntity originAirport = route.getOriginAirport();
         originAirport.getDepartureRoutes().size();
         List<FlightRouteEntity> departureRoutes = originAirport.getDepartureRoutes();
-        
+
         AirportEntity destinationAirport = route.getDestinationAirport();
         originAirport.getArrivalRoutes().size();
         List<FlightRouteEntity> arrivalRoutes = destinationAirport.getArrivalRoutes();
-        
+
         departureRoutes.remove(route);
         arrivalRoutes.remove(route);
-        
+
         originAirport.setDepartureRoutes(departureRoutes);
         destinationAirport.setArrivalRoutes(arrivalRoutes);
         entityManager.remove(route);
@@ -109,5 +110,22 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
     public void disable(FlightRouteEntity route) {
         entityManager.find(FlightRouteEntity.class, route.getRouteId());
         route.setDisabled(true);
+    }
+
+    @Override
+    public boolean isDisabled(FlightRouteEntity route) throws FlightRouteDisabled {
+        if (route.isDisabled()) {
+            throw new FlightRouteDisabled("This flight route is disabled!");
+        }
+        return false;
+    }
+
+    @Override
+    public boolean checkReturnRouteAvailability(FlightRouteEntity route) {
+        if (route.getReturnFlightRoute() != null || route.getDepartureFlightRoute() != null) {
+            return true;
+        }
+
+        return false;
     }
 }
