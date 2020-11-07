@@ -16,6 +16,9 @@
     <class>entity.PartnerEntity</class>
     <class>entity.ReservationEntity</class>
     <class>entity.SeatsInventoryEntity</class>
+    <class>entity.FareEntity.FareEntity</class>
+    <class>entity.FlightScheduleEntity.FlightScheduleEntity</class>
+    <class>entity.ReservationsEntity</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>

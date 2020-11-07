@@ -30,7 +30,7 @@ public class AirportEntity implements Serializable {
     private String airportCity;
     private String airportState;
     private String airportCountry;
-    private int timeZone;
+    private double timeZone;
 
     @OneToMany(mappedBy = "destinationAirport")
     private List<FlightRouteEntity> arrivalRoutes;
@@ -41,9 +41,10 @@ public class AirportEntity implements Serializable {
     public AirportEntity() {
     }
 
-    public AirportEntity(String airportCode, String airportName, String airportCity, String airportState, String airportCountry, int timeZone) {
+    public AirportEntity(String airportCode, String airportName, String airportCity, String airportState, String airportCountry, double timeZone) {
         this.airportName = airportName;
         this.airportCity = airportCity;
+        this.airportCode = airportCode;
         this.airportState = airportState;
         this.airportCountry = airportCountry;
         this.timeZone = timeZone;
@@ -151,14 +152,14 @@ public class AirportEntity implements Serializable {
     /**
      * @return the timeZone
      */
-    public int getTimeZone() {
+    public double getTimeZone() {
         return timeZone;
     }
 
     /**
      * @param timeZone the timeZone to set
      */
-    public void setTimeZone(int timeZone) {
+    public void setTimeZone(double timeZone) {
         this.timeZone = timeZone;
     }
 

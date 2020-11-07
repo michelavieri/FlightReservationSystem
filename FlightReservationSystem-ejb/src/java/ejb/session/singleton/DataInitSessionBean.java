@@ -73,9 +73,9 @@ public class DataInitSessionBean {
 
             partnerEntitySessionBeanLocal.createNewPartner(new PartnerEntity("holidayReservation", "Holiday Reservation System", "password"));
 
-            airportEntitySessionBeanLocal.createNewAirport(new AirportEntity("SIN", "Singapore Changi Airport", "Singapore", "Singapore", "Singapore", 8));
+            airportEntitySessionBeanLocal.createNewAirport(new AirportEntity("SIN", "Singapore Changi Airport", "Singapore", "Singapore", "Singapore", 08.00));
 
-            airportEntitySessionBeanLocal.createNewAirport(new AirportEntity("TPE", "Taoyuan International Airport", "Taipei", "Taipei", "Taiwan", 8));
+            airportEntitySessionBeanLocal.createNewAirport(new AirportEntity("TPE", "Taoyuan International Airport", "Taipei", "Taipei", "Taiwan", 08.00));
 
             aircraftTypeEntitySessionBeanLocal.createNewAircraftType(new AircraftTypeEntity("Boeing 737", 230));
 
