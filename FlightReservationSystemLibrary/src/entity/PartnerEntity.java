@@ -20,19 +20,22 @@ import javax.persistence.OneToMany;
 @Entity
 public class PartnerEntity implements Serializable {
 
-    @OneToMany(mappedBy = "partner")
-    private List<ReservationsEntity> reservationsEntitys;
-
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long partnerId;
     private String username;
     private String name;
     private String password;
+    
+    @OneToMany(mappedBy = "partner")
+    private List<ReservationEntity> reservationsEntitys;
 
+    
     public PartnerEntity() {
     }
 
+    
     public PartnerEntity(String username, String name, String password) {
         this.username = username;
         this.name = name;
@@ -40,11 +43,19 @@ public class PartnerEntity implements Serializable {
     }
 
     
-    public List<ReservationsEntity> getReservationsEntitys() {
+    public Long getPartnerId() {
+        return partnerId;
+    }
+
+    public void setPartnerId(Long partnerId) {
+        this.partnerId = partnerId;
+    }
+    
+    public List<ReservationEntity> getReservationsEntitys() {
         return reservationsEntitys;
     }
 
-    public void setReservationsEntitys(List<ReservationsEntity> reservationsEntitys) {
+    public void setReservationsEntitys(List<ReservationEntity> reservationsEntitys) {
         this.reservationsEntitys = reservationsEntitys;
     }
 

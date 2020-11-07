@@ -15,7 +15,7 @@ import util.exception.WrongPasswordException;
 
 /**
  *
- * @author Chrisya
+ * @author miche
  */
 @Remote
 public interface EmployeeEntitySessionBeanRemote {

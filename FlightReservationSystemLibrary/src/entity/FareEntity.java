@@ -25,11 +25,11 @@ public class FareEntity implements Serializable {
     @ManyToOne
     private CabinClassConfigurationEntity cabinClass;
 
+    
     public FareEntity() {
     }
     
-    
-
+ 
     public Long getFairId() {
         return fairId;
     }

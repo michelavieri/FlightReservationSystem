@@ -15,7 +15,7 @@ import util.exception.WrongPasswordException;
 
 /**
  *
- * @author Chrisya
+ * @author miche
  */
 @Local
 public interface EmployeeEntitySessionBeanLocal {

@@ -21,6 +21,7 @@ public class EmployeeEntity implements Serializable {
     private String password;
     private UserRoleEnum role;
     
+    
     public EmployeeEntity() {
     }
 

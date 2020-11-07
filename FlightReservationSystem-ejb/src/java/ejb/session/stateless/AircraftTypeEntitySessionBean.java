@@ -5,7 +5,12 @@
  */
 package ejb.session.stateless;
 
+import entity.AircraftConfigurationEntity;
 import entity.AircraftTypeEntity;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -30,49 +35,60 @@ public class AircraftTypeEntitySessionBean implements AircraftTypeEntitySessionB
     public AircraftTypeEntitySessionBean() {
     }
 
-   @Override
-    public Long createNewAircraftType(AircraftTypeEntity newAircraftTypeEntity) throws AircraftTypeNameExistException, UnknownPersistenceException
-    {
-        try
-        {
+    @Override
+    public Long createNewAircraftType(AircraftTypeEntity newAircraftTypeEntity) throws AircraftTypeNameExistException, UnknownPersistenceException {
+        try {
             entityManager.persist(newAircraftTypeEntity);
             entityManager.flush();
 
             return newAircraftTypeEntity.getId();
-        }
-        catch(PersistenceException ex)
-        {
-            if(ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException"))
-            {
-                if(ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException"))
-                {
+        } catch (PersistenceException ex) {
+            if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
+                if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
                     throw new AircraftTypeNameExistException();
-                }
-                else
-                {
+                } else {
                     throw new UnknownPersistenceException(ex.getMessage());
                 }
-            }
-            else
-            {
+            } else {
                 throw new UnknownPersistenceException(ex.getMessage());
             }
         }
     }
-    
-     @Override
-    public AircraftTypeEntity retrieveAircraftTypeByName(String name) throws AircraftTypeNotFoundException
-    {
-        Query query = entityManager.createQuery("SELECT a FROM AircraftTypeEntity a WHERE a.name = :inName");
+
+    @Override
+    public AircraftTypeEntity retrieveAircraftTypeByName(String name) throws AircraftTypeNotFoundException {
+        Query query = entityManager.createQuery("SELECT a FROM AircraftTypeEntity a WHERE a.name = :inUsername");
         query.setParameter("inUsername", name);
-        
-        try
-        {
-            return (AircraftTypeEntity)query.getSingleResult();
-        }
-        catch(NoResultException | NonUniqueResultException ex)
-        {
+
+        try {
+            return (AircraftTypeEntity) query.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
             throw new AircraftTypeNotFoundException("Aircraft Type " + name + " does not exist!");
         }
+    }
+
+    @Override
+    public List<AircraftTypeEntity> retrieveAllTypes() {
+        Query query = entityManager.createQuery("SELECT a FROM AircraftTypeEntity a");
+        List<AircraftTypeEntity> types = new ArrayList<AircraftTypeEntity>();
+        try {
+            types = query.getResultList();
+        } catch (NoResultException ex) {
+            return types;
+        }
+        return types;
+    }
+
+    @Override
+    public void addAircraftConfiguration(AircraftTypeEntity type, AircraftConfigurationEntity newAircraftConfig) {
+        entityManager.find(AircraftTypeEntity.class, type.getId());
+        type.getAircraftConfigurationEntitys().size();
+        
+        List<AircraftConfigurationEntity> configurations = type.getAircraftConfigurationEntitys();
+        
+        configurations.add(newAircraftConfig);
+        
+        type.setAircraftConfigurationEntitys(configurations);
+        
     }
 }

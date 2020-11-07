@@ -20,20 +20,28 @@ import javax.persistence.OneToOne;
 @Entity
 public class SeatsInventoryEntity implements Serializable {
 
-    @OneToOne(mappedBy = "seatsInventory")
-    private CabinClassConfigurationEntity cabinClassConfigurationEntity;
-
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long inventoryId;
     private int availableSeatsSize;
     private int reservedSeatsSize;
     private int balanceSeatsSize;
-    
+
     @ManyToOne
     private FlightScheduleEntity flightSchedule;
 
+    
+    public SeatsInventoryEntity() {
+    }
+
+    public SeatsInventoryEntity(int availableSeatsSize, int reservedSeatsSize, int balanceSeatsSize) {
+        this.availableSeatsSize = availableSeatsSize;
+        this.reservedSeatsSize = reservedSeatsSize;
+        this.balanceSeatsSize = balanceSeatsSize;
+    }
+
+    
     public Long getInventoryId() {
         return inventoryId;
     }

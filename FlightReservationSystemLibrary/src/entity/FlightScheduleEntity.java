@@ -24,21 +24,22 @@ import javax.persistence.OneToOne;
 @Entity
 public class FlightScheduleEntity implements Serializable {
 
-    @OneToMany(mappedBy = "flightSchedule")
-    private List<SeatsInventoryEntity> seatsInventoryEntitys;
-
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long scheduleId;
     private String departureTime;
     private Date departureDate;
     private int duration;
     private String arrTime;
     private Date arrivalDate;
-    
+      
+    @OneToMany(mappedBy = "flightSchedule")
+    private List<SeatsInventoryEntity> seatsInventoryEntitys;
+
     @OneToOne(mappedBy = "departureSchedule")
     private FlightScheduleEntity returnSchedule;
+    
     @OneToOne
     private FlightScheduleEntity departureSchedule;
     
@@ -46,7 +47,12 @@ public class FlightScheduleEntity implements Serializable {
     private FlightSchedulePlanEntity plan;
 
     @ManyToMany(mappedBy = "flightSchedules")
-    private List<ReservationsEntity> reservations;
+    private List<ReservationEntity> reservations;
+
+    
+    public FlightScheduleEntity() {
+    }
+    
     
     public Long getScheduleId() {
         return scheduleId;

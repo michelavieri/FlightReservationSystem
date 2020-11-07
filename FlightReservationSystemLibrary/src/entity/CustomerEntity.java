@@ -24,9 +24,11 @@ public class CustomerEntity implements Serializable {
     private String phoneNum;
     private String address;
     private String password;
+    
     @OneToMany(mappedBy = "customer")
-    private List<ReservationsEntity> reservationsEntitys;
+    private List<ReservationEntity> reservationsEntitys;
 
+    
     public CustomerEntity() {
     }
     

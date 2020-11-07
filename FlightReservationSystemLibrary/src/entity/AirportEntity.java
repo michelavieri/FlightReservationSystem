@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,8 +23,9 @@ public class AirportEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private String airportCode;//inserted manually?
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long airportId;
+    private String airportCode;
     private String airportName;
     private String airportCity;
     private String airportState;
@@ -35,8 +37,7 @@ public class AirportEntity implements Serializable {
 
     @OneToMany(mappedBy = "departureAirport")
     private List<FlightRouteEntity> departureRoutes;
-    
-    
+
     public AirportEntity() {
     }
 
@@ -46,9 +47,18 @@ public class AirportEntity implements Serializable {
         this.airportState = airportState;
         this.airportCountry = airportCountry;
         this.timeZone = timeZone;
+        this.arrivalRoutes = new ArrayList<>();
+        this.departureRoutes = new ArrayList<>();
     }
 
-    
+    public Long getAirportId() {
+        return airportId;
+    }
+
+    public void setAirportId(Long airportId) {
+        this.airportId = airportId;
+    }
+
     public String getAirportCode() {
         return airportCode;
     }
@@ -179,5 +189,5 @@ public class AirportEntity implements Serializable {
     public void setDepartureRoutes(List<FlightRouteEntity> departureRoutes) {
         this.departureRoutes = departureRoutes;
     }
-    
+
 }

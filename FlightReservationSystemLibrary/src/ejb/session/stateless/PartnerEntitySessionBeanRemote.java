@@ -13,11 +13,13 @@ import util.exception.UnknownPersistenceException;
 
 /**
  *
- * @author Chrisya
+ * @author miche
  */
 @Remote
 public interface PartnerEntitySessionBeanRemote {
+    
     public String createNewPartner(PartnerEntity newPartnerEntity) throws PartnerUsernameExistException, UnknownPersistenceException;
 
     public PartnerEntity retrievePartnerByUsername(String username) throws PartnerNotFoundException;
+    
 }

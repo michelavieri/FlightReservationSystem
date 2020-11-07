@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,25 +23,38 @@ import javax.persistence.OneToOne;
 @Entity
 public class FlightRouteEntity implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long routeId;
+    private boolean disabled;
+    
     @OneToMany(mappedBy = "route")
     private List<FlightEntity> flights;
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long routeId;
-    private boolean disabled;
     @OneToOne(mappedBy = "departureFlightRoute")
     private FlightRouteEntity returnFlightRoute;
+    
     @OneToOne
     private FlightRouteEntity departureFlightRoute;
     
     @ManyToOne
-    private AirportEntity departureAirport;
+    private AirportEntity originAirport;
     
     @ManyToOne
-    private AirportEntity arrivalAirport;
+    private AirportEntity destinationAirport;
 
+    
+    public FlightRouteEntity() {
+    }
+
+    public FlightRouteEntity(AirportEntity originAirport, AirportEntity destinationAirport) {
+        this.originAirport = originAirport;
+        this.destinationAirport = destinationAirport;
+        this.flights = new ArrayList<>();
+    }
+
+    
     public Long getRouteId() {
         return routeId;
     }
@@ -131,31 +145,31 @@ public class FlightRouteEntity implements Serializable {
     }
 
     /**
-     * @return the departureAirport
+     * @return the originAirport
      */
-    public AirportEntity getDepartureAirport() {
-        return departureAirport;
+    public AirportEntity getOriginAirport() {
+        return originAirport;
     }
 
     /**
-     * @param departureAirport the departureAirport to set
+     * @param originAirport the originAirport to set
      */
-    public void setDepartureAirport(AirportEntity departureAirport) {
-        this.departureAirport = departureAirport;
+    public void setOriginAirport(AirportEntity originAirport) {
+        this.originAirport = originAirport;
     }
 
     /**
-     * @return the arrivalAirport
+     * @return the destinationAirport
      */
-    public AirportEntity getArrivalAirport() {
-        return arrivalAirport;
+    public AirportEntity getDestinationAirport() {
+        return destinationAirport;
     }
 
     /**
-     * @param arrivalAirport the arrivalAirport to set
+     * @param destinationAirport the destinationAirport to set
      */
-    public void setArrivalAirport(AirportEntity arrivalAirport) {
-        this.arrivalAirport = arrivalAirport;
+    public void setDestinationAirport(AirportEntity destinationAirport) {
+        this.destinationAirport = destinationAirport;
     }
     
 }

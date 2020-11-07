@@ -13,7 +13,7 @@ import util.exception.UnknownPersistenceException;
 
 /**
  *
- * @author Chrisya
+ * @author miche
  */
 @Local
 public interface PartnerEntitySessionBeanLocal {

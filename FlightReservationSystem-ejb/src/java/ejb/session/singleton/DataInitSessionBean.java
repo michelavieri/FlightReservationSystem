@@ -34,51 +34,53 @@ import util.exception.UnknownPersistenceException;
 @LocalBean
 @Startup
 public class DataInitSessionBean {
-    
+
     @EJB
     private EmployeeEntitySessionBeanLocal employeeEntitySessionBeanLocal;
-    
+
     @EJB
     private PartnerEntitySessionBeanLocal partnerEntitySessionBeanLocal;
-    
-     @EJB
+
+    @EJB
     private AirportEntitySessionBeanLocal airportEntitySessionBeanLocal;
-     
-      @EJB
+
+    @EJB
     private AircraftTypeEntitySessionBeanLocal aircraftTypeEntitySessionBeanLocal;
 
     public DataInitSessionBean() {
     }
-    
+
     @PostConstruct
     public void postConstruct() {
-        try
-        {
-            employeeEntitySessionBeanLocal.retrieveEmployeeByUsername("employee");//name of employee?
-        }
-        catch(EmployeeNotFoundException ex)
-        {
+        try {
+            employeeEntitySessionBeanLocal.retrieveEmployeeByUsername("employee");
+        } catch (EmployeeNotFoundException ex) {
             initializeData();
         }
     }
-    
-     private void initializeData() {
-        try
-        {
-            employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("employee", "Default Employee",  "password", UserRoleEnum.EMPLOYEE));
+
+    private void initializeData() {
+        try {
+            employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("employee", "Default Employee", "password", UserRoleEnum.EMPLOYEE));
+            
+            employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("fleetManager", "Default Fleet Manager", "password", UserRoleEnum.FLEET_MANAGER));
+            
+            employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("routePlanner", "Default Route Planner", "password", UserRoleEnum.ROUTE_PLANNER));
+            
+            employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("salesManager", "Default Sales Manager", "password", UserRoleEnum.SALES_MANAGER));
+            
+            employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("scheduleManager", "Default Schedule Manager", "password", UserRoleEnum.SCHEDULE_MANAGER));
 
             partnerEntitySessionBeanLocal.createNewPartner(new PartnerEntity("holidayReservation", "Holiday Reservation System", "password"));
-            
+
             airportEntitySessionBeanLocal.createNewAirport(new AirportEntity("SIN", "Singapore Changi Airport", "Singapore", "Singapore", "Singapore", 8));
-            
+
             airportEntitySessionBeanLocal.createNewAirport(new AirportEntity("TPE", "Taoyuan International Airport", "Taipei", "Taipei", "Taiwan", 8));
-            
+
             aircraftTypeEntitySessionBeanLocal.createNewAircraftType(new AircraftTypeEntity("Boeing 737", 230));
-            
+
             aircraftTypeEntitySessionBeanLocal.createNewAircraftType(new AircraftTypeEntity("Boeing 747", 410));
-        }
-        catch(EmployeeUsernameExistException | PartnerUsernameExistException | AirportNameExistException | AircraftTypeNameExistException | UnknownPersistenceException ex)
-        {
+        } catch (EmployeeUsernameExistException | PartnerUsernameExistException | AirportNameExistException | AircraftTypeNameExistException | UnknownPersistenceException ex) {
             ex.printStackTrace();
         }
     }

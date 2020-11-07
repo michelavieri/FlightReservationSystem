@@ -26,15 +26,22 @@ public class CabinClassConfigurationEntity implements Serializable {
     private int maxCapacity;
     private CabinClassTypeEnum type;
     
-    @OneToOne
-    private SeatsInventoryEntity seatsInventory;
-    
     @ManyToOne
     private AircraftConfigurationEntity aircraftConfig;
+    
     @OneToMany(mappedBy = "cabinClass")
     private List<FareEntity> fareEntitys;
 
+    
     public CabinClassConfigurationEntity() {
+    }
+
+    public CabinClassConfigurationEntity(int numAisle, int numRow, int numSeatAbreast, int maxCapacity, CabinClassTypeEnum type) {
+        this.numAisle = numAisle;
+        this.numRow = numRow;
+        this.numSeatAbreast = numSeatAbreast;
+        this.maxCapacity = maxCapacity;
+        this.type = type;
     }
 
     

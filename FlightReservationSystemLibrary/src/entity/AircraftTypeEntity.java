@@ -2,6 +2,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,12 +24,14 @@ public class AircraftTypeEntity implements Serializable {
     @OneToMany(mappedBy = "type")
     private List<AircraftConfigurationEntity> aircraftConfigurationEntitys;
 
+    
     public AircraftTypeEntity() {
     }
 
     public AircraftTypeEntity(String name, int maxCapacity) {
         this.name = name;
         this.maxCapacity = maxCapacity;
+        this.aircraftConfigurationEntitys = new ArrayList<>();
     }
 
     public List<AircraftConfigurationEntity> getAircraftConfigurationEntitys() {

@@ -22,6 +22,13 @@ import javax.persistence.OneToOne;
 @Entity
 public class FlightEntity implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long flightId;
+    private String flightCode;
+    private boolean disabled;
+    
     @ManyToOne
     private AircraftConfigurationEntity aircraftConfigurationEntity;
 
@@ -31,18 +38,30 @@ public class FlightEntity implements Serializable {
     @ManyToOne
     private FlightRouteEntity route;
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private String flightCode;
-    private boolean disabled;
-    
     @OneToOne(mappedBy = "departureFlight")
     private FlightEntity returnFlight;
     
     @OneToOne
-    private FlightEntity departureFlight;//?
+    private FlightEntity departureFlight;
 
+    
+    public AircraftConfigurationEntity getAircraftConfigurationEntity() {
+        return aircraftConfigurationEntity;
+    }
+
+    
+    public void setAircraftConfigurationEntity(AircraftConfigurationEntity aircraftConfigurationEntity) {
+        this.aircraftConfigurationEntity = aircraftConfigurationEntity;
+    }
+
+    public Long getFlightId() {
+        return flightId;
+    }
+
+    public void setFlightId(Long flightId) {
+        this.flightId = flightId;
+    }
+    
     public String getFlightCode() {
         return flightCode;
     }
