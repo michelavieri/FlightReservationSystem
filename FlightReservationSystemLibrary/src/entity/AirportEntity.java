@@ -32,10 +32,10 @@ public class AirportEntity implements Serializable {
     private String airportCountry;
     private int timeZone;
 
-    @OneToMany(mappedBy = "arrivalAirport")
+    @OneToMany(mappedBy = "destinationAirport")
     private List<FlightRouteEntity> arrivalRoutes;
 
-    @OneToMany(mappedBy = "departureAirport")
+    @OneToMany(mappedBy = "originAirport")
     private List<FlightRouteEntity> departureRoutes;
 
     public AirportEntity() {

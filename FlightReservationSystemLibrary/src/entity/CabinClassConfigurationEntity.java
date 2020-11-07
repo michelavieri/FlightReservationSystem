@@ -1,4 +1,3 @@
-
 package entity;
 
 import java.io.Serializable;
@@ -9,9 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import util.enumeration.CabinClassTypeEnum;
-
 
 @Entity
 public class CabinClassConfigurationEntity implements Serializable {
@@ -25,26 +22,29 @@ public class CabinClassConfigurationEntity implements Serializable {
     private int numSeatAbreast;
     private int maxCapacity;
     private CabinClassTypeEnum type;
-    
+
+    private int[] arrOfConfig;
+
     @ManyToOne
     private AircraftConfigurationEntity aircraftConfig;
-    
+
     @OneToMany(mappedBy = "cabinClass")
     private List<FareEntity> fareEntitys;
 
-    
     public CabinClassConfigurationEntity() {
     }
 
-    public CabinClassConfigurationEntity(int numAisle, int numRow, int numSeatAbreast, int maxCapacity, CabinClassTypeEnum type) {
+    public CabinClassConfigurationEntity(int numAisle, int numRow,
+            int numSeatAbreast, int maxCapacity, CabinClassTypeEnum type,
+            int[] arrOfConfig) {
         this.numAisle = numAisle;
         this.numRow = numRow;
         this.numSeatAbreast = numSeatAbreast;
         this.maxCapacity = maxCapacity;
         this.type = type;
+        this.arrOfConfig = arrOfConfig;
     }
 
-    
     public Long getId() {
         return id;
     }
@@ -84,7 +84,6 @@ public class CabinClassConfigurationEntity implements Serializable {
     public void setMaxCapacity(int maxCapacity) {
         this.maxCapacity = maxCapacity;
     }
-    
 
     @Override
     public int hashCode() {
@@ -110,5 +109,61 @@ public class CabinClassConfigurationEntity implements Serializable {
     public String toString() {
         return "entity.CabinClassConfigurationEntity[ id=" + id + " ]";
     }
-    
+
+    /**
+     * @return the type
+     */
+    public CabinClassTypeEnum getType() {
+        return type;
+    }
+
+    /**
+     * @param type the type to set
+     */
+    public void setType(CabinClassTypeEnum type) {
+        this.type = type;
+    }
+
+    /**
+     * @return the arrOfConfig
+     */
+    public int[] getArrOfConfig() {
+        return arrOfConfig;
+    }
+
+    /**
+     * @param arrOfConfig the arrOfConfig to set
+     */
+    public void setArrOfConfig(int[] arrOfConfig) {
+        this.arrOfConfig = arrOfConfig;
+    }
+
+    /**
+     * @return the aircraftConfig
+     */
+    public AircraftConfigurationEntity getAircraftConfig() {
+        return aircraftConfig;
+    }
+
+    /**
+     * @param aircraftConfig the aircraftConfig to set
+     */
+    public void setAircraftConfig(AircraftConfigurationEntity aircraftConfig) {
+        this.aircraftConfig = aircraftConfig;
+    }
+
+    /**
+     * @return the fareEntitys
+     */
+    public List<FareEntity> getFareEntitys() {
+        return fareEntitys;
+    }
+
+    /**
+     * @param fareEntitys the fareEntitys to set
+     */
+    public void setFareEntitys(List<FareEntity> fareEntitys) {
+        this.fareEntitys = fareEntitys;
+    }
+
 }
