@@ -2,10 +2,15 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import util.enumeration.CabinClassTypeEnum;
 
 
 @Entity
@@ -19,8 +24,24 @@ public class CabinClassConfigurationEntity implements Serializable {
     private int numRow;
     private int numSeatAbreast;
     private int maxCapacity;
+    private CabinClassTypeEnum type;
+    
+    @ManyToOne
+    private AircraftConfigurationEntity aircraftConfig;
+    
+    @OneToMany(mappedBy = "cabinClass")
+    private List<FareEntity> fareEntitys;
 
+    
     public CabinClassConfigurationEntity() {
+    }
+
+    public CabinClassConfigurationEntity(int numAisle, int numRow, int numSeatAbreast, int maxCapacity, CabinClassTypeEnum type) {
+        this.numAisle = numAisle;
+        this.numRow = numRow;
+        this.numSeatAbreast = numSeatAbreast;
+        this.maxCapacity = maxCapacity;
+        this.type = type;
     }
 
     

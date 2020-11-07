@@ -12,7 +12,7 @@ import javax.persistence.ManyToOne;
 
 
 @Entity
-public class ReservationsEntity implements Serializable {
+public class ReservationEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -30,8 +30,9 @@ public class ReservationsEntity implements Serializable {
     
     @ManyToMany
     private List<FlightScheduleEntity> flightSchedules;
+    
 
-    public ReservationsEntity() {
+    public ReservationEntity() {
     }
 
     
@@ -78,10 +79,10 @@ public class ReservationsEntity implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the reservationId fields are not set
-        if (!(object instanceof ReservationsEntity)) {
+        if (!(object instanceof ReservationEntity)) {
             return false;
         }
-        ReservationsEntity other = (ReservationsEntity) object;
+        ReservationEntity other = (ReservationEntity) object;
         if ((this.reservationId == null && other.reservationId != null) || (this.reservationId != null && !this.reservationId.equals(other.reservationId))) {
             return false;
         }

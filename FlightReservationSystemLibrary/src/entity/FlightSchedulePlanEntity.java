@@ -23,12 +23,9 @@ import util.enumeration.FlightSchedulePlanTypeEnum;
 @Entity
 public class FlightSchedulePlanEntity implements Serializable {
 
-    @OneToMany(mappedBy = "plan")
-    private List<FlightScheduleEntity> flightSchedules;
-
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long schedulePlanId;
     private FlightSchedulePlanTypeEnum type;
     private Date startDate;
@@ -36,8 +33,18 @@ public class FlightSchedulePlanEntity implements Serializable {
     private boolean disabled;
     private int layoverDuration;
     
+    @OneToMany(mappedBy = "flightSchedulePlan")
+    private List<FareEntity> fareEntitys;
+
+    @OneToMany(mappedBy = "plan")
+    private List<FlightScheduleEntity> flightSchedules;
+    
     @ManyToOne
     private FlightEntity flight;
+
+    
+    public FlightSchedulePlanEntity() {
+    }
     
 
     public Long getSchedulePlanId() {

@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -21,14 +22,26 @@ public class SeatsInventoryEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long inventoryId;
     private int availableSeatsSize;
     private int reservedSeatsSize;
     private int balanceSeatsSize;
-    @ManyToOne
-    private FlightEntity flight;
 
+    @ManyToOne
+    private FlightScheduleEntity flightSchedule;
+
+    
+    public SeatsInventoryEntity() {
+    }
+
+    public SeatsInventoryEntity(int availableSeatsSize, int reservedSeatsSize, int balanceSeatsSize) {
+        this.availableSeatsSize = availableSeatsSize;
+        this.reservedSeatsSize = reservedSeatsSize;
+        this.balanceSeatsSize = balanceSeatsSize;
+    }
+
+    
     public Long getInventoryId() {
         return inventoryId;
     }
@@ -102,20 +115,6 @@ public class SeatsInventoryEntity implements Serializable {
      */
     public void setBalanceSeatsSize(int balanceSeatsSize) {
         this.balanceSeatsSize = balanceSeatsSize;
-    }
-
-    /**
-     * @return the flight
-     */
-    public FlightEntity getFlight() {
-        return flight;
-    }
-
-    /**
-     * @param flight the flight to set
-     */
-    public void setFlight(FlightEntity flight) {
-        this.flight = flight;
     }
     
 }

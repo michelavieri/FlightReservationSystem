@@ -22,25 +22,46 @@ import javax.persistence.OneToOne;
 @Entity
 public class FlightEntity implements Serializable {
 
-    @OneToMany(mappedBy = "flight")
-    private List<FlightSchedulePlanEntity> flightSchedulePlans;
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long flightId;
+    private String flightCode;
+    private boolean disabled;
+    
+    @ManyToOne
+    private AircraftConfigurationEntity aircraftConfigurationEntity;
 
     @OneToMany(mappedBy = "flight")
-    private List<SeatsInventoryEntity> seatsInventories;
+    private List<FlightSchedulePlanEntity> flightSchedulePlans;
     
     @ManyToOne
     private FlightRouteEntity route;
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private String flightCode;
-    private boolean disabled;
     @OneToOne(mappedBy = "departureFlight")
     private FlightEntity returnFlight;
+    
     @OneToOne
     private FlightEntity departureFlight;
 
+    
+    public AircraftConfigurationEntity getAircraftConfigurationEntity() {
+        return aircraftConfigurationEntity;
+    }
+
+    
+    public void setAircraftConfigurationEntity(AircraftConfigurationEntity aircraftConfigurationEntity) {
+        this.aircraftConfigurationEntity = aircraftConfigurationEntity;
+    }
+
+    public Long getFlightId() {
+        return flightId;
+    }
+
+    public void setFlightId(Long flightId) {
+        this.flightId = flightId;
+    }
+    
     public String getFlightCode() {
         return flightCode;
     }
@@ -114,20 +135,6 @@ public class FlightEntity implements Serializable {
      */
     public void setDepartureFlight(FlightEntity departureFlight) {
         this.departureFlight = departureFlight;
-    }
-
-    /**
-     * @return the seatsInventories
-     */
-    public List<SeatsInventoryEntity> getSeatsInventories() {
-        return seatsInventories;
-    }
-
-    /**
-     * @param seatsInventories the seatsInventories to set
-     */
-    public void setSeatsInventories(List<SeatsInventoryEntity> seatsInventories) {
-        this.seatsInventories = seatsInventories;
     }
 
     /**

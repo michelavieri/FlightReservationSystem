@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,21 +21,43 @@ import javax.persistence.OneToMany;
 @Entity
 public class AirportEntity implements Serializable {
 
-    @OneToMany(mappedBy = "arrivalAirport")
-    private List<FlightRouteEntity> arrivalRoutes;
-
-    @OneToMany(mappedBy = "departureAirport")
-    private List<FlightRouteEntity> departureRoutes;
-
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long airportId;
     private String airportCode;
     private String airportName;
     private String airportCity;
     private String airportState;
     private String airportCountry;
     private int timeZone;
+
+    @OneToMany(mappedBy = "arrivalAirport")
+    private List<FlightRouteEntity> arrivalRoutes;
+
+    @OneToMany(mappedBy = "departureAirport")
+    private List<FlightRouteEntity> departureRoutes;
+
+    public AirportEntity() {
+    }
+
+    public AirportEntity(String airportCode, String airportName, String airportCity, String airportState, String airportCountry, int timeZone) {
+        this.airportName = airportName;
+        this.airportCity = airportCity;
+        this.airportState = airportState;
+        this.airportCountry = airportCountry;
+        this.timeZone = timeZone;
+        this.arrivalRoutes = new ArrayList<>();
+        this.departureRoutes = new ArrayList<>();
+    }
+
+    public Long getAirportId() {
+        return airportId;
+    }
+
+    public void setAirportId(Long airportId) {
+        this.airportId = airportId;
+    }
 
     public String getAirportCode() {
         return airportCode;
@@ -166,5 +189,5 @@ public class AirportEntity implements Serializable {
     public void setDepartureRoutes(List<FlightRouteEntity> departureRoutes) {
         this.departureRoutes = departureRoutes;
     }
-    
+
 }

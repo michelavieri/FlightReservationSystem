@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import util.enumeration.UserRoleEnum;
 
 
 @Entity
@@ -14,21 +15,30 @@ public class EmployeeEntity implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long employeeId;
     private String username;
     private String name;
     private String password;
-
+    private UserRoleEnum role;
+    
+    
     public EmployeeEntity() {
+    }
+
+    public EmployeeEntity(String username, String name, String password, UserRoleEnum role) {
+        this.username = username;
+        this.name = name;
+        this.password = password;
+        this.role = role;
     }
     
 
-    public Long getId() {
-        return id;
+    public Long getEmployeeId() {
+        return employeeId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
     }
 
     public String getUsername() {
@@ -55,22 +65,30 @@ public class EmployeeEntity implements Serializable {
         this.password = password;
     }
 
+    public UserRoleEnum getRole() {
+        return role;
+    }
+
+    public void setRole(UserRoleEnum role) {
+        this.role = role;
+    }
+
     
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (employeeId != null ? employeeId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        // TODO: Warning - this method won't work in the case the employeeId fields are not set
         if (!(object instanceof EmployeeEntity)) {
             return false;
         }
         EmployeeEntity other = (EmployeeEntity) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.employeeId == null && other.employeeId != null) || (this.employeeId != null && !this.employeeId.equals(other.employeeId))) {
             return false;
         }
         return true;
@@ -78,7 +96,7 @@ public class EmployeeEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.EmployeeEntity[ id=" + id + " ]";
+        return "entity.EmployeeEntity[ id=" + employeeId + " ]";
     }
     
 }
