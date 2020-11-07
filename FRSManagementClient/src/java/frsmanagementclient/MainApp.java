@@ -5,6 +5,7 @@
  */
 package frsmanagementclient;
 
+import entity.EmployeeEntity;
 import java.util.Scanner;
 import util.enumeration.UserRoleEnum;
 import util.exception.InvalidLoginCredentialException;
