@@ -29,9 +29,13 @@ import ejb.session.stateless.FlightRouteEntitySessionBeanRemote;
 import entity.AirportEntity;
 import entity.FlightEntity;
 import entity.FlightRouteEntity;
+import entity.FlightScheduleEntity;
+import entity.FlightSchedulePlanEntity;
+import entity.SeatsInventoryEntity;
 import java.util.stream.Stream;
 import util.exception.AircraftConfigurationNotFoundException;
 import util.exception.AirportNotFoundException;
+import util.exception.FlightNotFoundException;
 import util.exception.FlightRouteNotFoundException;
 
 /**
@@ -535,9 +539,77 @@ public class MainApp {
                 response = sc.nextInt();
 
                 if (response == 1) {
+                    System.out.println("*** FRS Schedule Manager :: View Seats Inventory ***");
+                    sc.nextLine();
+                    System.out.print("Enter the flight number> ");
+                    String flightNumber = sc.nextLine();
+                    FlightEntity flight = null;
+                    try {
+                        flight = flightEntitySessionBeanRemote.retrieveFlightByNumber(flightNumber);
+                    } catch (FlightNotFoundException ex) {
+                        System.out.println(ex.getMessage());
+                        break;
+                    }
+                    System.out.println("List of available flight schedules ID for flight " + flightNumber + " :");
+                    flight.getFlightSchedulePlans().size();
+                    List<FlightSchedulePlanEntity> plans = flight.getFlightSchedulePlans();
+                    if (plans.isEmpty()) {
+                        System.out.println("No available flight schedules for flight " + flightNumber + "!");
+                        break;
+                    }
 
+                    for (FlightSchedulePlanEntity plan : plans) {
+                        plan.getFlightSchedules().size();
+                        List<FlightScheduleEntity> schedules = plan.getFlightSchedules();
+                        for (FlightScheduleEntity schedule : schedules) {
+                            System.out.println("Schedule ID: " + schedule.getScheduleId());
+                        }
+                    }
+                    System.out.println();
+                    System.out.print("Enter Schedule ID to view seats inventory> ");
+                    Long scheduleId = sc.nextLong();
+                    List<SeatsInventoryEntity> seats = seatsInventorySessionBean.retrieveSeatsInventoryByScheduleId(scheduleId);
+                    System.out.println("Seats Inventory for schedule ID " + scheduleId + " for flight " + flightNumber);
+                    System.out.println();
+                    for (SeatsInventoryEntity seat : seats) {
+                        System.out.println("Cabin class type: " + searchCabinType(seat.getCabinClass().getType()));
+                        System.out.println("    Available Seats: " + seat.getAvailableSeatsSize());
+                        System.out.println("    Reserved Seats: " + seat.getReservedSeatsSize());
+                        System.out.println("    Balance Seats: " + seat.getBalanceSeatsSize());
+                        System.out.println();
+                    }
                 } else if (response == 2) {
+                    System.out.println("*** FRS Schedule Manager :: View Flight Reservations ***");
+                    sc.nextLine();
+                    System.out.print("Enter the flight number> ");
+                    String flightNumber = sc.nextLine();
+                    FlightEntity flight = null;
+                    try {
+                        flight = flightEntitySessionBeanRemote.retrieveFlightByNumber(flightNumber);
+                    } catch (FlightNotFoundException ex) {
+                        System.out.println(ex.getMessage());
+                        break;
+                    }
+                    System.out.println("List of available flight schedules ID for flight " + flightNumber + " :");
+                    flight.getFlightSchedulePlans().size();
+                    List<FlightSchedulePlanEntity> plans = flight.getFlightSchedulePlans();
+                    if (plans.isEmpty()) {
+                        System.out.println("No available flight schedules for flight " + flightNumber + "!");
+                        break;
+                    }
 
+                    for (FlightSchedulePlanEntity plan : plans) {
+                        plan.getFlightSchedules().size();
+                        List<FlightScheduleEntity> schedules = plan.getFlightSchedules();
+                        for (FlightScheduleEntity schedule : schedules) {
+                            System.out.println("Schedule ID: " + schedule.getScheduleId());
+                        }
+                    }
+                    System.out.println();
+                    System.out.print("Enter Schedule ID to view seats inventory> ");
+                    Long scheduleId = sc.nextLong();
+                    
+//                    flightReservationsEntitySessionBean.retrieve
                 } else if (response == 3) {
                     break;
                 } else {
@@ -572,7 +644,7 @@ public class MainApp {
             }
         }
     }
-    
+
     public String searchCabinType(CabinClassTypeEnum type) {
         if (type.equals(CabinClassTypeEnum.FIRST_CLASS)) {
             return "First Class";

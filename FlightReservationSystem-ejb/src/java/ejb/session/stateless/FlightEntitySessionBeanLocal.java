@@ -7,6 +7,7 @@ package ejb.session.stateless;
 
 import entity.FlightEntity;
 import javax.ejb.Local;
+import util.exception.FlightNotFoundException;
 
 /**
  *
@@ -16,5 +17,7 @@ import javax.ejb.Local;
 public interface FlightEntitySessionBeanLocal {
 
     public FlightEntity createFlightEntity(FlightEntity newFlight);
-    
+
+    FlightEntity retrieveFlightByNumber(String flightNum) throws FlightNotFoundException;
+
 }
