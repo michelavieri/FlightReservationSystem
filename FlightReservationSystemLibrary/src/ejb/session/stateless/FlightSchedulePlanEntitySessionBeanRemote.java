@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.FlightSchedulePlanEntity;
 import javax.ejb.Remote;
 
 /**
@@ -13,5 +14,7 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface FlightSchedulePlanEntitySessionBeanRemote {
+    
+    public FlightSchedulePlanEntity createFlightSchedulePlanEntity(FlightSchedulePlanEntity newFlightSchedulePlan);
     
 }

@@ -51,9 +51,10 @@ public class FlightScheduleEntity implements Serializable {
     public FlightScheduleEntity() {
     }
 
-    public FlightScheduleEntity(String departureDateTime, String duration) {
+    public FlightScheduleEntity(String departureDateTime, String duration, String arrivalDateTime) {
         this.departureDateTime = departureDateTime;
         this.duration = duration;
+        this.arrivalDateTime = arrivalDateTime;
     }
     
     

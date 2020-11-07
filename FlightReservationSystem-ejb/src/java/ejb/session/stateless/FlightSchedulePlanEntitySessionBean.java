@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.FlightSchedulePlanEntity;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -22,5 +23,11 @@ public class FlightSchedulePlanEntitySessionBean implements FlightSchedulePlanEn
     public FlightSchedulePlanEntitySessionBean() {
     }
 
-   
+   @Override
+    public FlightSchedulePlanEntity createFlightSchedulePlanEntity(FlightSchedulePlanEntity newFlightSchedulePlan) {
+        entityManager.persist(newFlightSchedulePlan);
+        entityManager.flush();
+
+        return newFlightSchedulePlan;
+    }
 }
