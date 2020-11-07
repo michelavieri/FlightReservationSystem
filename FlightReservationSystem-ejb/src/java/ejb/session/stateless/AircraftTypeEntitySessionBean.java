@@ -81,7 +81,7 @@ public class AircraftTypeEntitySessionBean implements AircraftTypeEntitySessionB
 
     @Override
     public void addAircraftConfiguration(AircraftTypeEntity type, AircraftConfigurationEntity newAircraftConfig) {
-        entityManager.find(AircraftTypeEntity.class, type.getId());
+        type = entityManager.find(AircraftTypeEntity.class, type.getId());
         type.getAircraftConfigurationEntitys().size();
         
         List<AircraftConfigurationEntity> configurations = type.getAircraftConfigurationEntitys();
