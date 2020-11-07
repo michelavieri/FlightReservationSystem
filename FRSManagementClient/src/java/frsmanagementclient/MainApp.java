@@ -26,11 +26,13 @@ import util.exception.WrongPasswordException;
 import ejb.session.stateless.AircraftConfigurationEntitySessionBeanRemote;
 import ejb.session.stateless.FlightEntitySessionBeanRemote;
 import ejb.session.stateless.FlightRouteEntitySessionBeanRemote;
+import ejb.session.stateless.ReservationEntitySessionBeanRemote;
 import entity.AirportEntity;
 import entity.FlightEntity;
 import entity.FlightRouteEntity;
 import entity.FlightScheduleEntity;
 import entity.FlightSchedulePlanEntity;
+import entity.ReservationEntity;
 import entity.SeatsInventoryEntity;
 import java.util.stream.Stream;
 import util.exception.AircraftConfigurationNotFoundException;
@@ -62,6 +64,8 @@ public class MainApp {
 
     private FlightRouteEntitySessionBeanRemote flightRouteEntitySessionBeanRemote;
 
+    private ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote;
+
     public MainApp() {
     }
 
@@ -72,7 +76,8 @@ public class MainApp {
             CabinClassConfigurationSessionBeanRemote cabinClassConfigurationSessionBeanRemote,
             AircraftConfigurationEntitySessionBeanRemote aircraftConfigurationEntitySessionBeanRemote,
             FlightEntitySessionBeanRemote flightEntitySessionBeanRemote,
-            FlightRouteEntitySessionBeanRemote flightRouteEntitySessionBeanRemote) {
+            FlightRouteEntitySessionBeanRemote flightRouteEntitySessionBeanRemote,
+            ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote) {
         this.partnerEntitySessionBeanRemote = partnerEntitySessionBeanRemote;
         this.employeeEntitySessionBeanRemote = employeeEntitySessionBeanRemote;
         this.airportEntitySessionBeanRemote = airportEntitySessionBeanRemote;
@@ -81,6 +86,7 @@ public class MainApp {
         this.aircraftConfigurationEntitySessionBeanRemote = aircraftConfigurationEntitySessionBeanRemote;
         this.flightEntitySessionBeanRemote = flightEntitySessionBeanRemote;
         this.flightRouteEntitySessionBeanRemote = flightRouteEntitySessionBeanRemote;
+        this.reservationEntitySessionBeanRemote = reservationEntitySessionBeanRemote;
     }
 
     public void runApp() {
@@ -568,7 +574,7 @@ public class MainApp {
                     System.out.println();
                     System.out.print("Enter Schedule ID to view seats inventory> ");
                     Long scheduleId = sc.nextLong();
-                    List<SeatsInventoryEntity> seats = seatsInventorySessionBean.retrieveSeatsInventoryByScheduleId(scheduleId);
+                    List<SeatsInventoryEntity> seats = seatsInventorySessionBeanRemote.retrieveSeatsInventoryByScheduleId(scheduleId);
                     System.out.println("Seats Inventory for schedule ID " + scheduleId + " for flight " + flightNumber);
                     System.out.println();
                     for (SeatsInventoryEntity seat : seats) {
@@ -608,8 +614,64 @@ public class MainApp {
                     System.out.println();
                     System.out.print("Enter Schedule ID to view seats inventory> ");
                     Long scheduleId = sc.nextLong();
-                    
-//                    flightReservationsEntitySessionBean.retrieve
+
+                    List<ReservationEntity> firstClassReservations
+                            = reservationEntitySessionBeanRemote.retrieveReservationsByScheduleIdFirstClass(scheduleId);
+
+                    List<ReservationEntity> businessClassReservations
+                            = reservationEntitySessionBeanRemote.retrieveReservationsByScheduleIdBusinessClass(scheduleId);
+
+                    List<ReservationEntity> premiumClassReservations
+                            = reservationEntitySessionBeanRemote.retrieveReservationsByScheduleIdPremiumClass(scheduleId);
+
+                    List<ReservationEntity> economyClassReservations
+                            = reservationEntitySessionBeanRemote.retrieveReservationsByScheduleIdEconomyClass(scheduleId);
+
+                    if (firstClassReservations.isEmpty() && businessClassReservations.isEmpty() && premiumClassReservations.isEmpty()
+                            && economyClassReservations.isEmpty()) {
+                        System.out.println("There are no reservations for this schedule!");
+                        break;
+                    }
+
+                    if (!firstClassReservations.isEmpty()) {
+                        System.out.println("*** FIRST CLASS RESERVATIONS: ***");
+                        for (ReservationEntity reservation : firstClassReservations) {
+                            System.out.println("Passenger name: " + reservation.getPassengerName());
+                            System.out.println("Seat number: " + reservation.getSeatNumber());
+                            System.out.println("Fare Basis Code: " + reservation.getFareBasisCode());
+                            System.out.println();
+                        }
+                    }
+
+                    if (!businessClassReservations.isEmpty()) {
+                        System.out.println("*** BUSINESS CLASS RESERVATIONS: ***");
+                        for (ReservationEntity reservation : businessClassReservations) {
+                            System.out.println("Passenger name: " + reservation.getPassengerName());
+                            System.out.println("Seat number: " + reservation.getSeatNumber());
+                            System.out.println("Fare Basis Code: " + reservation.getFareBasisCode());
+                            System.out.println();
+                        }
+                    }
+
+                    if (!premiumClassReservations.isEmpty()) {
+                        System.out.println("*** PREMIUM ECONOMY CLASS RESERVATIONS: ***");
+                        for (ReservationEntity reservation : premiumClassReservations) {
+                            System.out.println("Passenger name: " + reservation.getPassengerName());
+                            System.out.println("Seat number: " + reservation.getSeatNumber());
+                            System.out.println("Fare Basis Code: " + reservation.getFareBasisCode());
+                            System.out.println();
+                        }
+                    }
+
+                    if (!economyClassReservations.isEmpty()) {
+                        System.out.println("*** ECONOMY CLASS RESERVATIONS: ***");
+                        for (ReservationEntity reservation : economyClassReservations) {
+                            System.out.println("Passenger name: " + reservation.getPassengerName());
+                            System.out.println("Seat number: " + reservation.getSeatNumber());
+                            System.out.println("Fare Basis Code: " + reservation.getFareBasisCode());
+                            System.out.println();
+                        }
+                    }
                 } else if (response == 3) {
                     break;
                 } else {

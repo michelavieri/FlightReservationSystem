@@ -33,27 +33,25 @@ public class FlightScheduleEntity implements Serializable {
     private int duration;
     private String arrTime;
     private Date arrivalDate;
-      
+
     @OneToMany(mappedBy = "flightSchedule")
     private List<SeatsInventoryEntity> seatsInventoryEntitys;
 
     @OneToOne(mappedBy = "departureSchedule")
     private FlightScheduleEntity returnSchedule;
-    
+
     @OneToOne
     private FlightScheduleEntity departureSchedule;
-    
+
     @ManyToOne
     private FlightSchedulePlanEntity plan;
 
-    @ManyToMany(mappedBy = "flightSchedules")
+    @OneToMany(mappedBy = "flightSchedule")
     private List<ReservationEntity> reservations;
 
-    
     public FlightScheduleEntity() {
     }
-    
-    
+
     public Long getScheduleId() {
         return scheduleId;
     }
@@ -191,5 +189,19 @@ public class FlightScheduleEntity implements Serializable {
     public FlightSchedulePlanEntity getPlan() {
         return plan;
     }
-    
+
+    /**
+     * @return the reservations
+     */
+    public List<ReservationEntity> getReservations() {
+        return reservations;
+    }
+
+    /**
+     * @param reservations the reservations to set
+     */
+    public void setReservations(List<ReservationEntity> reservations) {
+        this.reservations = reservations;
+    }
+
 }

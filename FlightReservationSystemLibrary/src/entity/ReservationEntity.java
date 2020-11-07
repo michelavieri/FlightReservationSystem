@@ -1,4 +1,3 @@
-
 package entity;
 
 import java.io.Serializable;
@@ -9,7 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-
+import util.enumeration.CabinClassTypeEnum;
 
 @Entity
 public class ReservationEntity implements Serializable {
@@ -21,21 +20,29 @@ public class ReservationEntity implements Serializable {
     private String seatNumber;
     private String passengerName;
     private String fareBasisCode;
-    
+
     @ManyToOne
     private PartnerEntity partner;
-    
+
     @ManyToOne
     private CustomerEntity customer;
-    
-    @ManyToMany
-    private List<FlightScheduleEntity> flightSchedules;
-    
+
+    @ManyToOne
+    private FlightScheduleEntity flightSchedule;
+
+    private CabinClassTypeEnum cabinClass;
 
     public ReservationEntity() {
     }
 
-    
+    public ReservationEntity(String seatNumber, String passengerName, String fareBasisCode, FlightScheduleEntity flightSchedule, CabinClassTypeEnum cabinClass) {
+        this.seatNumber = seatNumber;
+        this.passengerName = passengerName;
+        this.fareBasisCode = fareBasisCode;
+        this.flightSchedule = flightSchedule;
+        this.cabinClass = cabinClass;
+    }
+
     public Long getReservationId() {
         return reservationId;
     }
@@ -68,7 +75,6 @@ public class ReservationEntity implements Serializable {
         this.fareBasisCode = fareBasisCode;
     }
 
-    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -93,5 +99,61 @@ public class ReservationEntity implements Serializable {
     public String toString() {
         return "entity.ReservationsEntity[ id=" + reservationId + " ]";
     }
-    
+
+    /**
+     * @return the partner
+     */
+    public PartnerEntity getPartner() {
+        return partner;
+    }
+
+    /**
+     * @param partner the partner to set
+     */
+    public void setPartner(PartnerEntity partner) {
+        this.partner = partner;
+    }
+
+    /**
+     * @return the customer
+     */
+    public CustomerEntity getCustomer() {
+        return customer;
+    }
+
+    /**
+     * @param customer the customer to set
+     */
+    public void setCustomer(CustomerEntity customer) {
+        this.customer = customer;
+    }
+
+    /**
+     * @return the flightSchedule
+     */
+    public FlightScheduleEntity getFlightSchedule() {
+        return flightSchedule;
+    }
+
+    /**
+     * @param flightSchedule the flightSchedule to set
+     */
+    public void setFlightSchedule(FlightScheduleEntity flightSchedule) {
+        this.flightSchedule = flightSchedule;
+    }
+
+    /**
+     * @return the cabinClass
+     */
+    public CabinClassTypeEnum getCabinClass() {
+        return cabinClass;
+    }
+
+    /**
+     * @param cabinClass the cabinClass to set
+     */
+    public void setCabinClass(CabinClassTypeEnum cabinClass) {
+        this.cabinClass = cabinClass;
+    }
+
 }
