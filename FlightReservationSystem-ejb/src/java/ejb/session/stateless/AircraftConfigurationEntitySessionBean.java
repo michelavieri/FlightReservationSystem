@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.AircraftConfigurationEntity;
+import entity.AircraftTypeEntity;
 import entity.CabinClassConfigurationEntity;
 import entity.FlightEntity;
 import java.util.ArrayList;
@@ -34,6 +35,20 @@ public class AircraftConfigurationEntitySessionBean implements AircraftConfigura
     @Override
     public AircraftConfigurationEntity createAircraftConfiguration(AircraftConfigurationEntity newAircraftConfig) {
         entityManager.persist(newAircraftConfig);
+        newAircraftConfig.getCabinClassConfigurationEntitys().size();
+        List<CabinClassConfigurationEntity> classes = newAircraftConfig.getCabinClassConfigurationEntitys();
+        AircraftTypeEntity type = newAircraftConfig.getType();
+        type = entityManager.find(AircraftTypeEntity.class, type.getId());
+
+        type.getAircraftConfigurationEntitys().size();
+        List<AircraftConfigurationEntity> configs = type.getAircraftConfigurationEntitys();
+        configs.add(newAircraftConfig);
+        type.setAircraftConfigurationEntitys(configs);
+
+        for (CabinClassConfigurationEntity c : classes) {
+            c.setAircraftConfig(newAircraftConfig);
+            entityManager.persist(c);
+        }
         entityManager.flush();
 
         return newAircraftConfig;
@@ -42,11 +57,15 @@ public class AircraftConfigurationEntitySessionBean implements AircraftConfigura
     @Override
     public List<AircraftConfigurationEntity> retrieveAllAircraftConfigurations() {
         List<AircraftConfigurationEntity> aircrafts = new ArrayList<AircraftConfigurationEntity>();
-        Query query = entityManager.createQuery("SELECT a FROM AircraftTypeEntity a");
+        Query query = entityManager.createQuery("SELECT a FROM AircraftConfigurationEntity a");
         try {
             aircrafts = query.getResultList();
         } catch (NoResultException ex) {
             return aircrafts;
+        }
+        for (AircraftConfigurationEntity aircraft : aircrafts) {
+            aircraft.getCabinClassConfigurationEntitys().size();
+            aircraft.getFlightEntitys().size();
         }
         return aircrafts;
     }
@@ -65,6 +84,7 @@ public class AircraftConfigurationEntitySessionBean implements AircraftConfigura
 
     @Override
     public List<FlightEntity> getFlightEntities(AircraftConfigurationEntity aircraftConfig) {
+        aircraftConfig = entityManager.find(AircraftConfigurationEntity.class, aircraftConfig.getId());
         aircraftConfig.getFlightEntitys().size();
         List<FlightEntity> flights = aircraftConfig.getFlightEntitys();
         return flights;
@@ -72,6 +92,7 @@ public class AircraftConfigurationEntitySessionBean implements AircraftConfigura
 
     @Override
     public List<CabinClassConfigurationEntity> getCabinClassConfig(AircraftConfigurationEntity aircraftConfig) {
+        aircraftConfig = entityManager.find(AircraftConfigurationEntity.class, aircraftConfig.getId());
         aircraftConfig.getCabinClassConfigurationEntitys().size();
         List<CabinClassConfigurationEntity> classes = aircraftConfig.getCabinClassConfigurationEntitys();
         return classes;

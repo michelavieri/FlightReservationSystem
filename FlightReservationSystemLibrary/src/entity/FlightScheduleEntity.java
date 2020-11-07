@@ -37,17 +37,16 @@ public class FlightScheduleEntity implements Serializable {
 
     @OneToOne(mappedBy = "departureSchedule")
     private FlightScheduleEntity returnSchedule;
-    
+
     @OneToOne
     private FlightScheduleEntity departureSchedule;
-    
+
     @ManyToOne
     private FlightSchedulePlanEntity plan;
 
-    @ManyToMany(mappedBy = "flightSchedules")
+    @OneToMany(mappedBy = "flightSchedule")
     private List<ReservationEntity> reservations;
 
-    
     public FlightScheduleEntity() {
     }
 

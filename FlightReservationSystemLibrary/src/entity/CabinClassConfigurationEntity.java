@@ -1,6 +1,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -30,11 +31,13 @@ public class CabinClassConfigurationEntity implements Serializable {
 
     @OneToMany(mappedBy = "cabinClass")
     private List<FareEntity> fareEntitys;
+    @OneToMany(mappedBy = "cabinClass")
+    private List<SeatsInventoryEntity> seatsInventoryEntities;
 
     public CabinClassConfigurationEntity() {
     }
 
-    public CabinClassConfigurationEntity(int numAisle, int numRow, 
+    public CabinClassConfigurationEntity(int numAisle, int numRow,
             int numSeatAbreast, int maxCapacity, CabinClassTypeEnum type,
             int[] arrOfConfig) {
         this.numAisle = numAisle;
@@ -43,6 +46,7 @@ public class CabinClassConfigurationEntity implements Serializable {
         this.maxCapacity = maxCapacity;
         this.type = type;
         this.arrOfConfig = arrOfConfig;
+        this.seatsInventoryEntities = new ArrayList<>();
     }
 
     public Long getId() {
@@ -165,5 +169,19 @@ public class CabinClassConfigurationEntity implements Serializable {
     public void setFareEntitys(List<FareEntity> fareEntitys) {
         this.fareEntitys = fareEntitys;
     }
-    
+
+    /**
+     * @return the seatsInventoryEntities
+     */
+    public List<SeatsInventoryEntity> getSeatsInventoryEntities() {
+        return seatsInventoryEntities;
+    }
+
+    /**
+     * @param seatsInventoryEntities the seatsInventoryEntities to set
+     */
+    public void setSeatsInventoryEntities(List<SeatsInventoryEntity> seatsInventoryEntities) {
+        this.seatsInventoryEntities = seatsInventoryEntities;
+    }
+
 }

@@ -31,9 +31,14 @@ import ejb.session.stateless.FlightSchedulePlanEntitySessionBeanRemote;
 import entity.AirportEntity;
 import entity.FlightEntity;
 import entity.FlightRouteEntity;
+import entity.FlightScheduleEntity;
+import entity.FlightSchedulePlanEntity;
+import entity.ReservationEntity;
+import entity.SeatsInventoryEntity;
 import java.util.stream.Stream;
 import util.exception.AircraftConfigurationNotFoundException;
 import util.exception.AirportNotFoundException;
+import util.exception.FlightNotFoundException;
 import util.exception.FlightRouteNotFoundException;
 
 /**
@@ -65,6 +70,8 @@ public class MainApp {
     private FlightSchedulePlanEntitySessionBeanRemote flightSchedulePlanEntitySessionBeanRemote;
     
     private FlightOperationModule flightOperationModule;
+
+    private ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote;
 
     public MainApp() {
     }
@@ -209,17 +216,18 @@ public class MainApp {
                     }
                     int totalMaxCapacity = 0;
                     List<CabinClassConfigurationEntity> classes = new ArrayList<CabinClassConfigurationEntity>();
-                    System.out.println("Here are the list of cabin class types:");
-                    System.out.println("1: First Class");
-                    System.out.println("2: Business Class");
-                    System.out.println("3: Premium Economy Class");
-                    System.out.println("4: Economy Class");
+
                     System.out.println("Enter " + numOfClasses + " cabin classes based on the numbers above:");
                     for (int i = 1; i <= numOfClasses; i++) {
+                        System.out.println("Here are the list of cabin class types:");
+                        System.out.println("1: First Class");
+                        System.out.println("2: Business Class");
+                        System.out.println("3: Premium Economy Class");
+                        System.out.println("4: Economy Class");
                         int response2 = 0;
                         CabinClassTypeEnum classType = CabinClassTypeEnum.FIRST_CLASS;
                         while (response2 < 1 || response2 > 4) {
-                            System.out.print(i + " > ");
+                            System.out.print(i + ". Enter type of cabin class > ");
                             response2 = sc.nextInt();
                             switch (response2) {
                                 case 1:
@@ -273,12 +281,10 @@ public class MainApp {
                             for (int j = 0; j < arrOfConfig.length; j++) {
                                 abreast += arrOfConfig[j];
                             }
-                            
-                            int maxCapacity = abreast*rows;
-                            
-                            classes.add(cabinClassConfigurationSessionBeanRemote.
-                                    createNewCabinClassConfiguration(
-                                            new CabinClassConfigurationEntity(aisles, rows, abreast, maxCapacity, classType, arrOfConfig)));
+
+                            int maxCapacity = abreast * rows;
+
+                            classes.add(new CabinClassConfigurationEntity(aisles, rows, abreast, maxCapacity, classType, arrOfConfig));
                             totalMaxCapacity += maxCapacity;
                         }
                     }
@@ -306,7 +312,7 @@ public class MainApp {
                 } else if (response == 3) {
                     System.out.println("*** FRS Fleet Manager :: View Aircraft Configuration Details ***");
                     sc.nextLine();
-                    System.out.println("Enter aircraft configuration code> ");
+                    System.out.print("Enter aircraft configuration code> ");
                     String code = sc.nextLine();
                     AircraftConfigurationEntity aircraftConfig = null;
                     try {
@@ -321,7 +327,7 @@ public class MainApp {
                     System.out.println("*** Aircraft Configuration Details of " + code + " ***");
                     System.out.println("- CODE: " + aircraftConfig.getCode());
                     System.out.println("- NAME: " + aircraftConfig.getName());
-                    System.out.println("- AIRCRAFT TYPE: " + aircraftConfig.getType());
+                    System.out.println("- AIRCRAFT TYPE: " + aircraftConfig.getType().getName());
                     System.out.println("- NUMBER OF CABIN CLASSES: " + aircraftConfig.getNumCabinClass());
                     System.out.print("- FLIGHTS (Flight Code): ");
                     if (flights.isEmpty()) {
@@ -334,7 +340,7 @@ public class MainApp {
                     }
                     System.out.println("- Cabin Classes: ");
                     for (CabinClassConfigurationEntity c : classes) {
-                        System.out.println("   " + c.getClass().toString());
+                        System.out.println("   " + searchCabinType(c.getType()));
                         System.out.println("   - Number of aisles: " + c.getNumAisle());
                         System.out.println("   - Number of rows: " + c.getNumRow());
                         System.out.println("   - Number of seats abreast: " + c.getNumSeatAbreast());
@@ -554,9 +560,133 @@ public class MainApp {
                 response = sc.nextInt();
 
                 if (response == 1) {
+                    System.out.println("*** FRS Schedule Manager :: View Seats Inventory ***");
+                    sc.nextLine();
+                    System.out.print("Enter the flight number> ");
+                    String flightNumber = sc.nextLine();
+                    FlightEntity flight = null;
+                    try {
+                        flight = flightEntitySessionBeanRemote.retrieveFlightByNumber(flightNumber);
+                    } catch (FlightNotFoundException ex) {
+                        System.out.println(ex.getMessage());
+                        break;
+                    }
+                    System.out.println("List of available flight schedules ID for flight " + flightNumber + " :");
+                    flight.getFlightSchedulePlans().size();
+                    List<FlightSchedulePlanEntity> plans = flight.getFlightSchedulePlans();
+                    if (plans.isEmpty()) {
+                        System.out.println("No available flight schedules for flight " + flightNumber + "!");
+                        break;
+                    }
 
+                    for (FlightSchedulePlanEntity plan : plans) {
+                        plan.getFlightSchedules().size();
+                        List<FlightScheduleEntity> schedules = plan.getFlightSchedules();
+                        for (FlightScheduleEntity schedule : schedules) {
+                            System.out.println("Schedule ID: " + schedule.getScheduleId());
+                        }
+                    }
+                    System.out.println();
+                    System.out.print("Enter Schedule ID to view seats inventory> ");
+                    Long scheduleId = sc.nextLong();
+                    List<SeatsInventoryEntity> seats = seatsInventorySessionBeanRemote.retrieveSeatsInventoryByScheduleId(scheduleId);
+                    System.out.println("Seats Inventory for schedule ID " + scheduleId + " for flight " + flightNumber);
+                    System.out.println();
+                    for (SeatsInventoryEntity seat : seats) {
+                        System.out.println("Cabin class type: " + searchCabinType(seat.getCabinClass().getType()));
+                        System.out.println("    Available Seats: " + seat.getAvailableSeatsSize());
+                        System.out.println("    Reserved Seats: " + seat.getReservedSeatsSize());
+                        System.out.println("    Balance Seats: " + seat.getBalanceSeatsSize());
+                        System.out.println();
+                    }
                 } else if (response == 2) {
+                    System.out.println("*** FRS Schedule Manager :: View Flight Reservations ***");
+                    sc.nextLine();
+                    System.out.print("Enter the flight number> ");
+                    String flightNumber = sc.nextLine();
+                    FlightEntity flight = null;
+                    try {
+                        flight = flightEntitySessionBeanRemote.retrieveFlightByNumber(flightNumber);
+                    } catch (FlightNotFoundException ex) {
+                        System.out.println(ex.getMessage());
+                        break;
+                    }
+                    System.out.println("List of available flight schedules ID for flight " + flightNumber + " :");
+                    flight.getFlightSchedulePlans().size();
+                    List<FlightSchedulePlanEntity> plans = flight.getFlightSchedulePlans();
+                    if (plans.isEmpty()) {
+                        System.out.println("No available flight schedules for flight " + flightNumber + "!");
+                        break;
+                    }
 
+                    for (FlightSchedulePlanEntity plan : plans) {
+                        plan.getFlightSchedules().size();
+                        List<FlightScheduleEntity> schedules = plan.getFlightSchedules();
+                        for (FlightScheduleEntity schedule : schedules) {
+                            System.out.println("Schedule ID: " + schedule.getScheduleId());
+                        }
+                    }
+                    System.out.println();
+                    System.out.print("Enter Schedule ID to view seats inventory> ");
+                    Long scheduleId = sc.nextLong();
+
+                    List<ReservationEntity> firstClassReservations
+                            = reservationEntitySessionBeanRemote.retrieveReservationsByScheduleIdFirstClass(scheduleId);
+
+                    List<ReservationEntity> businessClassReservations
+                            = reservationEntitySessionBeanRemote.retrieveReservationsByScheduleIdBusinessClass(scheduleId);
+
+                    List<ReservationEntity> premiumClassReservations
+                            = reservationEntitySessionBeanRemote.retrieveReservationsByScheduleIdPremiumClass(scheduleId);
+
+                    List<ReservationEntity> economyClassReservations
+                            = reservationEntitySessionBeanRemote.retrieveReservationsByScheduleIdEconomyClass(scheduleId);
+
+                    if (firstClassReservations.isEmpty() && businessClassReservations.isEmpty() && premiumClassReservations.isEmpty()
+                            && economyClassReservations.isEmpty()) {
+                        System.out.println("There are no reservations for this schedule!");
+                        break;
+                    }
+
+                    if (!firstClassReservations.isEmpty()) {
+                        System.out.println("*** FIRST CLASS RESERVATIONS: ***");
+                        for (ReservationEntity reservation : firstClassReservations) {
+                            System.out.println("Passenger name: " + reservation.getPassengerName());
+                            System.out.println("Seat number: " + reservation.getSeatNumber());
+                            System.out.println("Fare Basis Code: " + reservation.getFareBasisCode());
+                            System.out.println();
+                        }
+                    }
+
+                    if (!businessClassReservations.isEmpty()) {
+                        System.out.println("*** BUSINESS CLASS RESERVATIONS: ***");
+                        for (ReservationEntity reservation : businessClassReservations) {
+                            System.out.println("Passenger name: " + reservation.getPassengerName());
+                            System.out.println("Seat number: " + reservation.getSeatNumber());
+                            System.out.println("Fare Basis Code: " + reservation.getFareBasisCode());
+                            System.out.println();
+                        }
+                    }
+
+                    if (!premiumClassReservations.isEmpty()) {
+                        System.out.println("*** PREMIUM ECONOMY CLASS RESERVATIONS: ***");
+                        for (ReservationEntity reservation : premiumClassReservations) {
+                            System.out.println("Passenger name: " + reservation.getPassengerName());
+                            System.out.println("Seat number: " + reservation.getSeatNumber());
+                            System.out.println("Fare Basis Code: " + reservation.getFareBasisCode());
+                            System.out.println();
+                        }
+                    }
+
+                    if (!economyClassReservations.isEmpty()) {
+                        System.out.println("*** ECONOMY CLASS RESERVATIONS: ***");
+                        for (ReservationEntity reservation : economyClassReservations) {
+                            System.out.println("Passenger name: " + reservation.getPassengerName());
+                            System.out.println("Seat number: " + reservation.getSeatNumber());
+                            System.out.println("Fare Basis Code: " + reservation.getFareBasisCode());
+                            System.out.println();
+                        }
+                    }
                 } else if (response == 3) {
                     break;
                 } else {
@@ -590,5 +720,18 @@ public class MainApp {
                 break;
             }
         }
+    }
+
+    public String searchCabinType(CabinClassTypeEnum type) {
+        if (type.equals(CabinClassTypeEnum.FIRST_CLASS)) {
+            return "First Class";
+        } else if (type.equals(CabinClassTypeEnum.BUSINESS_CLASS)) {
+            return "Business Class";
+        } else if (type.equals(CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS)) {
+            return "Premium Economy Class";
+        } else if (type.equals(CabinClassTypeEnum.ECONOMY_CLASS)) {
+            return "Economy Class";
+        }
+        return "invalid";
     }
 }
