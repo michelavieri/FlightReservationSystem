@@ -18,11 +18,11 @@ import util.exception.WrongPasswordException;
  * @author miche
  */
 public class MainApp {
-    
+
     private EmployeeEntity currentEmployee;
-    
+
     private EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote;
-    
+
     public MainApp() {
     }
 
@@ -227,7 +227,7 @@ public class MainApp {
                 response = sc.nextInt();
 
                 if (response == 1) {
-                    
+
                 } else if (response == 2) {
 
                 } else if (response == 3) {
