@@ -53,7 +53,8 @@ public class FlightSchedulePlanEntity implements Serializable {
         this.disabled = false;
     }
 
-    public FlightSchedulePlanEntity(String startDate, String endDate, int layoverDuration, FlightEntity flight) {
+    public FlightSchedulePlanEntity(FlightSchedulePlanTypeEnum type, String startDate, String endDate, int layoverDuration, FlightEntity flight) {
+        this.type = type;
         this.startDate = startDate;
         this.endDate = endDate;
         this.layoverDuration = layoverDuration;

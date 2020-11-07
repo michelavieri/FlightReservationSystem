@@ -50,15 +50,15 @@ public class FlightOperationModule {
     private FlightRouteEntitySessionBeanRemote flightRouteEntitySessionBeanRemote;
 
     private FlightScheduleEntitySessionBeanRemote flightScheduleEntitySessionBeanRemote;
-    
+
     private FlightSchedulePlanEntitySessionBeanRemote flightSchedulePlanEntitySessionBeanRemote;
 
-    public FlightOperationModule(AirportEntitySessionBeanRemote airportEntitySessionBeanRemote, 
-            AircraftTypeEntitySessionBeanRemote aircraftTypeEntitySessionBeanRemote, 
-            CabinClassConfigurationSessionBeanRemote cabinClassConfigurationSessionBeanRemote, 
-            AircraftConfigurationEntitySessionBeanRemote aircraftConfigurationEntitySessionBeanRemote, 
-            FlightEntitySessionBeanRemote flightEntitySessionBeanRemote, 
-            FlightRouteEntitySessionBeanRemote flightRouteEntitySessionBeanRemote, 
+    public FlightOperationModule(AirportEntitySessionBeanRemote airportEntitySessionBeanRemote,
+            AircraftTypeEntitySessionBeanRemote aircraftTypeEntitySessionBeanRemote,
+            CabinClassConfigurationSessionBeanRemote cabinClassConfigurationSessionBeanRemote,
+            AircraftConfigurationEntitySessionBeanRemote aircraftConfigurationEntitySessionBeanRemote,
+            FlightEntitySessionBeanRemote flightEntitySessionBeanRemote,
+            FlightRouteEntitySessionBeanRemote flightRouteEntitySessionBeanRemote,
             FlightScheduleEntitySessionBeanRemote flightScheduleEntitySessionBeanRemote,
             FlightSchedulePlanEntitySessionBeanRemote flightSchedulePlanEntitySessionBeanRemote) {
         this.airportEntitySessionBeanRemote = airportEntitySessionBeanRemote;
@@ -191,6 +191,65 @@ public class FlightOperationModule {
         }
     }
 
+    public FlightScheduleEntity createFlightSchedule(Scanner sc, DateTimeFormatter dateFormat) {
+
+        System.out.println("Enter departure date and time (DD MM YYYY HH:MM)>");
+        String departureDate = sc.nextLine();
+
+        System.out.println("Enter duration of flight (HH:MM)>");
+        String duration = sc.nextLine();
+        String durationHour = duration.substring(0, 1);
+        String durationMin = duration.substring(3, 4);
+
+        int durationHourInt = Integer.parseInt(durationHour);
+        int durationMinInt = Integer.parseInt(durationMin);
+        int totalDuration = durationMinInt + (60 * durationHourInt);
+
+        ZonedDateTime departureDateTime = ZonedDateTime.parse(departureDate);
+        ZonedDateTime arrivalDateTime = departureDateTime.plusMinutes(totalDuration);
+        String arrDateTime = arrivalDateTime.format(dateFormat);
+
+        System.out.println("Expected arrival date and time: " + arrDateTime);
+
+        FlightScheduleEntity flightSchedule = flightScheduleEntitySessionBeanRemote.createFlightScheduleEntity(new FlightScheduleEntity(departureDate, totalDuration, arrDateTime));
+
+        flightScheduleEntitySessionBeanRemote.associateNewSeatsInventory(flightSchedule);
+
+        return flightSchedule;
+    }
+
+    public FlightScheduleEntity createReturnFlightSchedule(Scanner sc, DateTimeFormatter dateFormat, int totalLayoverDuration, FlightScheduleEntity departureFlight) {
+
+        String arrDateTime = departureFlight.getArrivalDateTime();
+        int duration = departureFlight.getDuration();
+
+        ZonedDateTime returnDepartureDateTime = ZonedDateTime.parse(arrDateTime).plusMinutes(totalLayoverDuration);
+        String returnDepDateTime = returnDepartureDateTime.format(dateFormat);
+        System.out.println("Return departure time: " + returnDepDateTime);
+
+        ZonedDateTime returnArrivalDateTime = returnDepartureDateTime.plusMinutes(duration);
+        String returnArrDateTime = returnArrivalDateTime.format(dateFormat);
+        System.out.println("Expected return arrival time: " + returnArrDateTime);
+
+        FlightScheduleEntity returnFlightSchedule = flightScheduleEntitySessionBeanRemote.createFlightScheduleEntity(new FlightScheduleEntity(returnDepDateTime, duration, returnArrDateTime));
+
+        flightScheduleEntitySessionBeanRemote.associateReturnSchedule(departureFlight, returnFlightSchedule);
+        flightScheduleEntitySessionBeanRemote.associateNewSeatsInventory(returnFlightSchedule);
+
+        return returnFlightSchedule;
+    }
+
+    public int scanLayoverTime(Scanner sc) {
+        System.out.println("Enter layover duration (HH:MM)>");
+        String layoverDuration = sc.nextLine();
+        String layoverDurationHour = layoverDuration.substring(0, 1);
+        String layoverDurationMin = layoverDuration.substring(3, 4);
+
+        int layoverDurationHourInt = Integer.parseInt(layoverDurationHour);
+        int layoverDurationMinInt = Integer.parseInt(layoverDurationMin);
+        return layoverDurationMinInt + (60 * layoverDurationHourInt);
+    }
+
     public void createFlightSchedulePlan(Scanner sc) {
         System.out.println("*** FRS Schedule Manager :: Create Schedule Plan ***");
         sc.nextLine();
@@ -204,6 +263,7 @@ public class FlightOperationModule {
             System.out.println(ex.getMessage());
         }
 
+        //List<CabinClassConfigurationEntity> cabinClassList = flight.getAircraftConfigurationEntity().getCabinClassConfigurationEntitys();
         System.out.println("Select schedule plan type>");
         System.out.println("1: Single schedule");
         System.out.println("2: Multiple schedules");
@@ -213,74 +273,114 @@ public class FlightOperationModule {
         int typeResponse = sc.nextInt();
         String datePattern = "yyyy-MM-dd HH:mm";
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(datePattern);
-        
+
         if (typeResponse == 1) {
             FlightSchedulePlanTypeEnum type = FlightSchedulePlanTypeEnum.SINGLE;
+
+            FlightScheduleEntity flightSchedule = this.createFlightSchedule(sc, dateFormat);
+            FlightScheduleEntity returnFlightSchedule = null;
             int totalLayoverDuration = 0;
 
-            System.out.println("Enter departure date and time (DD MM YYYY HH:MM)>");
-            String departureDate = sc.nextLine();
+            String startDate = flightSchedule.getDepartureDateTime().substring(0, 9);
 
-            System.out.println("Enter duration of flight (HH:MM)>");
-            String duration = sc.nextLine();
-            String durationHour = duration.substring(0, 1);
-            String durationMin = duration.substring(3, 4);
-
-            int durationHourInt = Integer.parseInt(durationHour);
-            int durationMinInt = Integer.parseInt(durationMin);
-            int totalDuration = durationMinInt + (60 * durationHourInt);
-
-            ZonedDateTime departureDateTime = ZonedDateTime.parse(departureDate);
-            ZonedDateTime arrivalDateTime = departureDateTime.plusMinutes(totalDuration);
-            String arrDateTime = arrivalDateTime.format(dateFormat);
-
-            System.out.println("Expected arrival date and time: " + arrDateTime);
-
-            FlightScheduleEntity flightSchedule = flightScheduleEntitySessionBeanRemote.createFlightScheduleEntity(new FlightScheduleEntity(departureDate, duration, arrDateTime));
-            FlightScheduleEntity returnFlightSchedule = null;
-            
             if (flight.getReturnFlight() != null) {
                 System.out.println("There is a return flight for this route. Do you want to create return flight schedule? (Y/N)>");
                 String response = sc.nextLine();
 
                 if (response.equals("Y")) {
-                    System.out.println("Enter layover duration (HH:MM)>");
-                    String layoverDuration = sc.nextLine();
-                    String layoverDurationHour = duration.substring(0, 1);
-                    String layoverDurationMin = duration.substring(3, 4);
 
-                    int layoverDurationHourInt = Integer.parseInt(durationHour);
-                    int layoverDurationMinInt = Integer.parseInt(durationMin);
-                    totalLayoverDuration = durationMinInt + (60 * durationHourInt);
-                    
-                    ZonedDateTime returnDepartureDateTime = arrivalDateTime.plusMinutes(totalLayoverDuration);
-                    String returnDepDateTime = returnDepartureDateTime.format(dateFormat);
-                    System.out.println("Return departure time: " + returnDepDateTime);
-                    
-                    ZonedDateTime returnArrivalDateTime = returnDepartureDateTime.plusMinutes(totalDuration);
-                    String returnArrDateTime = returnArrivalDateTime.format(dateFormat);
-                    System.out.println("Expected return arrival time: " + returnArrDateTime);
-                    
-                    returnFlightSchedule = flightScheduleEntitySessionBeanRemote.createFlightScheduleEntity(new FlightScheduleEntity(returnDepDateTime, duration, returnArrDateTime));
+                    totalLayoverDuration = this.scanLayoverTime(sc);
+                    returnFlightSchedule = this.createReturnFlightSchedule(sc, dateFormat, totalLayoverDuration, flightSchedule);
                 }
             }
-            
+
             FlightSchedulePlanEntity schedulePlan = null;
-            
-            if(returnFlightSchedule == null) {
-                schedulePlan = flightSchedulePlanEntitySessionBeanRemote.createFlightSchedulePlanEntity(new FlightSchedulePlanEntity(type, departureDate, 0, flight));
-                schedulePlan.getFlightSchedules().add(flightSchedule);
+
+            if (returnFlightSchedule == null) {
+
+                schedulePlan = flightSchedulePlanEntitySessionBeanRemote.createFlightSchedulePlanEntity(new FlightSchedulePlanEntity(type, startDate, 0, flight));
+                flightScheduleEntitySessionBeanRemote.associateWithPlan(flightSchedule, schedulePlan);
+
             } else {
-                schedulePlan = flightSchedulePlanEntitySessionBeanRemote.createFlightSchedulePlanEntity(new FlightSchedulePlanEntity(type, departureDate, totalLayoverDuration, flight));
-                schedulePlan.getFlightSchedules().add(flightSchedule);
-                schedulePlan.getFlightSchedules().add(returnFlightSchedule);
+
+                schedulePlan = flightSchedulePlanEntitySessionBeanRemote.createFlightSchedulePlanEntity(new FlightSchedulePlanEntity(type, startDate, totalLayoverDuration, flight));
+
+                flightScheduleEntitySessionBeanRemote.associateWithPlan(flightSchedule, schedulePlan);
+                flightScheduleEntitySessionBeanRemote.associateWithPlan(returnFlightSchedule, schedulePlan);
+
             }
         } else if (typeResponse == 2) {
+            FlightSchedulePlanTypeEnum type = FlightSchedulePlanTypeEnum.MULTIPLE;
 
+            System.out.println("Enter number of schedule>");
+            int numSchedule = sc.nextInt();
+
+            System.out.println("Enter starting date (yyyy-mm-dd)>");
+            String startDate = sc.nextLine();
+
+            FlightSchedulePlanEntity schedulePlan = flightSchedulePlanEntitySessionBeanRemote.createFlightSchedulePlanEntity(new FlightSchedulePlanEntity(type, startDate, 0, flight));
+
+            for (int i = 0; i < numSchedule; i++) {
+                FlightScheduleEntity flightSchedule = this.createFlightSchedule(sc, dateFormat);
+                FlightScheduleEntity returnFlightSchedule = null;
+
+                int totalLayoverDuration = 0;
+
+                if (flight.getReturnFlight() != null) {
+                    System.out.println("There is a return flight for this route. Do you want to create return flight schedule? (Y/N)>");
+                    String response = sc.nextLine();
+
+                    if (response.equals("Y")) {
+
+                        totalLayoverDuration = this.scanLayoverTime(sc);
+                        returnFlightSchedule = this.createReturnFlightSchedule(sc, dateFormat, totalLayoverDuration, flightSchedule);
+                    }
+                }
+
+                if (returnFlightSchedule == null) {
+
+                    flightScheduleEntitySessionBeanRemote.associateWithPlan(flightSchedule, schedulePlan);
+
+                } else {
+
+                    flightScheduleEntitySessionBeanRemote.associateWithPlan(flightSchedule, schedulePlan);
+                    flightScheduleEntitySessionBeanRemote.associateWithPlan(returnFlightSchedule, schedulePlan);
+
+                }
+            }
         } else if (typeResponse == 3) {
+            FlightSchedulePlanTypeEnum type = FlightSchedulePlanTypeEnum.RECURRENT_DAY;
 
+            System.out.println("Enter starting date (yyyy-mm-dd)>");
+            String startDate = sc.nextLine();
+            
+            System.out.println("Enter ending date (yyyy-mm-dd)>");
+            String endDate = sc.nextLine();
+
+            System.out.println("Enter number of recurring days>");
+            int recurringDay = sc.nextInt();
+
+            System.out.println("Enter departure hour (HH:mm)>");
+            String departuretime = sc.nextLine();
+
+            System.out.println("Enter duration of flight (HH:MM)>");
+            String duration = sc.nextLine();
+
+            FlightSchedulePlanEntity schedulePlan = flightSchedulePlanEntitySessionBeanRemote.createFlightSchedulePlanEntity(new FlightSchedulePlanEntity(type, startDate, endDate, 0, flight));
+
+            if (flight.getReturnFlight() != null) {
+                System.out.println("There is a return flight for this route. Do you want to create return flight schedule? (Y/N)>");
+                String response = sc.nextLine();
+
+                if (response.equals("Y")) {
+                    int totalLayoverDuration = this.scanLayoverTime(sc);
+                    flightScheduleEntitySessionBeanRemote.createRecurrentSchedule(schedulePlan, startDate, endDate, recurringDay, departuretime, dateFormat, duration, true, totalLayoverDuration);
+                } else {
+                    flightScheduleEntitySessionBeanRemote.createRecurrentSchedule(schedulePlan, startDate, endDate, recurringDay, departuretime, dateFormat, duration, false, 0);
+                }
+            }
         } else if (typeResponse == 4) {
-
         }
+
     }
 }

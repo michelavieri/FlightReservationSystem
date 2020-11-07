@@ -29,7 +29,7 @@ public class FlightScheduleEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long scheduleId;
     private String departureDateTime;
-    private String duration;
+    private int duration;
     private String arrivalDateTime;
       
     @OneToMany(mappedBy = "flightSchedule")
@@ -51,7 +51,7 @@ public class FlightScheduleEntity implements Serializable {
     public FlightScheduleEntity() {
     }
 
-    public FlightScheduleEntity(String departureDateTime, String duration, String arrivalDateTime) {
+    public FlightScheduleEntity(String departureDateTime, int duration, String arrivalDateTime) {
         this.departureDateTime = departureDateTime;
         this.duration = duration;
         this.arrivalDateTime = arrivalDateTime;
@@ -108,14 +108,14 @@ public class FlightScheduleEntity implements Serializable {
     /**
      * @return the duration
      */
-    public String getDuration() {
+    public int getDuration() {
         return duration;
     }
 
     /**
      * @param duration the duration to set
      */
-    public void setDuration(String duration) {
+    public void setDuration(int duration) {
         this.duration = duration;
     }
 
@@ -166,6 +166,27 @@ public class FlightScheduleEntity implements Serializable {
      */
     public FlightSchedulePlanEntity getPlan() {
         return plan;
+    }
+
+    /**
+     * @param plan the plan to set
+     */
+    public void setPlan(FlightSchedulePlanEntity plan) {
+        this.plan = plan;
+    }
+
+    /**
+     * @return the seatsInventoryEntitys
+     */
+    public List<SeatsInventoryEntity> getSeatsInventoryEntitys() {
+        return seatsInventoryEntitys;
+    }
+
+    /**
+     * @param seatsInventoryEntitys the seatsInventoryEntitys to set
+     */
+    public void setSeatsInventoryEntitys(List<SeatsInventoryEntity> seatsInventoryEntitys) {
+        this.seatsInventoryEntitys = seatsInventoryEntitys;
     }
     
 }

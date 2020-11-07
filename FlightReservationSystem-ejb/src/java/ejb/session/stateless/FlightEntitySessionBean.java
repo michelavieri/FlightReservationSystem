@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.FlightEntity;
+import entity.FlightScheduleEntity;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;

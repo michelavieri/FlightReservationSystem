@@ -5,7 +5,11 @@
  */
 package ejb.session.stateless;
 
+import entity.FlightScheduleEntity;
 import entity.FlightSchedulePlanEntity;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -16,6 +20,9 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 public class FlightSchedulePlanEntitySessionBean implements FlightSchedulePlanEntitySessionBeanRemote, FlightSchedulePlanEntitySessionBeanLocal {
+
+    @EJB
+    private FlightScheduleEntitySessionBeanLocal flightScheduleEntitySessionBean;
 
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
     private EntityManager entityManager;
