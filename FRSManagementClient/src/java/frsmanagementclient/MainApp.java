@@ -29,8 +29,7 @@ import ejb.session.stateless.FlightRouteEntitySessionBeanRemote;
 import entity.AirportEntity;
 import entity.FlightEntity;
 import entity.FlightRouteEntity;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.stream.Stream;
 import util.exception.AircraftConfigurationNotFoundException;
 import util.exception.AirportNotFoundException;
 import util.exception.FlightRouteNotFoundException;
@@ -208,7 +207,8 @@ public class MainApp {
                         int response2 = 0;
                         CabinClassTypeEnum classType = CabinClassTypeEnum.FIRST_CLASS;
                         while (response2 < 1 || response2 > 4) {
-                            System.out.print(i + "> ");
+                             System.out.print(i + " > ");
+                            response2 = sc.nextInt();
                             switch (response2) {
                                 case 1:
                                     classType = CabinClassTypeEnum.FIRST_CLASS;
@@ -226,19 +226,46 @@ public class MainApp {
                                     System.out.println("Please enter numbers from 1-4!");
                                     break;
                             }
-
+if (response2 < 1 || response2 > 4) {
+                                continue;
+                            }
                             System.out.println("***Create Cabin Class Configuration***");
                             System.out.print("Enter number of aisles> ");
                             int aisles = sc.nextInt();
                             System.out.print("Enter number of rows> ");
                             int rows = sc.nextInt();
-                            System.out.print("Enter number of seat abreast> ");
-                            int abreast = sc.nextInt();
-                            System.out.print("Enter maximum capacity> ");
-                            int maxCapacity = sc.nextInt();
+                             switch (aisles) {
+                                case 0:
+                                    System.out.println("Enter the seating configuration in an 'A' format. e.g. '3'");
+                                    break;
+                                case 1:
+                                    System.out.println("Enter the seating configuration in an 'A-B' format. e.g. '2-2'");
+                                    break;
+                                case 2:
+                                    System.out.println("Enter the seating configuration in an 'A-B-C' format. e.g. '3-4-3'");
+                                    break;
+                                case 3:
+                                    System.out.println("Enter the seating configuration in an 'A-B-C-D' format. e.g. '3-3-3-3'");
+                                    break;
+                                default:
+                                    break;
+                            }
+                            sc.nextLine();
+                            System.out.print("> ");
+                            String configuration = sc.nextLine();
+                            String[] strArr = configuration.split("-", 0);
+
+                            int[] arrOfConfig = Stream.of(strArr).mapToInt(Integer::valueOf).toArray();
+                            int abreast = 0;
+                            for (int j = 0; j < arrOfConfig.length; j++) {
+                                abreast += arrOfConfig[j];
+                            }
+
+                            int maxCapacity = abreast*rows;
+
                             classes.add(cabinClassConfigurationSessionBeanRemote.
                                     createNewCabinClassConfiguration(
-                                            new CabinClassConfigurationEntity(aisles, rows, abreast, maxCapacity, classType)));
+                                            new CabinClassConfigurationEntity(aisles, rows, abreast, maxCapacity, classType, arrOfConfig)));
                             totalMaxCapacity += maxCapacity;
                         }
                     }
@@ -249,6 +276,7 @@ public class MainApp {
                         AircraftConfigurationEntity newAircraftConfiguration = aircraftConfigurationEntitySessionBeanRemote.createAircraftConfiguration(
                                 new AircraftConfigurationEntity(code, name, numOfClasses, aircraftType, classes));
                         aircraftTypeEntitySessionBeanRemote.addAircraftConfiguration(aircraftType, newAircraftConfiguration);
+                         System.out.println("An Aircraft Configuration has been successfully created!");
                     }
                 } else if (response == 2) {
                     System.out.println("*** FRS Fleet Manager :: View All Aircraft Configurations ***");
@@ -381,7 +409,7 @@ public class MainApp {
                                 + routes.get(i - 1).getDestinationAirport().getAirportCode());
                         List<FlightEntity> flights = flightRouteEntitySessionBeanRemote.retrieveAllFlights(routes.get(i - 1));
                         System.out.print("   DISABLED: ");
-                        if (routes.get(i-1).isDisabled()) {
+                        if (routes.get(i - 1).isDisabled()) {
                             System.out.println("TRUE");
                         } else {
                             System.out.println("FALSE");
