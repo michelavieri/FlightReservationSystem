@@ -24,6 +24,20 @@ import javax.persistence.OneToOne;
 @Entity
 public class FlightScheduleEntity implements Serializable {
 
+    /**
+     * @return the reservations
+     */
+    public List<ReservationEntity> getReservations() {
+        return reservations;
+    }
+
+    /**
+     * @param reservations the reservations to set
+     */
+    public void setReservations(List<ReservationEntity> reservations) {
+        this.reservations = reservations;
+    }
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

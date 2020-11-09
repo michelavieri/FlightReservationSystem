@@ -5,9 +5,11 @@
  */
 package ejb.session.stateless;
 
+import entity.CabinClassConfigurationEntity;
 import entity.FlightEntity;
 import java.util.List;
 import javax.ejb.Local;
+import util.exception.FlightDisabledException;
 import util.exception.FlightNotFoundException;
 
 /**
@@ -26,5 +28,10 @@ public interface FlightEntitySessionBeanLocal {
     public void setDepartureFlight(FlightEntity returnFlight, FlightEntity departureFlight);
 
     public FlightEntity retrieveFlightByCode(String code) throws FlightNotFoundException;
-    
+
+    public List<CabinClassConfigurationEntity> retrieveCabinClassByFlight(FlightEntity flight);
+
+    public String retrieveTimeZoneByFlight(FlightEntity flight);
+
+    public boolean checkAvailability(FlightEntity flight) throws FlightDisabledException;
 }

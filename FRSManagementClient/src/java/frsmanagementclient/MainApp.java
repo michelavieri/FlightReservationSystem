@@ -28,6 +28,8 @@ import ejb.session.stateless.FlightEntitySessionBeanRemote;
 import ejb.session.stateless.FlightRouteEntitySessionBeanRemote;
 import ejb.session.stateless.FlightScheduleEntitySessionBeanRemote;
 import ejb.session.stateless.FlightSchedulePlanEntitySessionBeanRemote;
+import ejb.session.stateless.ReservationEntitySessionBeanRemote;
+import ejb.session.stateless.SeatsInventoryEntitySessionBeanRemote;
 import entity.AirportEntity;
 import entity.FlightEntity;
 import entity.FlightRouteEntity;
@@ -35,11 +37,14 @@ import entity.FlightScheduleEntity;
 import entity.FlightSchedulePlanEntity;
 import entity.ReservationEntity;
 import entity.SeatsInventoryEntity;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 import util.exception.AircraftConfigurationNotFoundException;
 import util.exception.AirportNotFoundException;
 import util.exception.FlightNotFoundException;
 import util.exception.FlightRouteNotFoundException;
+import util.exception.FlightScheduleNotFoundException;
 
 /**
  *
@@ -72,6 +77,8 @@ public class MainApp {
     private FlightOperationModule flightOperationModule;
 
     private ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote;
+    
+    private SeatsInventoryEntitySessionBeanRemote seatsInventoryEntitySessionBeanRemote;
 
     public MainApp() {
     }
@@ -85,7 +92,9 @@ public class MainApp {
             FlightEntitySessionBeanRemote flightEntitySessionBeanRemote,
             FlightRouteEntitySessionBeanRemote flightRouteEntitySessionBeanRemote,
             FlightScheduleEntitySessionBeanRemote flightScheduleEntitySessionBeanRemote,
-            FlightSchedulePlanEntitySessionBeanRemote flightSchedulePlanEntitySessionBeanRemote) {
+            FlightSchedulePlanEntitySessionBeanRemote flightSchedulePlanEntitySessionBeanRemote,
+            ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote,
+            SeatsInventoryEntitySessionBeanRemote seatsInventoryEntitySessionBeanRemote) {
         this.partnerEntitySessionBeanRemote = partnerEntitySessionBeanRemote;
         this.employeeEntitySessionBeanRemote = employeeEntitySessionBeanRemote;
         this.airportEntitySessionBeanRemote = airportEntitySessionBeanRemote;
@@ -96,6 +105,8 @@ public class MainApp {
         this.flightRouteEntitySessionBeanRemote = flightRouteEntitySessionBeanRemote;
         this.flightScheduleEntitySessionBeanRemote = flightScheduleEntitySessionBeanRemote;
         this.flightSchedulePlanEntitySessionBeanRemote = flightSchedulePlanEntitySessionBeanRemote;
+        this.reservationEntitySessionBeanRemote = reservationEntitySessionBeanRemote;
+        this.seatsInventoryEntitySessionBeanRemote = seatsInventoryEntitySessionBeanRemote;
     }
 
     public void runApp() {
@@ -562,11 +573,11 @@ public class MainApp {
                 if (response == 1) {
                     System.out.println("*** FRS Schedule Manager :: View Seats Inventory ***");
                     sc.nextLine();
-                    System.out.print("Enter the flight number> ");
+                    System.out.print("Enter the flight code> ");
                     String flightNumber = sc.nextLine();
                     FlightEntity flight = null;
                     try {
-                        flight = flightEntitySessionBeanRemote.retrieveFlightByNumber(flightNumber);
+                        flight = flightEntitySessionBeanRemote.retrieveFlightByCode(flightNumber);
                     } catch (FlightNotFoundException ex) {
                         System.out.println(ex.getMessage());
                         break;
@@ -589,7 +600,14 @@ public class MainApp {
                     System.out.println();
                     System.out.print("Enter Schedule ID to view seats inventory> ");
                     Long scheduleId = sc.nextLong();
-                    List<SeatsInventoryEntity> seats = seatsInventorySessionBeanRemote.retrieveSeatsInventoryByScheduleId(scheduleId);
+                    List<SeatsInventoryEntity> seats = null;
+                    
+                    try {
+                        seats = seatsInventoryEntitySessionBeanRemote.retrieveSeatsInventoryByScheduleId(scheduleId);
+                    } catch (FlightScheduleNotFoundException ex) {
+                        System.out.println("Schedule not found!");
+                    }
+                    
                     System.out.println("Seats Inventory for schedule ID " + scheduleId + " for flight " + flightNumber);
                     System.out.println();
                     for (SeatsInventoryEntity seat : seats) {
@@ -602,11 +620,11 @@ public class MainApp {
                 } else if (response == 2) {
                     System.out.println("*** FRS Schedule Manager :: View Flight Reservations ***");
                     sc.nextLine();
-                    System.out.print("Enter the flight number> ");
+                    System.out.print("Enter the flight code> ");
                     String flightNumber = sc.nextLine();
                     FlightEntity flight = null;
                     try {
-                        flight = flightEntitySessionBeanRemote.retrieveFlightByNumber(flightNumber);
+                        flight = flightEntitySessionBeanRemote.retrieveFlightByCode(flightNumber);
                     } catch (FlightNotFoundException ex) {
                         System.out.println(ex.getMessage());
                         break;

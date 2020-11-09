@@ -5,8 +5,11 @@
  */
 package ejb.session.stateless;
 
+import entity.FlightEntity;
+import entity.FlightScheduleEntity;
 import entity.FlightSchedulePlanEntity;
 import javax.ejb.Remote;
+import util.exception.ScheduleIsUsedException;
 
 /**
  *
@@ -17,4 +20,14 @@ public interface FlightSchedulePlanEntitySessionBeanRemote {
     
     public FlightSchedulePlanEntity createFlightSchedulePlanEntity(FlightSchedulePlanEntity newFlightSchedulePlan);
     
+    public void associatePlanWithFlight(FlightSchedulePlanEntity plan, FlightEntity flight);
+    
+     public void deleteSchedulePlan(long schedulePlanId) throws ScheduleIsUsedException;
+     
+     public FlightSchedulePlanEntity retrieveSchedulePlanById(long planId);
+
+     public FlightScheduleEntity retrieveScheduleSinglePlan(FlightSchedulePlanEntity plan);
+
+     public FlightEntity retrieveFlightFromPlan(FlightSchedulePlanEntity plan);
+
 }

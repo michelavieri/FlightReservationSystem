@@ -16,6 +16,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.FlightRouteDisabled;
 import util.exception.FlightRouteNotFoundException;
 
 /**
@@ -109,5 +110,27 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
     public void disable(FlightRouteEntity route) {
         entityManager.find(FlightRouteEntity.class, route.getRouteId());
         route.setDisabled(true);
+    }
+    
+    @Override
+    public boolean isDisabled(FlightRouteEntity route) throws FlightRouteDisabled {
+        route = entityManager.find(FlightRouteEntity.class, route.getRouteId());
+        
+        if(route.isDisabled()) {
+            throw new FlightRouteDisabled();
+        }
+        
+        return false;
+    }
+    
+    @Override
+    public boolean checkReturnRouteAvailability(FlightRouteEntity route) {
+        route = entityManager.find(FlightRouteEntity.class, route.getRouteId());
+        
+        if(route.getReturnFlightRoute() != null) {
+            return true;
+        }
+        
+        return false;
     }
 }
