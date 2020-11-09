@@ -21,6 +21,10 @@ import util.exception.FlightRouteNotFoundException;
 public interface FlightRouteEntitySessionBeanLocal {
 
     FlightRouteEntity createFlightRouteEntity(FlightRouteEntity newRoute);
+    
+    public boolean isReturnRoute(FlightRouteEntity route);
+    
+    public List<FlightRouteEntity> retrieveAllAvailableRoutesNotReturn();
 
     void setReturnFlightRoute(FlightRouteEntity departureFlightRoute, FlightRouteEntity returnFlightRoute);
 
@@ -37,6 +41,10 @@ public interface FlightRouteEntitySessionBeanLocal {
     void disable(FlightRouteEntity route);
     
     public boolean isDisabled(FlightRouteEntity route) throws FlightRouteDisabled;
+    
+    public FlightRouteEntity retrieveRouteById(Long newRouteId) throws FlightRouteNotFoundException;
 
     public boolean checkReturnRouteAvailability(FlightRouteEntity route);
+    
+    public List<FlightRouteEntity> retrieveAllAvailableRoutes();
 }

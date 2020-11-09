@@ -65,6 +65,30 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
         }
         return routes;
     }
+    
+    @Override
+    public List<FlightRouteEntity> retrieveAllAvailableRoutes() {
+        Query query = entityManager.createQuery("SELECT r FROM FlightRouteEntity r WHERE r.disabled = FALSE");
+        List<FlightRouteEntity> routes = new ArrayList<>();
+        try {
+            routes = query.getResultList();
+        } catch (NoResultException ex) {
+            return routes;
+        }
+        return routes;
+    }
+    
+    @Override
+    public List<FlightRouteEntity> retrieveAllAvailableRoutesNotReturn() {
+        Query query = entityManager.createQuery("SELECT r FROM FlightRouteEntity r WHERE r.disabled = FALSE AND r.departureFlightRoute IS NULL");
+        List<FlightRouteEntity> routes = new ArrayList<>();
+        try {
+            routes = query.getResultList();
+        } catch (NoResultException ex) {
+            return routes;
+        }
+        return routes;
+    }
 
     @Override
     public List<FlightEntity> retrieveAllFlights(FlightRouteEntity route) {
@@ -85,6 +109,18 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
         } catch (NoResultException | NonUniqueResultException ex) {
             throw new FlightRouteNotFoundException("Flight Route " + originAirport.getAirportCode()
                     + " - " + destinationAirport.getAirportCode() + " does not exist!");
+        }
+    }
+    
+    @Override
+    public FlightRouteEntity retrieveRouteById(Long newRouteId) throws FlightRouteNotFoundException {
+        Query query = entityManager.createQuery("SELECT r FROM FlightRouteEntity r WHERE r.routeId = :inId");
+        query.setParameter("inId", newRouteId);
+
+        try {
+            return (FlightRouteEntity) query.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            throw new FlightRouteNotFoundException("Flight Route with ID " + newRouteId + " does not exist!");
         }
     }
 
@@ -127,6 +163,14 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
             return true;
         }
 
+        return false;
+    }
+    
+    @Override
+    public boolean isReturnRoute(FlightRouteEntity route) {
+        if (route.getDepartureFlightRoute() != null) {
+            return true;
+        }
         return false;
     }
 }
