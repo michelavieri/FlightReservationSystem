@@ -69,15 +69,15 @@ public class MainApp {
     private FlightEntitySessionBeanRemote flightEntitySessionBeanRemote;
 
     private FlightRouteEntitySessionBeanRemote flightRouteEntitySessionBeanRemote;
-    
+
     private FlightScheduleEntitySessionBeanRemote flightScheduleEntitySessionBeanRemote;
-    
+
     private FlightSchedulePlanEntitySessionBeanRemote flightSchedulePlanEntitySessionBeanRemote;
-    
+
     private FlightOperationModule flightOperationModule;
 
     private ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote;
-    
+
     private SeatsInventoryEntitySessionBeanRemote seatsInventoryEntitySessionBeanRemote;
 
     public MainApp() {
@@ -227,6 +227,7 @@ public class MainApp {
                     }
                     int totalMaxCapacity = 0;
                     List<CabinClassConfigurationEntity> classes = new ArrayList<CabinClassConfigurationEntity>();
+                    System.out.println("*** The Maximum Capacity for this aircraft is: " + aircraftType.getMaxCapacity() + " ***");
 
                     System.out.println("Enter " + numOfClasses + " cabin classes based on the numbers above:");
                     for (int i = 1; i <= numOfClasses; i++) {
@@ -304,7 +305,7 @@ public class MainApp {
                         System.out.println("The total maximum capacity for all cabin classes exceeds the aircraft type's maximum seat capacity");
                     } else {
                         AircraftConfigurationEntity newAircraftConfiguration = aircraftConfigurationEntitySessionBeanRemote.createAircraftConfiguration(
-                                new AircraftConfigurationEntity(code, name, numOfClasses, aircraftType, classes));
+                                new AircraftConfigurationEntity(code, name, numOfClasses, aircraftType, classes, totalMaxCapacity));
                         aircraftTypeEntitySessionBeanRemote.addAircraftConfiguration(aircraftType, newAircraftConfiguration);
                         System.out.println("An Aircraft Configuration has been successfully created!");
                     }
@@ -319,6 +320,7 @@ public class MainApp {
                         System.out.println("   NAME: " + configurations.get(i - 1).getName());
                         System.out.println("   AIRCRAFT TYPE: " + configurations.get(i - 1).getName());
                         System.out.println("   NUMBER OF CABIN CLASSES: " + configurations.get(i - 1).getNumCabinClass());
+                        System.out.println("   MAXIMUM CAPACITY: " + configurations.get(i - 1).getMaxCapacity());
                     }
                 } else if (response == 3) {
                     System.out.println("*** FRS Fleet Manager :: View Aircraft Configuration Details ***");
@@ -340,15 +342,8 @@ public class MainApp {
                     System.out.println("- NAME: " + aircraftConfig.getName());
                     System.out.println("- AIRCRAFT TYPE: " + aircraftConfig.getType().getName());
                     System.out.println("- NUMBER OF CABIN CLASSES: " + aircraftConfig.getNumCabinClass());
-                    System.out.print("- FLIGHTS (Flight Code): ");
-                    if (flights.isEmpty()) {
-                        System.out.println("No flights registered for this aircraft configuration");
-                    } else {
-                        System.out.println();
-                        for (FlightEntity f : flights) {
-                            System.out.println("   " + f.getFlightCode());
-                        }
-                    }
+                    System.out.println("- TOTAL MAXIMUM CAPACITY: " + aircraftConfig.getMaxCapacity());
+
                     System.out.println("- Cabin Classes: ");
                     for (CabinClassConfigurationEntity c : classes) {
                         System.out.println("   " + searchCabinType(c.getType()));
@@ -357,6 +352,16 @@ public class MainApp {
                         System.out.println("   - Number of seats abreast: " + c.getNumSeatAbreast());
                         System.out.println("   - Maximum Capacity: " + c.getMaxCapacity());
                         System.out.println();
+                    }
+                    
+                    System.out.print("- FLIGHTS (Flight Code): ");
+                    if (flights.isEmpty()) {
+                        System.out.println("No flights registered for this aircraft configuration");
+                    } else {
+                        System.out.println();
+                        for (FlightEntity f : flights) {
+                            System.out.println("   " + f.getFlightCode());
+                        }
                     }
                     System.out.println("******END OF AIRCRAFT CONFIGURATION DETAILS******");
                 } else if (response == 4) {
@@ -510,11 +515,11 @@ public class MainApp {
         Integer response = 0;
 
         flightOperationModule
-            = new FlightOperationModule(airportEntitySessionBeanRemote, aircraftTypeEntitySessionBeanRemote, 
-                    cabinClassConfigurationSessionBeanRemote, aircraftConfigurationEntitySessionBeanRemote, 
-                    flightEntitySessionBeanRemote, flightRouteEntitySessionBeanRemote,
-                    flightScheduleEntitySessionBeanRemote, flightSchedulePlanEntitySessionBeanRemote);
-        
+                = new FlightOperationModule(airportEntitySessionBeanRemote, aircraftTypeEntitySessionBeanRemote,
+                        cabinClassConfigurationSessionBeanRemote, aircraftConfigurationEntitySessionBeanRemote,
+                        flightEntitySessionBeanRemote, flightRouteEntitySessionBeanRemote,
+                        flightScheduleEntitySessionBeanRemote, flightSchedulePlanEntitySessionBeanRemote);
+
         while (true) {
             System.out.println("*** FRS Management Application ***");
             System.out.println("You are logged in as " + currentEmployee.getName() + " with Schedule Manager rights");
@@ -609,13 +614,23 @@ public class MainApp {
                     }
                     System.out.println("Seats Inventory for schedule ID " + scheduleId + " for flight " + flightNumber);
                     System.out.println();
+                    long totalAvailableSeats = 0;
+                    long totalReservedSeats = 0;
+                    long totalBalancedSeats = 0;
                     for (SeatsInventoryEntity seat : seats) {
                         System.out.println("Cabin class type: " + searchCabinType(seat.getCabinClass().getType()));
                         System.out.println("    Available Seats: " + seat.getAvailableSeatsSize());
                         System.out.println("    Reserved Seats: " + seat.getReservedSeatsSize());
                         System.out.println("    Balance Seats: " + seat.getBalanceSeatsSize());
+                        totalAvailableSeats += seat.getAvailableSeatsSize();
+                        totalReservedSeats += seat.getReservedSeatsSize();
+                        totalBalancedSeats += seat.getBalanceSeatsSize();
                         System.out.println();
                     }
+                    System.out.println();
+                    System.out.println("TOTAL Available seats: " + totalAvailableSeats);
+                    System.out.println("TOTAL Reserved seats: " + totalReservedSeats);
+                    System.out.println("TOTAL Balance seats: " + totalBalancedSeats);
                 } else if (response == 2) {
                     System.out.println("*** FRS Schedule Manager :: View Flight Reservations ***");
                     sc.nextLine();

@@ -22,6 +22,7 @@ public class AircraftConfigurationEntity implements Serializable {
     private String code;
     private String name;
     private int numCabinClass;
+    private int maxCapacity;
     
     
     @ManyToOne
@@ -39,13 +40,15 @@ public class AircraftConfigurationEntity implements Serializable {
 
     public AircraftConfigurationEntity(String code, String name, 
             int numCabinClass, AircraftTypeEntity type, 
-            List<CabinClassConfigurationEntity> cabinClassConfigurationEntitys) {
+            List<CabinClassConfigurationEntity> cabinClassConfigurationEntitys,
+            int maxCapacity) {
         this.code = code;
         this.name = name;
         this.numCabinClass = numCabinClass;
         this.type = type;
         this.cabinClassConfigurationEntitys = cabinClassConfigurationEntitys;
         this.flightEntitys = new ArrayList<>();
+        this.maxCapacity = maxCapacity;
     }
     
 
@@ -147,6 +150,20 @@ public class AircraftConfigurationEntity implements Serializable {
      */
     public void setFlightEntitys(List<FlightEntity> flightEntitys) {
         this.flightEntitys = flightEntitys;
+    }
+
+    /**
+     * @return the maxCapacity
+     */
+    public int getMaxCapacity() {
+        return maxCapacity;
+    }
+
+    /**
+     * @param maxCapacity the maxCapacity to set
+     */
+    public void setMaxCapacity(int maxCapacity) {
+        this.maxCapacity = maxCapacity;
     }
     
 }
