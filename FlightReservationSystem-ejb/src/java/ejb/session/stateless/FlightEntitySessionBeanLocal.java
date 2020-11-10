@@ -9,6 +9,7 @@ import entity.AircraftConfigurationEntity;
 import entity.CabinClassConfigurationEntity;
 import entity.FlightEntity;
 import entity.FlightRouteEntity;
+import entity.FlightSchedulePlanEntity;
 import java.util.List;
 import javax.ejb.Local;
 import util.exception.FlightNotFoundException;
@@ -23,6 +24,8 @@ public interface FlightEntitySessionBeanLocal {
     public FlightEntity createFlightEntity(FlightEntity newFlight);
 
     public List<FlightEntity> retrieveAllFlights();
+    
+    public List<FlightSchedulePlanEntity> retrieveSchedulePlans (FlightEntity flight);
 
     public void setReturnFlight(FlightEntity departureFlight, FlightEntity returnFlight);
 
@@ -35,11 +38,14 @@ public interface FlightEntitySessionBeanLocal {
     public String retrieveTimeZoneByFlight(FlightEntity flight);
 
     public void deleteFlight(FlightEntity flight);
-    
+
     public void updateAircraftConfiguration(AircraftConfigurationEntity newConfig, FlightEntity flight);
-    
+
     public void updateFlightRoute(FlightRouteEntity newRoute, FlightEntity flight);
-    
+
     public boolean isReturnFlight(FlightEntity flight);
 
+    public boolean hasReturnFlight(FlightEntity flight);
+
+    public void removeReturnFlight(FlightEntity flight);
 }

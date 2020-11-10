@@ -57,7 +57,7 @@ public class AircraftConfigurationEntitySessionBean implements AircraftConfigura
     @Override
     public List<AircraftConfigurationEntity> retrieveAllAircraftConfigurations() {
         List<AircraftConfigurationEntity> aircrafts = new ArrayList<AircraftConfigurationEntity>();
-        Query query = entityManager.createQuery("SELECT a FROM AircraftConfigurationEntity a");
+        Query query = entityManager.createQuery("SELECT a FROM AircraftConfigurationEntity a ORDER BY a.type ASC, a.name ASC");
         try {
             aircrafts = query.getResultList();
         } catch (NoResultException ex) {

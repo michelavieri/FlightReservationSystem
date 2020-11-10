@@ -353,7 +353,7 @@ public class MainApp {
                         System.out.println("   - Maximum Capacity: " + c.getMaxCapacity());
                         System.out.println();
                     }
-                    
+
                     System.out.print("- FLIGHTS (Flight Code): ");
                     if (flights.isEmpty()) {
                         System.out.println("No flights registered for this aircraft configuration");
@@ -395,7 +395,7 @@ public class MainApp {
                 if (response == 1) {
                     System.out.println("*** FRS Route Planner :: Create Flight Route ***");
                     sc.nextLine();
-                    System.out.println("Enter origin airport> ");
+                    System.out.print("Enter origin airport> ");
                     String origin = sc.nextLine();
                     AirportEntity originAirport = null;
                     try {
@@ -405,7 +405,7 @@ public class MainApp {
                         break;
                     }
 
-                    System.out.println("Enter destination airport> ");
+                    System.out.print("Enter destination airport> ");
                     String destination = sc.nextLine();
                     AirportEntity destinationAirport = null;
                     try {
@@ -437,27 +437,46 @@ public class MainApp {
                     System.out.println("*** FRS Route Planner :: View All Flight Routes ***");
                     sc.nextLine();
                     List<FlightRouteEntity> routes
-                            = flightRouteEntitySessionBeanRemote.retrieveAllRoutes();
+                            = flightRouteEntitySessionBeanRemote.retrieveAllRoutesNotReturn();
                     for (int i = 1; i <= routes.size(); i++) {
                         System.out.print(i + ". ");
                         System.out.println("ROUTE: " + routes.get(i - 1).getOriginAirport().getAirportCode() + " - "
                                 + routes.get(i - 1).getDestinationAirport().getAirportCode());
                         List<FlightEntity> flights = flightRouteEntitySessionBeanRemote.retrieveAllFlights(routes.get(i - 1));
-                        System.out.print("   DISABLED: ");
+                        System.out.print("   \t DISABLED: ");
                         if (routes.get(i - 1).isDisabled()) {
                             System.out.println("TRUE");
                         } else {
                             System.out.println("FALSE");
                         }
-                        System.out.print("   FLIGHTS (FLIGHT CODE): ");
+                        System.out.print("   \t FLIGHTS (FLIGHT CODE): ");
                         if (flights.isEmpty()) {
                             System.out.println("No available flights for this route");
                         } else {
                             System.out.println();
                             for (FlightEntity f : flights) {
-                                System.out.println("    - " + f.getFlightCode());
+                                System.out.println("    \t\t - " + f.getFlightCode());
                             }
-                            System.out.println();
+                        }
+                        if (routes.get(i - 1).getReturnFlightRoute() != null) {
+                            FlightRouteEntity returnRoute = routes.get(i - 1).getReturnFlightRoute();
+                            System.out.println("   RETURN ROUTE: " + returnRoute.getOriginAirport().getAirportCode() + " - " + returnRoute.getDestinationAirport().getAirportCode());
+                            flights = flightRouteEntitySessionBeanRemote.retrieveAllFlights(returnRoute);
+                            System.out.print("   \t DISABLED: ");
+                            if (returnRoute.isDisabled()) {
+                                System.out.println("TRUE");
+                            } else {
+                                System.out.println("FALSE");
+                            }
+                            System.out.print("   \t FLIGHTS (FLIGHT CODE): ");
+                            if (flights.isEmpty()) {
+                                System.out.println("No available flights for this return route");
+                            } else {
+                                System.out.println();
+                                for (FlightEntity f : flights) {
+                                    System.out.println("    \t\t - " + f.getFlightCode());
+                                }
+                            }
                         }
                     }
                 } else if (response == 3) {
@@ -493,9 +512,12 @@ public class MainApp {
                     }
 
                     if (flightRouteEntitySessionBeanRemote.retrieveAllFlights(route).isEmpty()) {
+                        System.out.println("1");
                         flightRouteEntitySessionBeanRemote.deleteRoute(route);
                         System.out.println("Route successfully deleted");
                     } else {
+                        System.out.println("2");
+
                         flightRouteEntitySessionBeanRemote.disable(route);
                         System.out.println("Route successfully disabled");
                     }
@@ -588,8 +610,8 @@ public class MainApp {
                         break;
                     }
                     System.out.println("List of available flight schedules ID for flight " + flightNumber + " :");
-                    flight.getFlightSchedulePlans().size();
-                    List<FlightSchedulePlanEntity> plans = flight.getFlightSchedulePlans();
+                    
+                    List<FlightSchedulePlanEntity> plans = flightEntitySessionBeanRemote.retrieveSchedulePlans(flight);
                     if (plans.isEmpty()) {
                         System.out.println("No available flight schedules for flight " + flightNumber + "!");
                         break;
@@ -644,8 +666,8 @@ public class MainApp {
                         break;
                     }
                     System.out.println("List of available flight schedules ID for flight " + flightNumber + " :");
-                    flight.getFlightSchedulePlans().size();
-                    List<FlightSchedulePlanEntity> plans = flight.getFlightSchedulePlans();
+                    
+                    List<FlightSchedulePlanEntity> plans = flightEntitySessionBeanRemote.retrieveSchedulePlans(flight);
                     if (plans.isEmpty()) {
                         System.out.println("No available flight schedules for flight " + flightNumber + "!");
                         break;

@@ -120,6 +120,9 @@ public class FlightOperationModule {
         try {
             route = flightRouteEntitySessionBeanRemote.retrieveRouteByAirport(originAirport, destinationAirport);
             boolean disabled = flightRouteEntitySessionBeanRemote.isDisabled(route);
+            if (disabled) {
+                throw new FlightRouteDisabled("Flight Route has been disabled!");
+            }
         } catch (FlightRouteNotFoundException | FlightRouteDisabled ex) {
             System.out.println(ex.getMessage());
             return;
@@ -221,7 +224,7 @@ public class FlightOperationModule {
         int maxCapacity = aircraftConfiguration.getType().getMaxCapacity();
         List<CabinClassConfigurationEntity> cabinClasses = flightEntitySessionBeanRemote.retrieveCabinClassByFlight(flight);
 
-        System.out.println("FLIGHT " + flight.getFlightCode() + ": ");
+        System.out.println("DEPARTURE FLIGHT " + flight.getFlightCode() + ": ");
         System.out.println("From: " + origin + " to: " + destination);
         System.out.println("Total maximum capacity: " + maxCapacity);
         System.out.println("Disabled: " + flight.isDisabled());
@@ -229,6 +232,21 @@ public class FlightOperationModule {
         for (int i = 1; i <= cabinClasses.size(); i++) {
             System.out.println("\t" + i + ". " + searchCabinType(cabinClasses.get(i - 1).getType()));
             System.out.println("\t" + "Available capacity: " + cabinClasses.get(i - 1).getMaxCapacity());
+        }
+        System.out.println();
+        FlightEntity returnFlight = flight.getReturnFlight();
+
+        if (returnFlight != null) {
+            System.out.println("RETURN FLIGHT " + returnFlight.getFlightCode() + ":");
+            System.out.println("From: " + returnFlight.getRoute().getOriginAirport().getAirportCode() + " to: " + returnFlight.getRoute().getDestinationAirport().getAirportCode());
+            System.out.println("Total maximum capacity: " + returnFlight.getAircraftConfigurationEntity().getMaxCapacity());
+            System.out.println("Disabled: " + returnFlight.isDisabled());
+            System.out.println("Available cabin classes: ");
+            for (int i = 1; i <= cabinClasses.size(); i++) {
+                System.out.println("\t" + i + ". " + searchCabinType(cabinClasses.get(i - 1).getType()));
+                System.out.println("\t" + "Available capacity: " + cabinClasses.get(i - 1).getMaxCapacity());
+            }
+
         }
 
         String modificationConfirmation = "A";
@@ -304,7 +322,7 @@ public class FlightOperationModule {
                         FlightRouteEntity newRoute = null;
                         try {
                             newRoute = flightRouteEntitySessionBeanRemote.retrieveRouteById(routeId);
-                            
+
                             if (flightRouteEntitySessionBeanRemote.isReturnRoute(newRoute)) {
                                 System.out.println("Do not choose a return route!");
                                 return;
@@ -316,19 +334,9 @@ public class FlightOperationModule {
 
                         flightEntitySessionBeanRemote.updateFlightRoute(newRoute, flight);
 
-                        if (flight.getReturnFlight() != null) {
-
-                            FlightRouteEntity returnRoute = new FlightRouteEntity(newRoute.getDestinationAirport(), newRoute.getOriginAirport());
-
-                            flightEntitySessionBeanRemote.updateFlightRoute(returnRoute, flight.getReturnFlight());
-
-                            System.out.println("Return flight has been updated!");
-
-                        }
-
                         System.out.println("Route of flight " + flight.getFlightCode() + " has been updated to "
-                                + flight.getRoute().getOriginAirport().getAirportCode() + " - "
-                                + flight.getRoute().getDestinationAirport().getAirportCode());
+                                + newRoute.getOriginAirport().getAirportCode() + " - "
+                                + newRoute.getDestinationAirport().getAirportCode());
                     }
                 } else if (response == 2) {
                     flightEntitySessionBeanRemote.deleteFlight(flight);

@@ -9,6 +9,7 @@ import entity.AircraftConfigurationEntity;
 import entity.CabinClassConfigurationEntity;
 import entity.FlightEntity;
 import entity.FlightRouteEntity;
+import entity.FlightSchedulePlanEntity;
 import java.util.List;
 import javax.ejb.Remote;
 import util.exception.FlightNotFoundException;
@@ -21,12 +22,16 @@ import util.exception.FlightNotFoundException;
 public interface FlightEntitySessionBeanRemote {
 
     public FlightEntity createFlightEntity(FlightEntity newFlight);
+    
+    public List<FlightSchedulePlanEntity> retrieveSchedulePlans (FlightEntity flight);
 
     public List<FlightEntity> retrieveAllFlights();
    
     public void setReturnFlight(FlightEntity departureFlight, FlightEntity returnFlight);
 
     public void setDepartureFlight(FlightEntity returnFlight, FlightEntity departureFlight);
+    
+    public boolean hasReturnFlight(FlightEntity flight);
     
     public FlightEntity retrieveFlightByCode(String code) throws FlightNotFoundException;
     
@@ -41,5 +46,7 @@ public interface FlightEntitySessionBeanRemote {
     public void updateFlightRoute(FlightRouteEntity newRoute, FlightEntity flight);
     
     public boolean isReturnFlight(FlightEntity flight);
+
+    public void removeReturnFlight(FlightEntity flight);
     
 }

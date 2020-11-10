@@ -22,6 +22,8 @@ public interface FlightRouteEntitySessionBeanLocal {
 
     FlightRouteEntity createFlightRouteEntity(FlightRouteEntity newRoute);
     
+    public List<FlightRouteEntity> retrieveAllRoutesNotReturn();
+    
     public boolean isReturnRoute(FlightRouteEntity route);
     
     public List<FlightRouteEntity> retrieveAllAvailableRoutesNotReturn();

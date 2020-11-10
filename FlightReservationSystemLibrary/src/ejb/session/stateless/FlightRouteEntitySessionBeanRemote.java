@@ -25,6 +25,8 @@ public interface FlightRouteEntitySessionBeanRemote {
     public boolean isReturnRoute(FlightRouteEntity route);
     
     public List<FlightRouteEntity> retrieveAllAvailableRoutesNotReturn();
+    
+    public List<FlightRouteEntity> retrieveAllRoutesNotReturn();
 
     void setReturnFlightRoute(FlightRouteEntity departureFlightRoute, FlightRouteEntity returnFlightRoute);
 

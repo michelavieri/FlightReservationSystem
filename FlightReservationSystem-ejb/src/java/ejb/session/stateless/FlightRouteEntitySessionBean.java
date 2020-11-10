@@ -80,7 +80,21 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
     
     @Override
     public List<FlightRouteEntity> retrieveAllAvailableRoutesNotReturn() {
-        Query query = entityManager.createQuery("SELECT r FROM FlightRouteEntity r WHERE r.disabled = FALSE AND r.departureFlightRoute IS NULL");
+        Query query = entityManager.createQuery("SELECT r FROM FlightRouteEntity r WHERE r.disabled = FALSE AND "
+                + "r.departureFlightRoute IS NULL ORDER BY r.originAirport.airportCode ASC");
+        List<FlightRouteEntity> routes = new ArrayList<>();
+        try {
+            routes = query.getResultList();
+        } catch (NoResultException ex) {
+            return routes;
+        }
+        return routes;
+    }
+    
+    @Override
+    public List<FlightRouteEntity> retrieveAllRoutesNotReturn() {
+        Query query = entityManager.createQuery("SELECT r FROM FlightRouteEntity r WHERE r.departureFlightRoute IS NULL"
+                + " ORDER BY r.originAirport.airportCode ASC ");
         List<FlightRouteEntity> routes = new ArrayList<>();
         try {
             routes = query.getResultList();
@@ -159,7 +173,7 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
 
     @Override
     public boolean checkReturnRouteAvailability(FlightRouteEntity route) {
-        if (route.getReturnFlightRoute() != null || route.getDepartureFlightRoute() != null) {
+        if (route.getReturnFlightRoute() != null) {
             return true;
         }
 
