@@ -84,6 +84,8 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
     public void createRecurrentSchedule(FlightSchedulePlanEntity schedule, String startDate, String endDate, int days, String departureTime, DateTimeFormatter dateFormat, String duration, boolean returning, int layoverDuration) {
 
         ZonedDateTime startingDate = ZonedDateTime.parse((startDate + departureTime), dateFormat);
+        String startingDateTime = startingDate.format(dateFormat);
+                
         ZonedDateTime endingDate = ZonedDateTime.parse(endDate, dateFormat);
 
         String durationHour = duration.substring(0, 1);
@@ -97,7 +99,13 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
         String arrDateTime = arrivalDateTime.format(dateFormat);
 
         while (startingDate.isBefore(endingDate)) {
-            FlightScheduleEntity departure = this.createFlightScheduleEntity(new FlightScheduleEntity(startDate, totalDuration, arrDateTime));
+            startingDate = ZonedDateTime.parse((startDate + departureTime), dateFormat);
+            startingDateTime = startingDate.format(dateFormat);
+            
+            arrivalDateTime = startingDate.plusMinutes(totalDuration);
+            arrDateTime = arrivalDateTime.format(dateFormat);
+            
+            FlightScheduleEntity departure = this.createFlightScheduleEntity(new FlightScheduleEntity(startingDateTime, totalDuration, arrDateTime));
             this.associateWithPlan(departure, schedule);
 
             if (returning) {
@@ -111,6 +119,7 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
             }
 
             startingDate = startingDate.plusDays(days);
+            arrivalDateTime = arrivalDateTime.plusDays(days);
         }
     }
 

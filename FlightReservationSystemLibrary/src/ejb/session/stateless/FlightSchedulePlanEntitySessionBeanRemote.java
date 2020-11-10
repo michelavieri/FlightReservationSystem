@@ -8,8 +8,10 @@ package ejb.session.stateless;
 import entity.FlightEntity;
 import entity.FlightScheduleEntity;
 import entity.FlightSchedulePlanEntity;
+import java.time.format.DateTimeFormatter;
 import javax.ejb.Remote;
 import util.exception.ScheduleIsUsedException;
+import util.exception.ScheduleOverlapException;
 
 /**
  *
@@ -29,5 +31,7 @@ public interface FlightSchedulePlanEntitySessionBeanRemote {
      public FlightScheduleEntity retrieveScheduleSinglePlan(FlightSchedulePlanEntity plan);
 
      public FlightEntity retrieveFlightFromPlan(FlightSchedulePlanEntity plan);
+
+      public void replaceRecurrentSchedulePlan(FlightSchedulePlanEntity oldSchedulePlan, FlightSchedulePlanEntity newSchedulePlan, DateTimeFormatter dateFormat, String departureTime, String duration, int days, int layover) throws ScheduleIsUsedException, ScheduleOverlapException;
 
 }

@@ -372,6 +372,7 @@ public class FlightOperationModule {
                     flightScheduleEntitySessionBeanRemote.checkOverlapSchedule(schedulePlan, flightSchedule);
                 } catch (ScheduleOverlapException ex) {
                     System.out.println("Schedule invalid with exisiting schedule!");
+                    return;
                 }
 
                 int totalLayoverDuration = 0;
@@ -482,6 +483,7 @@ public class FlightOperationModule {
             flightSchedulePlanEntitySessionBeanRemote.deleteSchedulePlan(planId);
         } catch (ScheduleIsUsedException ex) {
             System.out.println("Schedule plan is in use!");
+            return;
         }
     }
 
@@ -510,9 +512,77 @@ public class FlightOperationModule {
             FlightScheduleEntity schedule = flightScheduleEntitySessionBeanRemote.retrieveFlightScheduleById(scheduleId);
             updateSingleSchedule(sc, dateFormat, flight, plan, schedule);
         } else if (type.equals(FlightSchedulePlanTypeEnum.RECURRENT_DAY)) {
+            System.out.println("Enter new starting date (yyyy-mm-dd)>");
+            String startDate = sc.nextLine();
 
+            System.out.println("Enter new ending date (yyyy-mm-dd)>");
+            String endDate = sc.nextLine();
+
+            System.out.println("Enter new departure hour (HH:mm)>");
+            String departuretime = sc.nextLine();
+
+            System.out.println("Enter new duration of flight (HH:MM)>");
+            String duration = sc.nextLine();
+
+            System.out.println("Enter new number of recurring days>");
+            int recurringDays = sc.nextInt();
+            sc.nextLine();
+
+            System.out.println("Enter layover duration if needed (HH:MM)>");
+            String layoverDuration = sc.nextLine();
+            String layoverDurationHour = layoverDuration.substring(0, 1);
+            String layoverDurationMin = layoverDuration.substring(3, 4);
+
+            int layoverDurationHourInt = Integer.parseInt(layoverDurationHour);
+            int layoverDurationMinInt = Integer.parseInt(layoverDurationMin);
+            layoverDurationMinInt += (60 * layoverDurationHourInt);
+
+            FlightSchedulePlanEntity newPlan = new FlightSchedulePlanEntity(FlightSchedulePlanTypeEnum.RECURRENT_DAY, startDate, endDate, layoverDurationMinInt, flight);
+
+            try {
+                flightSchedulePlanEntitySessionBeanRemote.replaceRecurrentSchedulePlan(plan, newPlan, dateFormat, departuretime, duration, recurringDays, layoverDurationMinInt);
+                System.out.println("Schedule plan updated!");
+            } catch (ScheduleIsUsedException ex) {
+                System.out.println("Failed in updating schedule plan! At least one schedule is used!");
+                return;
+            } catch (ScheduleOverlapException ex) {
+                System.out.println("Failed in updating schedule plan! Updated scheduled overlapped with existing schedule!");
+                return;
+            }
         } else if (type.equals(FlightSchedulePlanTypeEnum.RECURRENT_WEEK)) {
+            System.out.println("Enter new starting date (yyyy-mm-dd)>");
+            String startDate = sc.nextLine();
 
+            System.out.println("Enter new ending date (yyyy-mm-dd)>");
+            String endDate = sc.nextLine();
+
+            System.out.println("Enter new departure hour (HH:mm)>");
+            String departuretime = sc.nextLine();
+
+            System.out.println("Enter new duration of flight (HH:MM)>");
+            String duration = sc.nextLine();
+
+            System.out.println("Enter layover duration if needed (HH:MM)>");
+            String layoverDuration = sc.nextLine();
+            String layoverDurationHour = layoverDuration.substring(0, 1);
+            String layoverDurationMin = layoverDuration.substring(3, 4);
+
+            int layoverDurationHourInt = Integer.parseInt(layoverDurationHour);
+            int layoverDurationMinInt = Integer.parseInt(layoverDurationMin);
+            layoverDurationMinInt += (60 * layoverDurationHourInt);
+
+            FlightSchedulePlanEntity newPlan = new FlightSchedulePlanEntity(FlightSchedulePlanTypeEnum.RECURRENT_WEEK, startDate, endDate, layoverDurationMinInt, flight);
+
+            try {
+                flightSchedulePlanEntitySessionBeanRemote.replaceRecurrentSchedulePlan(plan, newPlan, dateFormat, departuretime, duration, 7, layoverDurationMinInt);
+                System.out.println("Schedule plan updated!");
+            } catch (ScheduleIsUsedException ex) {
+                System.out.println("Failed in updating schedule plan! At least one schedule is used!");
+                return;
+            } catch (ScheduleOverlapException ex) {
+                System.out.println("Failed in updating schedule plan! Updated scheduled overlapped with existing schedule!");
+                return;
+            }
         }
     }
 
@@ -539,16 +609,16 @@ public class FlightOperationModule {
         System.out.println("Expected new arrival date and time: " + arrDateTime);
 
         FlightScheduleEntity returnSchedule = flightScheduleEntitySessionBeanRemote.retrieveReturnSchedule(schedule);
-        FlightScheduleEntity flightSchedule = flightScheduleEntitySessionBeanRemote.createFlightScheduleEntity(new FlightScheduleEntity(newDepartureDateTime, totalDuration, arrDateTime));
-        
+        FlightScheduleEntity flightSchedule = new FlightScheduleEntity(newDepartureDateTime, totalDuration, arrDateTime);
+
         int layover = scanLayoverTime(sc);
-        FlightScheduleEntity returnFlightSchedule = replaceReturnFlightSchedule(sc, dateFormat,  layover, flightSchedule);
+        FlightScheduleEntity returnFlightSchedule = replaceReturnFlightSchedule(sc, dateFormat, layover, flightSchedule);
         FlightScheduleEntity overlap = null;
         FlightScheduleEntity returnOverlap = null;
-        
-        if(schedule.getReturnSchedule() != null) {
-        overlap = flightScheduleEntitySessionBeanRemote.checkOverlapPlan(flight, plan, flightSchedule);
-        returnOverlap = flightScheduleEntitySessionBeanRemote.checkOverlapPlan(flight, plan, returnFlightSchedule);
+
+        if (schedule.getReturnSchedule() != null) {
+            overlap = flightScheduleEntitySessionBeanRemote.checkOverlapPlan(flight, plan, flightSchedule);
+            returnOverlap = flightScheduleEntitySessionBeanRemote.checkOverlapPlan(flight, plan, returnFlightSchedule);
         }
 
         if (overlap != null) {
@@ -561,11 +631,12 @@ public class FlightOperationModule {
                     flightScheduleEntitySessionBeanRemote.deleteSchedule(overlap);
                 } catch (ScheduleIsUsedException ex) {
                     System.out.println("Schedule is used and cannot be deleted!");
+                    return;
                 }
             }
         }
-        
-         if (returnOverlap != null) {
+
+        if (returnOverlap != null) {
             System.out.println("New return flight schedule overlaps with other schedule(s)!");
             System.out.println("Continue and delete overlapping schedule? (Y/N)");
             String response = sc.nextLine();
@@ -575,15 +646,18 @@ public class FlightOperationModule {
                     flightScheduleEntitySessionBeanRemote.deleteSchedule(overlap);
                 } catch (ScheduleIsUsedException ex) {
                     System.out.println("Schedule is used and cannot be deleted!");
+                    return;
                 }
             }
         }
 
         flightScheduleEntitySessionBeanRemote.replaceSchedule(schedule, flightSchedule);
-        
-        if(returnOverlap != null) {
+
+        if (returnOverlap != null) {
             flightScheduleEntitySessionBeanRemote.replaceSchedule(returnSchedule, returnFlightSchedule);
         }
+
+        System.out.println("Schedule plan updated!");
     }
 
     public FlightScheduleEntity replaceReturnFlightSchedule(Scanner sc, DateTimeFormatter dateFormat, int totalLayoverDuration, FlightScheduleEntity departureFlight) {
@@ -603,15 +677,4 @@ public class FlightOperationModule {
 
         return returnFlightSchedule;
     }
-//
-//    public int scanLayoverTime(Scanner sc) {
-//        System.out.println("Enter layover duration (HH:MM)>");
-//        String layoverDuration = sc.nextLine();
-//        String layoverDurationHour = layoverDuration.substring(0, 1);
-//        String layoverDurationMin = layoverDuration.substring(3, 4);
-//
-//        int layoverDurationHourInt = Integer.parseInt(layoverDurationHour);
-//        int layoverDurationMinInt = Integer.parseInt(layoverDurationMin);
-//        return layoverDurationMinInt + (60 * layoverDurationHourInt);
-//    }
 }
