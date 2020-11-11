@@ -80,8 +80,6 @@ public class MainApp {
     
     private SeatsInventoryEntitySessionBeanRemote seatsInventoryEntitySessionBeanRemote;
 
-    private SeatsInventoryEntitySessionBeanRemote seatsInventoryEntitySessionBeanRemote;
-
     public MainApp() {
     }
 
