@@ -5,9 +5,12 @@
  */
 package ejb.session.stateless;
 
+import entity.CustomerEntity;
 import entity.ReservationEntity;
 import java.util.List;
 import javax.ejb.Remote;
+import util.exception.InvalidReservationId;
+import util.exception.NotMyReservationException;
 
 /**
  *
@@ -16,11 +19,7 @@ import javax.ejb.Remote;
 @Remote
 public interface ReservationEntitySessionBeanRemote {
 
-    public List<ReservationEntity> retrieveReservationsByScheduleIdFirstClass(Long id);
+    public List<ReservationEntity> retrieveFlightReservationsByCustomer(CustomerEntity cust);
 
-    public List<ReservationEntity> retrieveReservationsByScheduleIdBusinessClass(Long id);
-
-    public List<ReservationEntity> retrieveReservationsByScheduleIdPremiumClass(Long id);
-
-    public List<ReservationEntity> retrieveReservationsByScheduleIdEconomyClass(Long id);
+    public ReservationEntity retrieveReservationByReservationId(long reservationId, CustomerEntity customer) throws InvalidReservationId, NotMyReservationException;
 }

@@ -209,7 +209,7 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
     public void deleteSchedule(FlightScheduleEntity schedule) throws ScheduleIsUsedException {
         schedule = entityManager.find(FlightScheduleEntity.class, schedule.getScheduleId());
         
-        if(schedule.getReservations().size() > 0) {
+        if(schedule.getBookingTicketEntitys().size() > 0) {
             throw new ScheduleIsUsedException();
         }
         

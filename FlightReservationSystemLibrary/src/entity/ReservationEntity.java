@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package entity;
 
 import java.io.Serializable;
@@ -6,42 +11,35 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import util.enumeration.CabinClassTypeEnum;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
+/**
+ *
+ * @author miche
+ */
 @Entity
 public class ReservationEntity implements Serializable {
+
+    @OneToOne(mappedBy = "reservation")
+    private CreditCardEntity creditCardEntity;
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reservationId;
-    private String seatNumber;
-    private String passengerName;
-    private String fareBasisCode;
+    private int numOfPassengers;
+    private String totalAmount;
 
-    @ManyToOne
-    private PartnerEntity partner;
-
+    @OneToMany(mappedBy = "reservationEntity")
+    private List<BookingTicketEntity> tickets;
+    
     @ManyToOne
     private CustomerEntity customer;
-
+    
     @ManyToOne
-    private FlightScheduleEntity flightSchedule;
-
-    private CabinClassTypeEnum cabinClass;
-
-    public ReservationEntity() {
-    }
-
-    public ReservationEntity(String seatNumber, String passengerName, String fareBasisCode, FlightScheduleEntity flightSchedule, CabinClassTypeEnum cabinClass) {
-        this.seatNumber = seatNumber;
-        this.passengerName = passengerName;
-        this.fareBasisCode = fareBasisCode;
-        this.flightSchedule = flightSchedule;
-        this.cabinClass = cabinClass;
-    }
+    private PartnerEntity partner;
 
     public Long getReservationId() {
         return reservationId;
@@ -49,30 +47,6 @@ public class ReservationEntity implements Serializable {
 
     public void setReservationId(Long reservationId) {
         this.reservationId = reservationId;
-    }
-
-    public String getSeatNumber() {
-        return seatNumber;
-    }
-
-    public void setSeatNumber(String seatNumber) {
-        this.seatNumber = seatNumber;
-    }
-
-    public String getPassengerName() {
-        return passengerName;
-    }
-
-    public void setPassengerName(String passengerName) {
-        this.passengerName = passengerName;
-    }
-
-    public String getFareBasisCode() {
-        return fareBasisCode;
-    }
-
-    public void setFareBasisCode(String fareBasisCode) {
-        this.fareBasisCode = fareBasisCode;
     }
 
     @Override
@@ -97,21 +71,63 @@ public class ReservationEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.ReservationsEntity[ id=" + reservationId + " ]";
+        return "entity.ReservationEntity[ id=" + reservationId + " ]";
     }
 
     /**
-     * @return the partner
+     * @return the numOfPassengers
      */
-    public PartnerEntity getPartner() {
-        return partner;
+    public int getNumOfPassengers() {
+        return numOfPassengers;
     }
 
     /**
-     * @param partner the partner to set
+     * @param numOfPassengers the numOfPassengers to set
      */
-    public void setPartner(PartnerEntity partner) {
-        this.partner = partner;
+    public void setNumOfPassengers(int numOfPassengers) {
+        this.numOfPassengers = numOfPassengers;
+    }
+
+    /**
+     * @return the totalAmount
+     */
+    public String getTotalAmount() {
+        return totalAmount;
+    }
+
+    /**
+     * @param totalAmount the totalAmount to set
+     */
+    public void setTotalAmount(String totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    /**
+     * @return the tickets
+     */
+    public List<BookingTicketEntity> getTickets() {
+        return tickets;
+    }
+
+    /**
+     * @param tickets the tickets to set
+     */
+    public void setTickets(List<BookingTicketEntity> tickets) {
+        this.tickets = tickets;
+    }
+
+    /**
+     * @return the creditCardEntity
+     */
+    public CreditCardEntity getCreditCardEntity() {
+        return creditCardEntity;
+    }
+
+    /**
+     * @param creditCardEntity the creditCardEntity to set
+     */
+    public void setCreditCardEntity(CreditCardEntity creditCardEntity) {
+        this.creditCardEntity = creditCardEntity;
     }
 
     /**
@@ -129,31 +145,17 @@ public class ReservationEntity implements Serializable {
     }
 
     /**
-     * @return the flightSchedule
+     * @return the partner
      */
-    public FlightScheduleEntity getFlightSchedule() {
-        return flightSchedule;
+    public PartnerEntity getPartner() {
+        return partner;
     }
 
     /**
-     * @param flightSchedule the flightSchedule to set
+     * @param partner the partner to set
      */
-    public void setFlightSchedule(FlightScheduleEntity flightSchedule) {
-        this.flightSchedule = flightSchedule;
-    }
-
-    /**
-     * @return the cabinClass
-     */
-    public CabinClassTypeEnum getCabinClass() {
-        return cabinClass;
-    }
-
-    /**
-     * @param cabinClass the cabinClass to set
-     */
-    public void setCabinClass(CabinClassTypeEnum cabinClass) {
-        this.cabinClass = cabinClass;
+    public void setPartner(PartnerEntity partner) {
+        this.partner = partner;
     }
 
 }

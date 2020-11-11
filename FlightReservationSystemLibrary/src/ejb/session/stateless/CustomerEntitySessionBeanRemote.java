@@ -5,7 +5,12 @@
  */
 package ejb.session.stateless;
 
+import entity.CustomerEntity;
 import javax.ejb.Remote;
+import util.exception.CustomerNotFoundException;
+import util.exception.EmailExistException;
+import util.exception.InvalidEmailException;
+import util.exception.WrongPasswordException;
 
 /**
  *
@@ -13,5 +18,14 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface CustomerEntitySessionBeanRemote {
-    
+
+    public void emailExists(String email) throws EmailExistException;
+
+    public CustomerEntity retrieveCustomer(CustomerEntity cust);
+
+    public CustomerEntity registerCustomer(CustomerEntity newCustomer) throws EmailExistException;
+
+    public CustomerEntity retrieveCustomerByEmail(String email) throws CustomerNotFoundException;
+
+    public CustomerEntity customerLogin(String email, String password) throws InvalidEmailException, WrongPasswordException;
 }

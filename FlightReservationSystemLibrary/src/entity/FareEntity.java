@@ -2,11 +2,13 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 
 @Entity
@@ -24,6 +26,8 @@ public class FareEntity implements Serializable {
     
     @ManyToOne
     private CabinClassConfigurationEntity cabinClass;
+    @OneToMany(mappedBy = "fare")
+    private List<BookingTicketEntity> bookingTicketEntitys;
 
     
     public FareEntity() {
@@ -78,6 +82,48 @@ public class FareEntity implements Serializable {
     @Override
     public String toString() {
         return "entity.FareEntity[ id=" + fairId + " ]";
+    }
+
+    /**
+     * @return the flightSchedulePlan
+     */
+    public FlightSchedulePlanEntity getFlightSchedulePlan() {
+        return flightSchedulePlan;
+    }
+
+    /**
+     * @param flightSchedulePlan the flightSchedulePlan to set
+     */
+    public void setFlightSchedulePlan(FlightSchedulePlanEntity flightSchedulePlan) {
+        this.flightSchedulePlan = flightSchedulePlan;
+    }
+
+    /**
+     * @return the cabinClass
+     */
+    public CabinClassConfigurationEntity getCabinClass() {
+        return cabinClass;
+    }
+
+    /**
+     * @param cabinClass the cabinClass to set
+     */
+    public void setCabinClass(CabinClassConfigurationEntity cabinClass) {
+        this.cabinClass = cabinClass;
+    }
+
+    /**
+     * @return the bookingTicketEntitys
+     */
+    public List<BookingTicketEntity> getBookingTicketEntitys() {
+        return bookingTicketEntitys;
+    }
+
+    /**
+     * @param bookingTicketEntitys the bookingTicketEntitys to set
+     */
+    public void setBookingTicketEntitys(List<BookingTicketEntity> bookingTicketEntitys) {
+        this.bookingTicketEntitys = bookingTicketEntitys;
     }
     
 }

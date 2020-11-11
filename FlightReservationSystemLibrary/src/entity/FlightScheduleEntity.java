@@ -24,20 +24,6 @@ import javax.persistence.OneToOne;
 @Entity
 public class FlightScheduleEntity implements Serializable {
 
-    /**
-     * @return the reservations
-     */
-    public List<ReservationEntity> getReservations() {
-        return reservations;
-    }
-
-    /**
-     * @param reservations the reservations to set
-     */
-    public void setReservations(List<ReservationEntity> reservations) {
-        this.reservations = reservations;
-    }
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,7 +31,7 @@ public class FlightScheduleEntity implements Serializable {
     private String departureDateTime;
     private int duration;
     private String arrivalDateTime;
-      
+
     @OneToMany(mappedBy = "flightSchedule")
     private List<SeatsInventoryEntity> seatsInventoryEntitys;
 
@@ -57,9 +43,9 @@ public class FlightScheduleEntity implements Serializable {
 
     @ManyToOne
     private FlightSchedulePlanEntity plan;
-
+    
     @OneToMany(mappedBy = "flightSchedule")
-    private List<ReservationEntity> reservations;
+    private List<BookingTicketEntity> bookingTicketEntitys;
 
     public FlightScheduleEntity() {
     }
@@ -69,8 +55,7 @@ public class FlightScheduleEntity implements Serializable {
         this.duration = duration;
         this.arrivalDateTime = arrivalDateTime;
     }
-    
-    
+
     public Long getScheduleId() {
         return scheduleId;
     }
@@ -201,5 +186,19 @@ public class FlightScheduleEntity implements Serializable {
     public void setSeatsInventoryEntitys(List<SeatsInventoryEntity> seatsInventoryEntitys) {
         this.seatsInventoryEntitys = seatsInventoryEntitys;
     }
-    
+
+    /**
+     * @return the bookingTicketEntitys
+     */
+    public List<BookingTicketEntity> getBookingTicketEntitys() {
+        return bookingTicketEntitys;
+    }
+
+    /**
+     * @param bookingTicketEntitys the bookingTicketEntitys to set
+     */
+    public void setBookingTicketEntitys(List<BookingTicketEntity> bookingTicketEntitys) {
+        this.bookingTicketEntitys = bookingTicketEntitys;
+    }
+
 }

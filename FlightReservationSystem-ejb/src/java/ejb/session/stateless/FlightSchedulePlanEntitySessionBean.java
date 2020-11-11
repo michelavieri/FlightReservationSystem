@@ -81,7 +81,7 @@ public class FlightSchedulePlanEntitySessionBean implements FlightSchedulePlanEn
         flightSchedules.size();
 
         for (FlightScheduleEntity schedule : flightSchedules) {
-            if (schedule.getReservations().size() == 0) {
+            if (schedule.getBookingTicketEntitys().size() == 0) {
                 throw new ScheduleIsUsedException();
             }
 

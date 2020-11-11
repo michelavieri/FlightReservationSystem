@@ -6,11 +6,13 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -26,6 +28,8 @@ public class SeatsInventoryEntity implements Serializable {
     private int availableSeatsSize;
     private int reservedSeatsSize;
     private int balanceSeatsSize;
+    @OneToMany(mappedBy = "seatsInventory")
+    private List<SeatEntity> seats;
 
     @ManyToOne
     private FlightScheduleEntity flightSchedule;
@@ -143,6 +147,20 @@ public class SeatsInventoryEntity implements Serializable {
      */
     public void setCabinClass(CabinClassConfigurationEntity cabinClass) {
         this.cabinClass = cabinClass;
+    }
+
+    /**
+     * @return the seats
+     */
+    public List<SeatEntity> getSeats() {
+        return seats;
+    }
+
+    /**
+     * @param seats the seats to set
+     */
+    public void setSeats(List<SeatEntity> seats) {
+        this.seats = seats;
     }
 
 }

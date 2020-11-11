@@ -9,22 +9,22 @@ package util.exception;
  *
  * @author miche
  */
-public class EmailExistException extends Exception {
+public class NotMyReservationException extends Exception {
 
     /**
-     * Creates a new instance of <code>EmailExistException</code> without detail
-     * message.
+     * Creates a new instance of <code>NotMyReservationException</code> without
+     * detail message.
      */
-    public EmailExistException() {
+    public NotMyReservationException() {
     }
 
     /**
-     * Constructs an instance of <code>EmailExistException</code> with the
+     * Constructs an instance of <code>NotMyReservationException</code> with the
      * specified detail message.
      *
      * @param msg the detail message.
      */
-    public EmailExistException(String msg) {
+    public NotMyReservationException(String msg) {
         super(msg);
     }
 }

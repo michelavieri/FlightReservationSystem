@@ -24,6 +24,7 @@ import util.exception.InvalidLoginCredentialsException;
 import util.exception.InvalidUsernameException;
 import util.exception.WrongPasswordException;
 import ejb.session.stateless.AircraftConfigurationEntitySessionBeanRemote;
+import ejb.session.stateless.BookingTicketEntitySessionBeanRemote;
 import ejb.session.stateless.FlightEntitySessionBeanRemote;
 import ejb.session.stateless.FlightRouteEntitySessionBeanRemote;
 import ejb.session.stateless.FlightScheduleEntitySessionBeanRemote;
@@ -31,14 +32,12 @@ import ejb.session.stateless.FlightSchedulePlanEntitySessionBeanRemote;
 import ejb.session.stateless.ReservationEntitySessionBeanRemote;
 import ejb.session.stateless.SeatsInventoryEntitySessionBeanRemote;
 import entity.AirportEntity;
+import entity.BookingTicketEntity;
 import entity.FlightEntity;
 import entity.FlightRouteEntity;
 import entity.FlightScheduleEntity;
 import entity.FlightSchedulePlanEntity;
-import entity.ReservationEntity;
 import entity.SeatsInventoryEntity;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 import util.exception.AircraftConfigurationNotFoundException;
 import util.exception.AirportNotFoundException;
@@ -77,8 +76,10 @@ public class MainApp {
     private FlightOperationModule flightOperationModule;
 
     private ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote;
-    
+
     private SeatsInventoryEntitySessionBeanRemote seatsInventoryEntitySessionBeanRemote;
+    
+    private BookingTicketEntitySessionBeanRemote bookingTicketEntitySessionBeanRemote;
 
     public MainApp() {
     }
@@ -94,7 +95,8 @@ public class MainApp {
             FlightScheduleEntitySessionBeanRemote flightScheduleEntitySessionBeanRemote,
             FlightSchedulePlanEntitySessionBeanRemote flightSchedulePlanEntitySessionBeanRemote,
             ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote,
-            SeatsInventoryEntitySessionBeanRemote seatsInventoryEntitySessionBeanRemote) {
+            SeatsInventoryEntitySessionBeanRemote seatsInventoryEntitySessionBeanRemote,
+            BookingTicketEntitySessionBeanRemote bookingTicketEntitySessionBeanRemote) {
         this.partnerEntitySessionBeanRemote = partnerEntitySessionBeanRemote;
         this.employeeEntitySessionBeanRemote = employeeEntitySessionBeanRemote;
         this.airportEntitySessionBeanRemote = airportEntitySessionBeanRemote;
@@ -107,6 +109,7 @@ public class MainApp {
         this.flightSchedulePlanEntitySessionBeanRemote = flightSchedulePlanEntitySessionBeanRemote;
         this.reservationEntitySessionBeanRemote = reservationEntitySessionBeanRemote;
         this.seatsInventoryEntitySessionBeanRemote = seatsInventoryEntitySessionBeanRemote;
+        this.bookingTicketEntitySessionBeanRemote = bookingTicketEntitySessionBeanRemote;
     }
 
     public void runApp() {
@@ -232,34 +235,34 @@ public class MainApp {
                     System.out.println("Enter " + numOfClasses + " cabin classes based on the numbers above:");
                     for (int i = 1; i <= numOfClasses; i++) {
                         System.out.println("Here are the list of cabin class types:");
-                        System.out.println("1: First Class");
-                        System.out.println("2: Business Class");
-                        System.out.println("3: Premium Economy Class");
-                        System.out.println("4: Economy Class");
-                        int response2 = 0;
+                        System.out.println("F: First Class");
+                        System.out.println("J: Business Class");
+                        System.out.println("W: Premium Economy Class");
+                        System.out.println("Y: Economy Class");
+                        String response2 = "a";
                         CabinClassTypeEnum classType = CabinClassTypeEnum.FIRST_CLASS;
-                        while (response2 < 1 || response2 > 4) {
-                            System.out.print(i + ". Enter type of cabin class > ");
-                            response2 = sc.nextInt();
+                        while (!response2.equals("F") && !response2.equals("J") && !response2.equals("W") && !response2.equals("Y")) {
+                            System.out.print(i + ". Enter type of cabin class in letter > ");
+                            response2 = sc.nextLine();
                             switch (response2) {
-                                case 1:
+                                case "F":
                                     classType = CabinClassTypeEnum.FIRST_CLASS;
                                     break;
-                                case 2:
+                                case "J":
                                     classType = CabinClassTypeEnum.BUSINESS_CLASS;
                                     break;
-                                case 3:
+                                case "W":
                                     classType = CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS;
                                     break;
-                                case 4:
+                                case "Y":
                                     classType = CabinClassTypeEnum.ECONOMY_CLASS;
                                     break;
                                 default:
-                                    System.out.println("Please enter numbers from 1-4!");
+                                    System.out.println("Please enter the correct letter in capital letters!");
                                     break;
                             }
 
-                            if (response2 < 1 || response2 > 4) {
+                            if (!response2.equals("F") && !response2.equals("J") && !response2.equals("W") && !response2.equals("Y")) {
                                 continue;
                             }
                             System.out.println("***Create Cabin Class Configuration***");
@@ -610,7 +613,7 @@ public class MainApp {
                         break;
                     }
                     System.out.println("List of available flight schedules ID for flight " + flightNumber + " :");
-                    
+
                     List<FlightSchedulePlanEntity> plans = flightEntitySessionBeanRemote.retrieveSchedulePlans(flight);
                     if (plans.isEmpty()) {
                         System.out.println("No available flight schedules for flight " + flightNumber + "!");
@@ -666,7 +669,7 @@ public class MainApp {
                         break;
                     }
                     System.out.println("List of available flight schedules ID for flight " + flightNumber + " :");
-                    
+
                     List<FlightSchedulePlanEntity> plans = flightEntitySessionBeanRemote.retrieveSchedulePlans(flight);
                     if (plans.isEmpty()) {
                         System.out.println("No available flight schedules for flight " + flightNumber + "!");
@@ -681,63 +684,56 @@ public class MainApp {
                         }
                     }
                     System.out.println();
-                    System.out.print("Enter Schedule ID to view seats inventory> ");
+                    System.out.print("Enter Schedule ID to view reservations> ");
                     Long scheduleId = sc.nextLong();
 
-                    List<ReservationEntity> firstClassReservations
-                            = reservationEntitySessionBeanRemote.retrieveReservationsByScheduleIdFirstClass(scheduleId);
+                    List<BookingTicketEntity> firstClassTickets = bookingTicketEntitySessionBeanRemote.retrieveTicketsByScheduleIdFirstClass(scheduleId);
+                    List<BookingTicketEntity> businessClassTickets = bookingTicketEntitySessionBeanRemote.retrieveTicketsByScheduleIdBusinessClass(scheduleId);
+                    List<BookingTicketEntity> premiumEconomyClassTickets = bookingTicketEntitySessionBeanRemote.retrieveTicketsByScheduleIdPremiumEconomyClass(scheduleId);
+                    List<BookingTicketEntity> economyClassTickets = bookingTicketEntitySessionBeanRemote.retrieveTicketsByScheduleIdEconomyClass(scheduleId);
 
-                    List<ReservationEntity> businessClassReservations
-                            = reservationEntitySessionBeanRemote.retrieveReservationsByScheduleIdBusinessClass(scheduleId);
-
-                    List<ReservationEntity> premiumClassReservations
-                            = reservationEntitySessionBeanRemote.retrieveReservationsByScheduleIdPremiumClass(scheduleId);
-
-                    List<ReservationEntity> economyClassReservations
-                            = reservationEntitySessionBeanRemote.retrieveReservationsByScheduleIdEconomyClass(scheduleId);
-
-                    if (firstClassReservations.isEmpty() && businessClassReservations.isEmpty() && premiumClassReservations.isEmpty()
-                            && economyClassReservations.isEmpty()) {
+                    if (firstClassTickets.isEmpty() && businessClassTickets.isEmpty() && premiumEconomyClassTickets.isEmpty()
+                            && economyClassTickets.isEmpty()) {
                         System.out.println("There are no reservations for this schedule!");
                         break;
                     }
 
-                    if (!firstClassReservations.isEmpty()) {
+                    if (!firstClassTickets.isEmpty()) {
                         System.out.println("*** FIRST CLASS RESERVATIONS: ***");
-                        for (ReservationEntity reservation : firstClassReservations) {
-                            System.out.println("Passenger name: " + reservation.getPassengerName());
-                            System.out.println("Seat number: " + reservation.getSeatNumber());
-                            System.out.println("Fare Basis Code: " + reservation.getFareBasisCode());
+                        for (BookingTicketEntity ticket : firstClassTickets) {
+                            System.out.println("Passenger name: " + ticket.getPassenger().getPassengerName());
+                            System.out.println("Seat number: " + ticket.getSeat().getSeatNumber());
+                            System.out.println("Fare Basis Code: " + ticket.getFareBasisCode());
                             System.out.println();
                         }
                     }
 
-                    if (!businessClassReservations.isEmpty()) {
+                    if (!businessClassTickets.isEmpty()) {
                         System.out.println("*** BUSINESS CLASS RESERVATIONS: ***");
-                        for (ReservationEntity reservation : businessClassReservations) {
-                            System.out.println("Passenger name: " + reservation.getPassengerName());
-                            System.out.println("Seat number: " + reservation.getSeatNumber());
-                            System.out.println("Fare Basis Code: " + reservation.getFareBasisCode());
+                        for (BookingTicketEntity ticket : businessClassTickets) {
+                            System.out.println("Passenger name: " + ticket.getPassenger().getPassengerName());
+                            System.out.println("Seat number: " + ticket.getSeat().getSeatNumber());
+                            System.out.println("Fare Basis Code: " + ticket.getFareBasisCode());
                             System.out.println();
                         }
                     }
 
-                    if (!premiumClassReservations.isEmpty()) {
+                    if (!premiumEconomyClassTickets.isEmpty()) {
                         System.out.println("*** PREMIUM ECONOMY CLASS RESERVATIONS: ***");
-                        for (ReservationEntity reservation : premiumClassReservations) {
-                            System.out.println("Passenger name: " + reservation.getPassengerName());
-                            System.out.println("Seat number: " + reservation.getSeatNumber());
-                            System.out.println("Fare Basis Code: " + reservation.getFareBasisCode());
+                        for (BookingTicketEntity ticket : premiumEconomyClassTickets) {
+                            System.out.println("Passenger name: " + ticket.getPassenger().getPassengerName());
+                            System.out.println("Seat number: " + ticket.getSeat().getSeatNumber());
+                            System.out.println("Fare Basis Code: " + ticket.getFareBasisCode());
                             System.out.println();
                         }
                     }
 
-                    if (!economyClassReservations.isEmpty()) {
+                    if (!economyClassTickets.isEmpty()) {
                         System.out.println("*** ECONOMY CLASS RESERVATIONS: ***");
-                        for (ReservationEntity reservation : economyClassReservations) {
-                            System.out.println("Passenger name: " + reservation.getPassengerName());
-                            System.out.println("Seat number: " + reservation.getSeatNumber());
-                            System.out.println("Fare Basis Code: " + reservation.getFareBasisCode());
+                        for (BookingTicketEntity ticket : economyClassTickets) {
+                            System.out.println("Passenger name: " + ticket.getPassenger().getPassengerName());
+                            System.out.println("Seat number: " + ticket.getSeat().getSeatNumber());
+                            System.out.println("Fare Basis Code: " + ticket.getFareBasisCode());
                             System.out.println();
                         }
                     }

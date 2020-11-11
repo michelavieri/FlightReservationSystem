@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.CustomerEntity;
 import entity.ReservationEntity;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,8 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.enumeration.CabinClassTypeEnum;
+import util.exception.InvalidReservationId;
+import util.exception.NotMyReservationException;
 
 /**
  *
@@ -30,54 +33,28 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
     }
 
     @Override
-    public List<ReservationEntity> retrieveReservationsByScheduleIdFirstClass(Long id) {
-        List<ReservationEntity> reservations = new ArrayList<>();
-        Query query = entityManager.createQuery("SELECT r FROM ReservationEntity r WHERE r.cabinClass := inClass ORDER BY r.seatNumber ASC");
-        query.setParameter("inClass", CabinClassTypeEnum.FIRST_CLASS);
-        try {
-            reservations = query.getResultList();
-        } catch (NoResultException ex) {
-            return reservations;
-        }
-        return reservations;
-    }
-    
-    @Override
-    public List<ReservationEntity> retrieveReservationsByScheduleIdBusinessClass(Long id) {
-        List<ReservationEntity> reservations = new ArrayList<>();
-        Query query = entityManager.createQuery("SELECT r FROM ReservationEntity r WHERE r.cabinClass := inClass ORDER BY r.seatNumber ASC");
-        query.setParameter("inClass", CabinClassTypeEnum.BUSINESS_CLASS);
-        try {
-            reservations = query.getResultList();
-        } catch (NoResultException ex) {
-            return reservations;
-        }
-        return reservations;
-    }
-    
-    @Override
-    public List<ReservationEntity> retrieveReservationsByScheduleIdPremiumClass(Long id) {
-        List<ReservationEntity> reservations = new ArrayList<>();
-        Query query = entityManager.createQuery("SELECT r FROM ReservationEntity r WHERE r.cabinClass := inClass ORDER BY r.seatNumber ASC");
-        query.setParameter("inClass", CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS);
-        try {
-            reservations = query.getResultList();
-        } catch (NoResultException ex) {
-            return reservations;
-        }
-        return reservations;
-    }
+    public List<ReservationEntity> retrieveFlightReservationsByCustomer(CustomerEntity cust) {
+        cust = entityManager.find(CustomerEntity.class, cust);
+        cust.getReservationsEntitys().size();
+        List<ReservationEntity> reservations = cust.getReservationsEntitys();
 
-    @Override
-    public List<ReservationEntity> retrieveReservationsByScheduleIdEconomyClass(Long id) {
-        List<ReservationEntity> reservations = new ArrayList<>();
-        Query query = entityManager.createQuery("SELECT r FROM ReservationEntity r WHERE r.cabinClass := inClass ORDER BY r.seatNumber ASC");
-        query.setParameter("inClass", CabinClassTypeEnum.ECONOMY_CLASS);
-        try {
-            reservations = query.getResultList();
-        } catch (NoResultException ex) {
-            return reservations;
-        }
         return reservations;
+    }
+    
+    @Override
+    public ReservationEntity retrieveReservationByReservationId(long reservationId, CustomerEntity customer) throws InvalidReservationId, NotMyReservationException {
+        Query query = entityManager.createQuery("SELECT r FROM ReservationEntity r WHERE r.reservationId = :id");
+        query.setParameter("id", reservationId);
+        ReservationEntity reservation = null;
+        try {
+            reservation = (ReservationEntity) query.getSingleResult();
+        } catch (NoResultException ex) {
+            throw new InvalidReservationId("The reservation Id is invalid!");
+        }
+        
+        if (!reservation.getCustomer().equals(reservation)) {
+            throw new NotMyReservationException("This reservation is not your reservation!");
+        }
+        return reservation;
     }
 }
