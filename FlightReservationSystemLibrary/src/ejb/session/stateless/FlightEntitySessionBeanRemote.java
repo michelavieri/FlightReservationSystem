@@ -12,6 +12,7 @@ import entity.FlightRouteEntity;
 import entity.FlightSchedulePlanEntity;
 import java.util.List;
 import javax.ejb.Remote;
+import util.exception.FlightDisabledException;
 import util.exception.FlightNotFoundException;
 
 /**
@@ -26,7 +27,7 @@ public interface FlightEntitySessionBeanRemote {
     public List<FlightSchedulePlanEntity> retrieveSchedulePlans (FlightEntity flight);
 
     public List<FlightEntity> retrieveAllFlights();
-   
+
     public void setReturnFlight(FlightEntity departureFlight, FlightEntity returnFlight);
 
     public void setDepartureFlight(FlightEntity returnFlight, FlightEntity departureFlight);

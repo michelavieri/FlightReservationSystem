@@ -77,6 +77,8 @@ public class MainApp {
     private FlightOperationModule flightOperationModule;
 
     private ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote;
+    
+    private SeatsInventoryEntitySessionBeanRemote seatsInventoryEntitySessionBeanRemote;
 
     private SeatsInventoryEntitySessionBeanRemote seatsInventoryEntitySessionBeanRemote;
 
@@ -600,7 +602,7 @@ public class MainApp {
                 if (response == 1) {
                     System.out.println("*** FRS Schedule Manager :: View Seats Inventory ***");
                     sc.nextLine();
-                    System.out.print("Enter the flight number> ");
+                    System.out.print("Enter the flight code> ");
                     String flightNumber = sc.nextLine();
                     FlightEntity flight = null;
                     try {
@@ -656,7 +658,7 @@ public class MainApp {
                 } else if (response == 2) {
                     System.out.println("*** FRS Schedule Manager :: View Flight Reservations ***");
                     sc.nextLine();
-                    System.out.print("Enter the flight number> ");
+                    System.out.print("Enter the flight code> ");
                     String flightNumber = sc.nextLine();
                     FlightEntity flight = null;
                     try {

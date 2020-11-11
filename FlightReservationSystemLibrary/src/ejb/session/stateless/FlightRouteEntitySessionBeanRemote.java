@@ -50,4 +50,7 @@ public interface FlightRouteEntitySessionBeanRemote {
     
     public FlightRouteEntity retrieveRouteById(Long newRouteId) throws FlightRouteNotFoundException;
 
+    public boolean isDisabled(FlightRouteEntity route) throws FlightRouteDisabled;
+    
+    public boolean checkReturnRouteAvailability(FlightRouteEntity route);
 }

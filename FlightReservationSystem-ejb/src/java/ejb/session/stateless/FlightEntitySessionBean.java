@@ -18,6 +18,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.FlightDisabledException;
 import util.exception.FlightNotFoundException;
 
 /**

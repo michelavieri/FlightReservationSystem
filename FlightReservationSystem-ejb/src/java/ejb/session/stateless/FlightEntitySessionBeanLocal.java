@@ -12,6 +12,7 @@ import entity.FlightRouteEntity;
 import entity.FlightSchedulePlanEntity;
 import java.util.List;
 import javax.ejb.Local;
+import util.exception.FlightDisabledException;
 import util.exception.FlightNotFoundException;
 
 /**

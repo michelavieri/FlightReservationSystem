@@ -173,6 +173,7 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
 
     @Override
     public boolean checkReturnRouteAvailability(FlightRouteEntity route) {
+        route = entityManager.find(FlightRouteEntity.class, route.getRouteId());
         if (route.getReturnFlightRoute() != null) {
             return true;
         }
@@ -182,6 +183,7 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
     
     @Override
     public boolean isReturnRoute(FlightRouteEntity route) {
+        route = entityManager.find(FlightRouteEntity.class, route.getRouteId());
         if (route.getDepartureFlightRoute() != null) {
             return true;
         }
