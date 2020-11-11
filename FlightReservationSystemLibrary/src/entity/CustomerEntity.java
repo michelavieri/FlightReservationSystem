@@ -1,4 +1,3 @@
-
 package entity;
 
 import java.io.Serializable;
@@ -9,7 +8,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-
 @Entity
 public class CustomerEntity implements Serializable {
 
@@ -17,24 +15,20 @@ public class CustomerEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long customerId;
-    private String username;
     private String firstName;
     private String lastName;
     private String email;
     private String phoneNum;
     private String address;
     private String password;
-    
+
     @OneToMany(mappedBy = "customer")
     private List<ReservationEntity> reservationsEntitys;
 
-    
     public CustomerEntity() {
     }
-    
-    public CustomerEntity(Long customerId, String username, String firstName, String lastName, String email, String phoneNum, String address, String password) {
-        this.customerId = customerId;
-        this.username = username;
+
+    public CustomerEntity(String firstName, String lastName, String email, String phoneNum, String address, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -42,8 +36,6 @@ public class CustomerEntity implements Serializable {
         this.address = address;
         this.password = password;
     }
-    
-    
 
     public Long getCustomerId() {
         return customerId;
@@ -77,5 +69,103 @@ public class CustomerEntity implements Serializable {
     public String toString() {
         return "entity.CustomerEntity[ id=" + customerId + " ]";
     }
-    
+
+    /**
+     * @return the firstName
+     */
+    public String getFirstName() {
+        return firstName;
+    }
+
+    /**
+     * @param firstName the firstName to set
+     */
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    /**
+     * @return the lastName
+     */
+    public String getLastName() {
+        return lastName;
+    }
+
+    /**
+     * @param lastName the lastName to set
+     */
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    /**
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * @param email the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    /**
+     * @return the phoneNum
+     */
+    public String getPhoneNum() {
+        return phoneNum;
+    }
+
+    /**
+     * @param phoneNum the phoneNum to set
+     */
+    public void setPhoneNum(String phoneNum) {
+        this.phoneNum = phoneNum;
+    }
+
+    /**
+     * @return the address
+     */
+    public String getAddress() {
+        return address;
+    }
+
+    /**
+     * @param address the address to set
+     */
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    /**
+     * @return the password
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * @param password the password to set
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * @return the reservationsEntitys
+     */
+    public List<ReservationEntity> getReservationsEntitys() {
+        return reservationsEntitys;
+    }
+
+    /**
+     * @param reservationsEntitys the reservationsEntitys to set
+     */
+    public void setReservationsEntitys(List<ReservationEntity> reservationsEntitys) {
+        this.reservationsEntitys = reservationsEntitys;
+    }
+
 }
