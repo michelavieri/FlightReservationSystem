@@ -28,6 +28,11 @@ public class FareEntity implements Serializable {
     
     public FareEntity() {
     }
+
+    public FareEntity(String fareBasisCode, String amount) {
+        this.fareBasisCode = fareBasisCode;
+        this.amount = amount;
+    }
     
  
     public Long getFairId() {
@@ -78,6 +83,34 @@ public class FareEntity implements Serializable {
     @Override
     public String toString() {
         return "entity.FareEntity[ id=" + fairId + " ]";
+    }
+
+    /**
+     * @return the flightSchedulePlan
+     */
+    public FlightSchedulePlanEntity getFlightSchedulePlan() {
+        return flightSchedulePlan;
+    }
+
+    /**
+     * @param flightSchedulePlan the flightSchedulePlan to set
+     */
+    public void setFlightSchedulePlan(FlightSchedulePlanEntity flightSchedulePlan) {
+        this.flightSchedulePlan = flightSchedulePlan;
+    }
+
+    /**
+     * @return the cabinClass
+     */
+    public CabinClassConfigurationEntity getCabinClass() {
+        return cabinClass;
+    }
+
+    /**
+     * @param cabinClass the cabinClass to set
+     */
+    public void setCabinClass(CabinClassConfigurationEntity cabinClass) {
+        this.cabinClass = cabinClass;
     }
     
 }

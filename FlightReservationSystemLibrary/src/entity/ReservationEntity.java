@@ -19,7 +19,6 @@ public class ReservationEntity implements Serializable {
     private Long reservationId;
     private String seatNumber;
     private String passengerName;
-    private String fareBasisCode;
 
     @ManyToOne
     private PartnerEntity partner;
@@ -38,7 +37,6 @@ public class ReservationEntity implements Serializable {
     public ReservationEntity(String seatNumber, String passengerName, String fareBasisCode, FlightScheduleEntity flightSchedule, CabinClassTypeEnum cabinClass) {
         this.seatNumber = seatNumber;
         this.passengerName = passengerName;
-        this.fareBasisCode = fareBasisCode;
         this.flightSchedule = flightSchedule;
         this.cabinClass = cabinClass;
     }
@@ -65,14 +63,6 @@ public class ReservationEntity implements Serializable {
 
     public void setPassengerName(String passengerName) {
         this.passengerName = passengerName;
-    }
-
-    public String getFareBasisCode() {
-        return fareBasisCode;
-    }
-
-    public void setFareBasisCode(String fareBasisCode) {
-        this.fareBasisCode = fareBasisCode;
     }
 
     @Override

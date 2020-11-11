@@ -24,6 +24,7 @@ import util.exception.InvalidLoginCredentialsException;
 import util.exception.InvalidUsernameException;
 import util.exception.WrongPasswordException;
 import ejb.session.stateless.AircraftConfigurationEntitySessionBeanRemote;
+import ejb.session.stateless.FareEntitySessionBeanRemote;
 import ejb.session.stateless.FlightEntitySessionBeanRemote;
 import ejb.session.stateless.FlightRouteEntitySessionBeanRemote;
 import ejb.session.stateless.FlightScheduleEntitySessionBeanRemote;
@@ -79,6 +80,8 @@ public class MainApp {
     private ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote;
     
     private SeatsInventoryEntitySessionBeanRemote seatsInventoryEntitySessionBeanRemote;
+    
+    private FareEntitySessionBeanRemote fareEntitySessionBeanRemote;
 
     public MainApp() {
     }
@@ -94,7 +97,8 @@ public class MainApp {
             FlightScheduleEntitySessionBeanRemote flightScheduleEntitySessionBeanRemote,
             FlightSchedulePlanEntitySessionBeanRemote flightSchedulePlanEntitySessionBeanRemote,
             ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote,
-            SeatsInventoryEntitySessionBeanRemote seatsInventoryEntitySessionBeanRemote) {
+            SeatsInventoryEntitySessionBeanRemote seatsInventoryEntitySessionBeanRemote,
+            FareEntitySessionBeanRemote fareEntitySessionBeanRemote) {
         this.partnerEntitySessionBeanRemote = partnerEntitySessionBeanRemote;
         this.employeeEntitySessionBeanRemote = employeeEntitySessionBeanRemote;
         this.airportEntitySessionBeanRemote = airportEntitySessionBeanRemote;
@@ -107,6 +111,7 @@ public class MainApp {
         this.flightSchedulePlanEntitySessionBeanRemote = flightSchedulePlanEntitySessionBeanRemote;
         this.reservationEntitySessionBeanRemote = reservationEntitySessionBeanRemote;
         this.seatsInventoryEntitySessionBeanRemote = seatsInventoryEntitySessionBeanRemote;
+        this.fareEntitySessionBeanRemote = fareEntitySessionBeanRemote;
     }
 
     public void runApp() {
@@ -540,7 +545,8 @@ public class MainApp {
                 = new FlightOperationModule(airportEntitySessionBeanRemote, aircraftTypeEntitySessionBeanRemote,
                         cabinClassConfigurationSessionBeanRemote, aircraftConfigurationEntitySessionBeanRemote,
                         flightEntitySessionBeanRemote, flightRouteEntitySessionBeanRemote,
-                        flightScheduleEntitySessionBeanRemote, flightSchedulePlanEntitySessionBeanRemote);
+                        flightScheduleEntitySessionBeanRemote, flightSchedulePlanEntitySessionBeanRemote,
+                        fareEntitySessionBeanRemote);
 
         while (true) {
             System.out.println("*** FRS Management Application ***");
@@ -567,7 +573,7 @@ public class MainApp {
                 } else if (response == 4) {
                     flightOperationModule.createFlightSchedulePlan(sc);
                 } else if (response == 5) {
-
+                    flightOperationModule.viewAllSchedulePlan(sc);
                 } else if (response == 6) {
 
                 } else if (response == 7) {
@@ -707,7 +713,7 @@ public class MainApp {
                         for (ReservationEntity reservation : firstClassReservations) {
                             System.out.println("Passenger name: " + reservation.getPassengerName());
                             System.out.println("Seat number: " + reservation.getSeatNumber());
-                            System.out.println("Fare Basis Code: " + reservation.getFareBasisCode());
+                            System.out.println("Fare Basis Code: " );
                             System.out.println();
                         }
                     }
@@ -717,7 +723,7 @@ public class MainApp {
                         for (ReservationEntity reservation : businessClassReservations) {
                             System.out.println("Passenger name: " + reservation.getPassengerName());
                             System.out.println("Seat number: " + reservation.getSeatNumber());
-                            System.out.println("Fare Basis Code: " + reservation.getFareBasisCode());
+                            System.out.println("Fare Basis Code: " );
                             System.out.println();
                         }
                     }
@@ -727,7 +733,7 @@ public class MainApp {
                         for (ReservationEntity reservation : premiumClassReservations) {
                             System.out.println("Passenger name: " + reservation.getPassengerName());
                             System.out.println("Seat number: " + reservation.getSeatNumber());
-                            System.out.println("Fare Basis Code: " + reservation.getFareBasisCode());
+                            System.out.println("Fare Basis Code: " );
                             System.out.println();
                         }
                     }
@@ -737,7 +743,7 @@ public class MainApp {
                         for (ReservationEntity reservation : economyClassReservations) {
                             System.out.println("Passenger name: " + reservation.getPassengerName());
                             System.out.println("Seat number: " + reservation.getSeatNumber());
-                            System.out.println("Fare Basis Code: " + reservation.getFareBasisCode());
+                            System.out.println("Fare Basis Code: " );
                             System.out.println();
                         }
                     }
