@@ -91,13 +91,13 @@ public class FlightOperationModule {
 
     public String searchSchedulePlanType(FlightSchedulePlanTypeEnum type) {
         if (type.equals(FlightSchedulePlanTypeEnum.SINGLE)) {
-            return "First Class";
+            return "Single Plan";
         } else if (type.equals(FlightSchedulePlanTypeEnum.MULTIPLE)) {
-            return "Business Class";
+            return "Multiple Plan";
         } else if (type.equals(FlightSchedulePlanTypeEnum.RECURRENT_DAY)) {
-            return "Premium Economy Class";
+            return "Recurrent Daily Plan";
         } else if (type.equals(FlightSchedulePlanTypeEnum.RECURRENT_WEEK)) {
-            return "Economy Class";
+            return "Recurrent Weekly Plan";
         }
         return "invalid";
     }
@@ -469,6 +469,29 @@ public class FlightOperationModule {
 
             flightSchedulePlanEntitySessionBeanRemote.associatePlanWithFlight(schedulePlan, flight);
             System.out.println("Flight schedule with id " + schedulePlan.getSchedulePlanId() + "is created!");
+        }
+    }
+
+    public void viewAllSchedulePlan(Scanner sc) {
+        System.out.println("*** FRS Schedule Manager :: Delete Schedule Plan ***");
+        sc.nextLine();
+
+        List<FlightSchedulePlanEntity> plans = flightSchedulePlanEntitySessionBeanRemote.retrieveAllSchedulePlan();
+
+        for (FlightSchedulePlanEntity plan : plans) {
+            System.out.println("Schedule plan id: " + plan.getSchedulePlanId());
+            System.out.println("Schedule plan type: " + searchSchedulePlanType(plan.getType()));
+            System.out.println("Schedule plan starting date: " + plan.getStartDate());
+            if (plan.getEndDate() != null) {
+                System.out.println("Schedule plan ending date: " + plan.getEndDate());
+            }
+            
+            FlightEntity flight = flightSchedulePlanEntitySessionBeanRemote.retrieveFlightFromPlan(plan);
+            System.out.println("Flight number: " + flight.getFlightCode());
+            
+            if(plan.getLayoverDuration() > 0) {
+                System.out.println("Schedule plan layover duration: " + plan.getLayoverDuration());
+            }
         }
     }
 

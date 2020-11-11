@@ -9,6 +9,7 @@ import entity.FlightEntity;
 import entity.FlightScheduleEntity;
 import entity.FlightSchedulePlanEntity;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import javax.ejb.Local;
 import util.exception.ScheduleIsUsedException;
 import util.exception.ScheduleOverlapException;
@@ -33,5 +34,7 @@ public interface FlightSchedulePlanEntitySessionBeanLocal {
     public FlightEntity retrieveFlightFromPlan(FlightSchedulePlanEntity plan);
 
     public void replaceRecurrentSchedulePlan(FlightSchedulePlanEntity oldSchedulePlan, FlightSchedulePlanEntity newSchedulePlan, DateTimeFormatter dateFormat, String departureTime, String duration, int days, int layover) throws ScheduleIsUsedException, ScheduleOverlapException;
+
+    public List<FlightSchedulePlanEntity> retrieveAllSchedulePlan();
 
 }

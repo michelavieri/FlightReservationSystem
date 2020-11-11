@@ -11,10 +11,12 @@ import entity.FlightSchedulePlanEntity;
 import entity.SeatsInventoryEntity;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.ScheduleIsUsedException;
@@ -44,6 +46,19 @@ public class FlightSchedulePlanEntitySessionBean implements FlightSchedulePlanEn
         return newFlightSchedulePlan;
     }
 
+    @Override
+    public List<FlightSchedulePlanEntity> retrieveAllSchedulePlan() {
+        Query query = entityManager.createQuery("SELECT p FROM FlightSchedulePlanEntity p ORDER BY p.schedulePlanId ASC, p.startDate DESC");
+        
+        List<FlightSchedulePlanEntity> plans = new ArrayList<>();
+        try {
+            plans = query.getResultList();
+        } catch (NoResultException ex) {
+            return plans;
+        }
+        return plans;
+    }
+      
     @Override
     public void associatePlanWithFlight(FlightSchedulePlanEntity plan, FlightEntity flight) {
         plan = entityManager.find(FlightSchedulePlanEntity.class, plan.getSchedulePlanId());
