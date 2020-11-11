@@ -549,7 +549,7 @@ public class MainApp {
                     System.out.println("Invalid response!");
                 }
             }
-            if (response == 6) {
+            if (response == 7) {
                 break;
             }
         }
