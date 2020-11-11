@@ -36,12 +36,11 @@ public class ReservationOperationModule {
     }
 
     public void searchFlights(Scanner sc) {
-        
+
     }
 
     public void viewMyFlightReservations(CustomerEntity customer) {
         List<ReservationEntity> reservations = reservationEntitySessionBeanRemote.retrieveFlightReservationsByCustomer(customer);
-
         for (ReservationEntity reservation : reservations) {
             System.out.println("RESERVATION ID: " + reservation.getReservationId());
             System.out.println("\t Number of Passengers: " + reservation.getNumOfPassengers());

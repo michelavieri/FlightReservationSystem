@@ -33,8 +33,15 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
     }
 
     @Override
+    public String test() {
+        return "a";
+    }
+    @Override
     public List<ReservationEntity> retrieveFlightReservationsByCustomer(CustomerEntity cust) {
-        cust = entityManager.find(CustomerEntity.class, cust);
+        cust = entityManager.find(CustomerEntity.class, cust.getCustomerId());
+        if (cust.getReservationsEntitys().isEmpty()) {
+            return new ArrayList<>();
+        }
         cust.getReservationsEntitys().size();
         List<ReservationEntity> reservations = cust.getReservationsEntitys();
 

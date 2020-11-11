@@ -1,6 +1,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -35,6 +36,7 @@ public class CustomerEntity implements Serializable {
         this.phoneNum = phoneNum;
         this.address = address;
         this.password = password;
+        this.reservationsEntitys = new ArrayList<>();
     }
 
     public Long getCustomerId() {

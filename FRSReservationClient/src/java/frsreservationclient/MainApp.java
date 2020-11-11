@@ -21,13 +21,12 @@ import util.exception.WrongPasswordException;
 public class MainApp {
 
     public CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote;
-    
+
     public ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote;
 
-    private CustomerEntity currentCustomer;
-    
-    public ReservationOperationModule reservationOperationModule = new ReservationOperationModule(reservationEntitySessionBeanRemote,
-    customerEntitySessionBeanRemote);
+    public CustomerEntity currentCustomer;
+
+    public ReservationOperationModule reservationOperationModule;
 
     public MainApp() {
 
@@ -64,7 +63,7 @@ public class MainApp {
                         System.out.println(ex.getMessage());
                     }
                 } else if (response == 2) {
-                    System.out.println("*** FRS Reservation System :: Custoemer Login ***");
+                    System.out.println("*** FRS Reservation System :: Customer Login ***");
                     try {
                         doLogin(sc);
                         System.out.println("Login successful!");
@@ -104,7 +103,7 @@ public class MainApp {
         String password = sc.nextLine();
 
         try {
-            customerEntitySessionBeanRemote.registerCustomer(new CustomerEntity(firstName, lastName, email, phoneNum, address, password));
+            currentCustomer = customerEntitySessionBeanRemote.registerCustomer(new CustomerEntity(firstName, lastName, email, phoneNum, address, password));
         } catch (EmailExistException ex) {
             throw new EmailExistException(ex.getMessage());
         }
@@ -132,6 +131,8 @@ public class MainApp {
     }
 
     private void menuMain(Scanner sc) {
+        reservationOperationModule = new ReservationOperationModule(reservationEntitySessionBeanRemote,
+                customerEntitySessionBeanRemote);
         Integer response = 0;
         while (true) {
             System.out.println("*** FRS Reservation Application: Customer Logged In ***");
@@ -151,7 +152,7 @@ public class MainApp {
                     reservationOperationModule.searchFlights(sc);
                 } else if (response == 2) {
                     System.out.println("*** FRS Customer :: View My Flight Reservations ***");
-                    reservationOperationModule.viewMyFlightReservations(currentCustomer);
+                    this.reservationOperationModule.viewMyFlightReservations(currentCustomer);
                 } else if (response == 3) {
                     System.out.println("*** FRS Customer :: View My Flight Reservation Details ***");
                     reservationOperationModule.viewFlightReservationDetails(currentCustomer, sc);

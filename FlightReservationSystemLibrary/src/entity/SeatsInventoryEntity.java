@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,7 +30,7 @@ public class SeatsInventoryEntity implements Serializable {
     private int reservedSeatsSize;
     private int balanceSeatsSize;
     @OneToMany(mappedBy = "seatsInventory")
-    private List<SeatEntity> seats;
+    private List<SeatEntity> seats = new ArrayList<>();
 
     @ManyToOne
     private FlightScheduleEntity flightSchedule;
