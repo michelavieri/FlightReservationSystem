@@ -128,6 +128,7 @@ public class FlightSchedulePlanEntitySessionBean implements FlightSchedulePlanEn
         return flight;
     }
 
+    @Override
     public void replaceRecurrentSchedulePlan(FlightSchedulePlanEntity oldSchedulePlan, FlightSchedulePlanEntity newSchedulePlan, DateTimeFormatter dateFormat, String departureTime, String duration, int days, int layover) throws ScheduleIsUsedException, ScheduleOverlapException {
         oldSchedulePlan = entityManager.find(FlightSchedulePlanEntity.class, oldSchedulePlan.getSchedulePlanId());
 
@@ -175,7 +176,7 @@ public class FlightSchedulePlanEntitySessionBean implements FlightSchedulePlanEn
             arrDateTime = arrivalDateTime.format(dateFormat);
 
             FlightScheduleEntity schedule = new FlightScheduleEntity(startingTimeDate, totalDuration, arrDateTime);
-            overlap = flightScheduleEntitySessionBean.checkOverlapPlan(flight, newSchedulePlan, schedule);
+            overlap = flightScheduleEntitySessionBean.checkOverlapPlan(flight, newSchedulePlan, schedule, dateFormat);
 
             if (overlap != null) {
                 throw new ScheduleOverlapException();

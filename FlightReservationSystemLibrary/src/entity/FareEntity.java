@@ -32,6 +32,11 @@ public class FareEntity implements Serializable {
     
     public FareEntity() {
     }
+
+    public FareEntity(String fareBasisCode, String amount) {
+        this.fareBasisCode = fareBasisCode;
+        this.amount = amount;
+    }
     
  
     public Long getFairId() {

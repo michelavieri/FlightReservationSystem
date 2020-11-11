@@ -24,17 +24,17 @@ public interface FlightScheduleEntitySessionBeanLocal {
 
     public void associateWithPlan(FlightScheduleEntity schedule, FlightSchedulePlanEntity schedulePlan);
 
-    public void associateNewSeatsInventory(FlightScheduleEntity schedule);
+    public void associateNewSeatsInventory(FlightSchedulePlanEntity plan);
 
     public void associateReturnSchedule(FlightScheduleEntity departure, FlightScheduleEntity returning);
 
-    public void createRecurrentSchedule(FlightSchedulePlanEntity schedule, String startDate, String endDate, int days, String departureTime, DateTimeFormatter dateFormat, String duration, boolean returning, int layoverDuration);
+    public void createRecurrentSchedule(String day, FlightSchedulePlanEntity schedule, String startDate, String endDate, int days, String departureTime, DateTimeFormatter dateFormat, String duration, int layoverDuration);
 
-    public boolean checkOverlapSchedule(FlightSchedulePlanEntity plan, FlightScheduleEntity schedule) throws ScheduleOverlapException;
+    public boolean checkOverlapSchedule(FlightSchedulePlanEntity plan, FlightScheduleEntity schedule, DateTimeFormatter dateFormat) throws ScheduleOverlapException;
 
-    public FlightScheduleEntity checkOverlapPlan(FlightEntity flight, FlightSchedulePlanEntity schedulePlan, FlightScheduleEntity schedule);
+    public FlightScheduleEntity checkOverlapPlan(FlightEntity flight, FlightSchedulePlanEntity schedulePlan, FlightScheduleEntity schedule, DateTimeFormatter dateFormat);
 
-    public FlightScheduleEntity overlapSchedule(FlightSchedulePlanEntity plan, FlightScheduleEntity schedule);
+    public FlightScheduleEntity overlapSchedule(FlightSchedulePlanEntity plan, FlightScheduleEntity schedule, DateTimeFormatter dateFormat);
 
     public void replaceSchedule(FlightScheduleEntity oldSchedule, FlightScheduleEntity newSchedule);
 

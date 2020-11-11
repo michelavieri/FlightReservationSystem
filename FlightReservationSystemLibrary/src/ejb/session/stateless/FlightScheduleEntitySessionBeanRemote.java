@@ -19,29 +19,29 @@ import util.exception.ScheduleOverlapException;
  */
 @Remote
 public interface FlightScheduleEntitySessionBeanRemote {
-    
-     public FlightScheduleEntity createFlightScheduleEntity(FlightScheduleEntity newFlightSchedule);
-    
-     public void associateWithPlan(FlightScheduleEntity schedule, FlightSchedulePlanEntity schedulePlan);
-     
-     public void associateNewSeatsInventory(FlightScheduleEntity schedule);
-    
-     public void associateReturnSchedule(FlightScheduleEntity departure, FlightScheduleEntity returning);
-    
-     public void createRecurrentSchedule(FlightSchedulePlanEntity schedule, String startDate, String endDate, int days, String departureTime, DateTimeFormatter dateFormat, String duration, boolean returning, int layoverDuration);
-    
-     public boolean checkOverlapSchedule(FlightSchedulePlanEntity plan, FlightScheduleEntity schedule) throws ScheduleOverlapException;
 
-     public FlightScheduleEntity checkOverlapPlan(FlightEntity flight, FlightSchedulePlanEntity schedulePlan, FlightScheduleEntity schedule);
+    public FlightScheduleEntity createFlightScheduleEntity(FlightScheduleEntity newFlightSchedule);
 
-      public FlightScheduleEntity overlapSchedule(FlightSchedulePlanEntity plan, FlightScheduleEntity schedule);
+    public void associateWithPlan(FlightScheduleEntity schedule, FlightSchedulePlanEntity schedulePlan);
 
-      public void replaceSchedule(FlightScheduleEntity oldSchedule, FlightScheduleEntity newSchedule);
+    public void associateNewSeatsInventory(FlightSchedulePlanEntity plan);
 
-      public void deleteSchedule(FlightScheduleEntity schedule) throws ScheduleIsUsedException;
+    public void associateReturnSchedule(FlightScheduleEntity departure, FlightScheduleEntity returning);
 
-      public FlightScheduleEntity retrieveFlightScheduleById(Long id);
+    public void createRecurrentSchedule(String day, FlightSchedulePlanEntity schedule, String startDate, String endDate, int days, String departureTime, DateTimeFormatter dateFormat, String duration, int layoverDuration);
 
-      public FlightScheduleEntity retrieveReturnSchedule(FlightScheduleEntity schedule);
+    public boolean checkOverlapSchedule(FlightSchedulePlanEntity plan, FlightScheduleEntity schedule, DateTimeFormatter dateFormat) throws ScheduleOverlapException;
+
+    public FlightScheduleEntity checkOverlapPlan(FlightEntity flight, FlightSchedulePlanEntity schedulePlan, FlightScheduleEntity schedule, DateTimeFormatter dateFormat);
+
+    public FlightScheduleEntity overlapSchedule(FlightSchedulePlanEntity plan, FlightScheduleEntity schedule, DateTimeFormatter dateFormat);
+
+    public void replaceSchedule(FlightScheduleEntity oldSchedule, FlightScheduleEntity newSchedule);
+
+    public void deleteSchedule(FlightScheduleEntity schedule) throws ScheduleIsUsedException;
+
+    public FlightScheduleEntity retrieveFlightScheduleById(Long id);
+
+    public FlightScheduleEntity retrieveReturnSchedule(FlightScheduleEntity schedule);
 
 }

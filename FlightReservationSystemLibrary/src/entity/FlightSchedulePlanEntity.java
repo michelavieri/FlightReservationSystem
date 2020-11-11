@@ -8,12 +8,14 @@ package entity;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import util.enumeration.FlightSchedulePlanTypeEnum;
 
 /**
@@ -22,6 +24,20 @@ import util.enumeration.FlightSchedulePlanTypeEnum;
  */
 @Entity
 public class FlightSchedulePlanEntity implements Serializable {
+
+    /**
+     * @return the fareEntitys
+     */
+    public List<FareEntity> getFareEntitys() {
+        return fareEntitys;
+    }
+
+    /**
+     * @param fareEntitys the fareEntitys to set
+     */
+    public void setFareEntitys(List<FareEntity> fareEntitys) {
+        this.fareEntitys = fareEntitys;
+    }
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -32,6 +48,12 @@ public class FlightSchedulePlanEntity implements Serializable {
     private String endDate;
     private boolean disabled;
     private int layoverDuration;
+    
+    @OneToOne(mappedBy = "departureSchedulePlan", cascade = CascadeType.REMOVE)
+    private FlightSchedulePlanEntity returnSchedulePlan;
+    
+    @OneToOne (cascade = CascadeType.REMOVE)
+    private FlightSchedulePlanEntity departureSchedulePlan;
 
     @OneToMany(mappedBy = "flightSchedulePlan")
     private List<FareEntity> fareEntitys;
