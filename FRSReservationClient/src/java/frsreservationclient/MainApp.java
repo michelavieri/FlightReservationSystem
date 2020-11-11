@@ -49,21 +49,21 @@ public class MainApp {
                 response = sc.nextInt();
 
                 if (response == 1) {
-                    try {
-                        doRegister(sc);
-                        System.out.println("Your account has been registered! You are automatically logged in.");
-                        menuMain(sc);
-                    } catch (InvalidRegistrationException ex) {
-                        System.out.println(ex.getMessage());
-                    }
+//                    try {
+//                        doRegister(sc);
+//                        System.out.println("Your account has been registered! You are automatically logged in.");
+//                        menuMain(sc);
+//                    } catch (InvalidRegistrationException ex) {
+//                        System.out.println(ex.getMessage());
+//                    }
                 } else if (response == 2) {
-                    try {
-                        doLogin(sc);
-                        System.out.println("Login successful!");
-                        menuMain(sc);
-                    } catch (InvalidUsernameException | WrongPasswordException | InvalidLoginCredentialsException ex) {
-                        System.out.println("Invalid login credential: " + ex.getMessage());
-                    }
+//                    try {
+//                        doLogin(sc);
+//                        System.out.println("Login successful!");
+//                        menuMain(sc);
+//                    } catch (InvalidUsernameException | WrongPasswordException | InvalidLoginCredentialsException ex) {
+//                        System.out.println("Invalid login credential: " + ex.getMessage());
+//                    }
                 } else if (response == 3) {
                     ReservationOperationModule.searchFlights(sc);
                 } else if (response == 4) {
@@ -94,11 +94,11 @@ public class MainApp {
         System.out.print("Enter password> ");
         String password = sc.nextLine();
 
-        try {
-            customerEntitySessionBeanRemote.registerCustomer(new CustomerEntity(firstName, lastName, email, phoneNum, address, password));
-        } catch (InvalidUsernameException | UsernameExistException | EmailExistException ex) {
-            throw new InvalidRegistrationException(ex.getMessage());
-        }
+//        try {
+//            customerEntitySessionBeanRemote.registerCustomer(new CustomerEntity(firstName, lastName, email, phoneNum, address, password));
+//        } catch (InvalidUsernameException | UsernameExistException | EmailExistException ex) {
+//            throw new InvalidRegistrationException(ex.getMessage());
+//        }
     }
 
     private void doLogin(Scanner sc) {
@@ -109,17 +109,17 @@ public class MainApp {
         System.out.print("Enter password> ");
         String password = sc.nextLine();
 
-        if (email.length() > 0 && password.length() > 0) {
-            try {
-                currentCustomer = customerEntitySessionBeanRemote.employeeLogin(email, password);
-            } catch (InvalidUsernameException ex) {
-                throw new InvalidUsernameException(ex.getMessage());
-            } catch (WrongPasswordException ex) {
-                throw new WrongPasswordException(ex.getMessage());
-            }
-        } else {
-            throw new InvalidLoginCredentialsException("Missing login credential!");
-        }
+//        if (email.length() > 0 && password.length() > 0) {
+//            try {
+//                currentCustomer = customerEntitySessionBeanRemote.employeeLogin(email, password);
+//            } catch (InvalidUsernameException ex) {
+//                throw new InvalidUsernameException(ex.getMessage());
+//            } catch (WrongPasswordException ex) {
+//                throw new WrongPasswordException(ex.getMessage());
+//            }
+//        } else {
+//            throw new InvalidLoginCredentialsException("Missing login credential!");
+//        }
     }
 
     private void menuMain(Scanner sc) {

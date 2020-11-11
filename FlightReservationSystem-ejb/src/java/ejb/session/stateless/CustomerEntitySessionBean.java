@@ -20,14 +20,14 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanRemot
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
     private EntityManager entityManager;
 
-    @Override
-    public CustomerEntity registerCustomer(CustomerEntity newCustomer) {
-        
-    }
-    
-    @Override
-    public boolean emailExists(String email) {
-        
-    }
+//    @Override
+//    public CustomerEntity registerCustomer(CustomerEntity newCustomer) {
+//        
+//    }
+//    
+//    @Override
+//    public boolean emailExists(String email) {
+//        
+//    }
     
 }
