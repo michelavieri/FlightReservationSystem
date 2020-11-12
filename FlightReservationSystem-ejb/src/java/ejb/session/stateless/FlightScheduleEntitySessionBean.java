@@ -35,9 +35,6 @@ import util.exception.ScheduleOverlapException;
 public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySessionBeanRemote, FlightScheduleEntitySessionBeanLocal {
 
     @EJB
-    private SeatEntitySessionBeanLocal seatEntitySessionBean;
-
-    @EJB
     private SeatsInventoryEntitySessionBeanLocal seatsInventoryEntitySessionBean;
 
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
@@ -92,6 +89,7 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
 
                 seatsInventory = seatsInventoryEntitySessionBean.createSeatsInventoryEntity(seatsInventory);
                 seatsInventory.setFlightSchedule(schedule);
+                seatsInventory.setCabinClass(cabinClass);
                 schedule.getSeatsInventoryEntitys().add(seatsInventory);
 
                 startSeatNumber = seatsInventoryEntitySessionBean.createSeatsFromSeatInventory(seatsInventory, startSeatNumber);
@@ -148,7 +146,7 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
     }
 
     @Override
-    public boolean checkOverlapping(FlightSchedulePlanEntity plan, FlightScheduleEntity schedule, DateTimeFormatter dateFormat) throws ScheduleOverlapException {
+    public boolean checkOverlapping(FlightSchedulePlanEntity plan, FlightScheduleEntity schedule, DateTimeFormatter dateFormat) {
         plan = entityManager.find(FlightSchedulePlanEntity.class, plan.getSchedulePlanId());
         schedule = entityManager.find(FlightScheduleEntity.class, schedule.getScheduleId());
         boolean overlap = false;
@@ -173,7 +171,7 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
                     if (newScheduleDep.isAfter(oldScheduleArr) || newScheduleArr.isBefore(oldScheduleDep)) {
                         overlap = false;
                     } else {
-                        throw new ScheduleOverlapException();
+                        return true;
                     }
                 }
             }
@@ -494,7 +492,7 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
         recurseTransit(availableSchedule, departure, destination, stopovers, availableSchedule, finalSchedule, classType, numOfPassenger);
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm Z");
         ZonedDateTime date = ZonedDateTime.parse(departureDateTime, dateFormat);
-        
+
         for (List<FlightScheduleEntity> schedules : finalSchedule) {
             ZonedDateTime departureTime = ZonedDateTime.parse(schedules.get(0).getDepartureDateTime(), dateFormat);
             ZonedDateTime minusOne = date.minusDays(1);
@@ -524,7 +522,7 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
         recurseTransit(availableSchedule, departure, destination, stopovers, availableSchedule, finalSchedule, classType, numOfPassenger);
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm Z");
         ZonedDateTime date = ZonedDateTime.parse(departureDateTime, dateFormat);
-        
+
         for (List<FlightScheduleEntity> schedules : finalSchedule) {
             ZonedDateTime departureTime = ZonedDateTime.parse(schedules.get(0).getDepartureDateTime(), dateFormat);
             ZonedDateTime plusOne = date.plusDays(1);
@@ -536,7 +534,8 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
         }
         return finalSchedule;
     }
-    
+
+    @Override
     public void recurseTransit(List<FlightScheduleEntity> allSchedules, AirportEntity departureAirport, AirportEntity destinationAirport,
             int stopovers, List<FlightScheduleEntity> availableSchedule,
             List<List<FlightScheduleEntity>> finalSchedule, CabinClassTypeEnum classType, int numOfPassenger) {
