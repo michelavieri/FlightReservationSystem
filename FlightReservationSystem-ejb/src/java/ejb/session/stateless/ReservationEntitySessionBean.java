@@ -20,7 +20,7 @@ import util.exception.NotMyReservationException;
 
 /**
  *
- * @author miche
+ * @author Chrisya
  */
 @Stateless
 public class ReservationEntitySessionBean implements ReservationEntitySessionBeanRemote, ReservationEntitySessionBeanLocal {

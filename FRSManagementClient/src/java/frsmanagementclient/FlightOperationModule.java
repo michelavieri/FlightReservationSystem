@@ -408,7 +408,7 @@ public class FlightOperationModule {
         FlightScheduleEntity returnFlightSchedule = flightScheduleEntitySessionBeanRemote.createFlightScheduleEntity(new FlightScheduleEntity(returnDepDateTime, duration, returnArrDateTime));
 
         flightScheduleEntitySessionBeanRemote.associateReturnSchedule(departureFlight, returnFlightSchedule);
-
+              
         return returnFlightSchedule;
     }
 
@@ -447,10 +447,6 @@ public class FlightOperationModule {
         }
     }
 
-    public void createReturnSchedulePlan(int layoverDuration, FlightSchedulePlanEntity departurePlan) {
-
-    }
-
     public void createFlightSchedulePlan(Scanner sc) {
         System.out.println("*** FRS Schedule Manager :: Create Schedule Plan ***");
         sc.nextLine();
@@ -484,12 +480,13 @@ public class FlightOperationModule {
             FlightScheduleEntity flightSchedule = this.createFlightSchedule(sc, dateFormat, flight);
             FlightScheduleEntity returnFlightSchedule = null;
             int totalLayoverDuration = 0;
+            String response = "";
 
-            String startDate = flightSchedule.getDepartureDateTime().substring(0, 9);
+            String startDate = flightSchedule.getDepartureDateTime();
 
             if (flight.getReturnFlight() != null) {
                 System.out.print("There is a return flight for this route. Do you want to create return flight schedule plan? (Y/N)>");
-                String response = sc.nextLine();
+                response = sc.nextLine();
 
                 if (response.equals("Y")) {
 
@@ -513,16 +510,20 @@ public class FlightOperationModule {
 
                 flightSchedulePlanEntitySessionBeanRemote.associatePlanWithFlight(returnPlan, flight);
                 flightScheduleEntitySessionBeanRemote.associateNewSeatsInventory(returnPlan);
+
+                flightSchedulePlanEntitySessionBeanRemote.associateReturnSchedulePlan(schedulePlan, returnPlan);
+                createFare(sc, flight, returnPlan);
             }
 
             flightSchedulePlanEntitySessionBeanRemote.associatePlanWithFlight(schedulePlan, flight);
             flightScheduleEntitySessionBeanRemote.associateNewSeatsInventory(schedulePlan);
 
             createFare(sc, flight, schedulePlan);
-            createFare(sc, flight, returnPlan);
 
             System.out.println("Flight schedule plan with id " + schedulePlan.getSchedulePlanId() + " is created!");
-            System.out.println("Return flight schedule plan with id " + returnPlan.getSchedulePlanId() + " is created!");
+            if(response.equals("Y")) {
+                System.out.println("Return flight schedule plan with id " + returnPlan.getSchedulePlanId() + " is created!");
+            }
 
         } else if (typeResponse == 2) {
             FlightSchedulePlanTypeEnum type = FlightSchedulePlanTypeEnum.MULTIPLE;
@@ -542,13 +543,12 @@ public class FlightOperationModule {
             for (int i = 0; i < numSchedule; i++) {
                 FlightScheduleEntity flightSchedule = this.createFlightSchedule(sc, dateFormat, flight);
 
-                try {
-                    flightScheduleEntitySessionBeanRemote.checkOverlapSchedule(schedulePlan, flightSchedule, dateFormat);
-                } catch (ScheduleOverlapException ex) {
-                    System.out.println("Schedule invalid with exisiting schedule!");
-                    return;
-                }
-
+//                try {
+//                    flightScheduleEntitySessionBeanRemote.checkOverlapping(schedulePlan, flightSchedule, dateFormat);
+//                } catch (ScheduleOverlapException ex) {
+//                    System.out.println("Schedule invalid with exisiting schedule!");
+//                    return;
+//                }
                 flightScheduleEntitySessionBeanRemote.associateWithPlan(flightSchedule, schedulePlan);
             }
 
@@ -566,18 +566,27 @@ public class FlightOperationModule {
                 if (response.equals("Y")) {
 
                     totalLayoverDuration = this.scanLayoverTime(sc);
-                    ZonedDateTime firstDate = ZonedDateTime.parse(startDate, dateFormat).plusMinutes(numSchedule);
+                    ZonedDateTime firstDate = ZonedDateTime.parse(schedulePlan.getStartDate(), dateFormat).plusMinutes(totalLayoverDuration);
                     String firstDateStr = firstDate.format(dateFormat);
 
                     returnPlan = flightSchedulePlanEntitySessionBeanRemote.createFlightSchedulePlanEntity(new FlightSchedulePlanEntity(type, firstDateStr, totalLayoverDuration, flight));
 
                     for (FlightScheduleEntity schedule : schedules) {
                         returnFlightSchedule = this.createReturnFlightSchedule(sc, dateFormat, totalLayoverDuration, schedule);
+
+//                        try {
+//                            flightScheduleEntitySessionBeanRemote.checkOverlapping(returnPlan, returnFlightSchedule, dateFormat);
+//                        } catch (ScheduleOverlapException ex) {
+//                            System.out.println("Schedule invalid with exisiting schedule!");
+//                            return;
+//                        }
                         flightScheduleEntitySessionBeanRemote.associateWithPlan(returnFlightSchedule, returnPlan);
                     }
 
                     flightSchedulePlanEntitySessionBeanRemote.associatePlanWithFlight(returnPlan, flight);
                     createFare(sc, flight, returnPlan);
+                    
+                    flightSchedulePlanEntitySessionBeanRemote.associateReturnSchedulePlan(schedulePlan, returnPlan);
                 }
             }
 
@@ -617,7 +626,7 @@ public class FlightOperationModule {
 
                 if (response.equals("Y")) {
                     int totalLayoverDuration = this.scanLayoverTime(sc);
-                    flightScheduleEntitySessionBeanRemote.createRecurrentSchedule("",schedulePlan, startDate, endDate, recurringDay, departuretime, dateFormat, duration, totalLayoverDuration);
+                    flightScheduleEntitySessionBeanRemote.createRecurrentSchedule("", schedulePlan, startDate, endDate, recurringDay, departuretime, dateFormat, duration, totalLayoverDuration);
 
                     ZonedDateTime firstDate = ZonedDateTime.parse(schedulePlan.getStartDate(), dateFormat);
                     firstDate = firstDate.plusMinutes(totalLayoverDuration);
@@ -628,10 +637,12 @@ public class FlightOperationModule {
                     String lastDateStr = lastDate.format(dateFormat);
 
                     returnPlan = flightSchedulePlanEntitySessionBeanRemote.createFlightSchedulePlanEntity(new FlightSchedulePlanEntity(type, firstDateStr, lastDateStr, 0, flight));
-                    
-                    flightScheduleEntitySessionBeanRemote.createRecurrentSchedule("",returnPlan, firstDateStr, lastDateStr, recurringDay, departuretime, dateFormat, duration, totalLayoverDuration);
+
+                    flightScheduleEntitySessionBeanRemote.createRecurrentSchedule("", returnPlan, firstDateStr, lastDateStr, recurringDay, departuretime, dateFormat, duration, totalLayoverDuration);
                     flightSchedulePlanEntitySessionBeanRemote.associatePlanWithFlight(returnPlan, flight);
                     createFare(sc, flight, returnPlan);
+                    
+                    flightSchedulePlanEntitySessionBeanRemote.associateReturnSchedulePlan(schedulePlan, returnPlan);
                 } else {
                     flightScheduleEntitySessionBeanRemote.createRecurrentSchedule("", schedulePlan, startDate, endDate, recurringDay, departuretime, dateFormat, duration, 0);
                 }
@@ -640,18 +651,17 @@ public class FlightOperationModule {
             createFare(sc, flight, schedulePlan);
             flightSchedulePlanEntitySessionBeanRemote.associatePlanWithFlight(schedulePlan, flight);
             System.out.println("Flight schedule with id " + schedulePlan.getSchedulePlanId() + "is created!");
-            
+
             if (response.equals("Y")) {
                 System.out.println("Return flight schedule plan with id " + returnPlan.getSchedulePlanId() + " is created!");
             }
-
 
         } else if (typeResponse == 4) {
             FlightSchedulePlanTypeEnum type = FlightSchedulePlanTypeEnum.RECURRENT_WEEK;
 
             System.out.println("Enter day of recurring (All capital letters)>");
             String day = sc.nextLine();
-            
+
             System.out.println("Enter starting date (yyyy-mm-dd)>");
             String startDate = sc.nextLine();
 
@@ -667,14 +677,14 @@ public class FlightOperationModule {
             FlightSchedulePlanEntity schedulePlan = flightSchedulePlanEntitySessionBeanRemote.createFlightSchedulePlanEntity(new FlightSchedulePlanEntity(type, startDate, endDate, 7, flight));
             FlightSchedulePlanEntity returnPlan = null;
             String response = "";
-            
+
             if (flight.getReturnFlight() != null) {
                 System.out.println("There is a return flight for this route. Do you want to create return flight schedule? (Y/N)>");
                 response = sc.nextLine();
-                
+
                 if (response.equals("Y")) {
                     int totalLayoverDuration = this.scanLayoverTime(sc);
-                    flightScheduleEntitySessionBeanRemote.createRecurrentSchedule(day,schedulePlan, startDate, endDate, 7, departuretime, dateFormat, duration, totalLayoverDuration);
+                    flightScheduleEntitySessionBeanRemote.createRecurrentSchedule(day, schedulePlan, startDate, endDate, 7, departuretime, dateFormat, duration, totalLayoverDuration);
 
                     ZonedDateTime firstDate = ZonedDateTime.parse(schedulePlan.getStartDate(), dateFormat);
                     firstDate = firstDate.plusMinutes(totalLayoverDuration);
@@ -685,10 +695,12 @@ public class FlightOperationModule {
                     String lastDateStr = lastDate.format(dateFormat);
 
                     returnPlan = flightSchedulePlanEntitySessionBeanRemote.createFlightSchedulePlanEntity(new FlightSchedulePlanEntity(type, firstDateStr, lastDateStr, 0, flight));
-                    
-                    flightScheduleEntitySessionBeanRemote.createRecurrentSchedule("",returnPlan, firstDateStr, lastDateStr, 7, departuretime, dateFormat, duration, totalLayoverDuration);
+
+                    flightScheduleEntitySessionBeanRemote.createRecurrentSchedule("", returnPlan, firstDateStr, lastDateStr, 7, departuretime, dateFormat, duration, totalLayoverDuration);
                     flightSchedulePlanEntitySessionBeanRemote.associatePlanWithFlight(returnPlan, flight);
                     createFare(sc, flight, returnPlan);
+                    
+                    flightSchedulePlanEntitySessionBeanRemote.associateReturnSchedulePlan(schedulePlan, returnPlan);
                 } else {
                     flightScheduleEntitySessionBeanRemote.createRecurrentSchedule("", schedulePlan, startDate, endDate, 7, departuretime, dateFormat, duration, 0);
                 }
@@ -697,7 +709,7 @@ public class FlightOperationModule {
             createFare(sc, flight, schedulePlan);
             flightSchedulePlanEntitySessionBeanRemote.associatePlanWithFlight(schedulePlan, flight);
             System.out.println("Flight schedule with id " + schedulePlan.getSchedulePlanId() + "is created!");
-            
+
             if (response.equals("Y")) {
                 System.out.println("Return flight schedule plan with id " + returnPlan.getSchedulePlanId() + " is created!");
             }

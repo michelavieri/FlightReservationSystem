@@ -214,4 +214,32 @@ public class FlightSchedulePlanEntity implements Serializable {
         this.flight = flight;
     }
 
+    /**
+     * @return the returnSchedulePlan
+     */
+    public FlightSchedulePlanEntity getReturnSchedulePlan() {
+        return returnSchedulePlan;
+    }
+
+    /**
+     * @param returnSchedulePlan the returnSchedulePlan to set
+     */
+    public void setReturnSchedulePlan(FlightSchedulePlanEntity returnSchedulePlan) {
+        this.returnSchedulePlan = returnSchedulePlan;
+    }
+
+    /**
+     * @return the departureSchedulePlan
+     */
+    public FlightSchedulePlanEntity getDepartureSchedulePlan() {
+        return departureSchedulePlan;
+    }
+
+    /**
+     * @param departureSchedulePlan the departureSchedulePlan to set
+     */
+    public void setDepartureSchedulePlan(FlightSchedulePlanEntity departureSchedulePlan) {
+        this.departureSchedulePlan = departureSchedulePlan;
+    }
+
 }

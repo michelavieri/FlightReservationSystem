@@ -44,4 +44,6 @@ public interface FlightScheduleEntitySessionBeanRemote {
 
     public FlightScheduleEntity retrieveReturnSchedule(FlightScheduleEntity schedule);
 
+    public boolean checkOverlapping(FlightSchedulePlanEntity plan, FlightScheduleEntity schedule, DateTimeFormatter dateFormat) throws ScheduleOverlapException;
+
 }

@@ -37,4 +37,8 @@ public interface FlightSchedulePlanEntitySessionBeanLocal {
 
     public List<FlightSchedulePlanEntity> retrieveAllSchedulePlan();
 
+    public void associateReturnSchedulePlan(FlightSchedulePlanEntity departure, FlightSchedulePlanEntity returning);
+
+    public String retrieveDepartureDateTime(FlightSchedulePlanEntity plan);
+
 }

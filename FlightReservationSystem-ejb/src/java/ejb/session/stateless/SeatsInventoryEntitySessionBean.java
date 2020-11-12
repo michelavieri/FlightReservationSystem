@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.FlightScheduleEntity;
 import entity.SeatsInventoryEntity;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -22,6 +23,9 @@ import util.exception.FlightScheduleNotFoundException;
  */
 @Stateless
 public class SeatsInventoryEntitySessionBean implements SeatsInventoryEntitySessionBeanRemote, SeatsInventoryEntitySessionBeanLocal {
+
+    @EJB
+    private SeatEntitySessionBeanLocal seatEntitySessionBean;
 
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
     private EntityManager entityManager;
@@ -57,5 +61,40 @@ public class SeatsInventoryEntitySessionBean implements SeatsInventoryEntitySess
         
         return schedule.getSeatsInventoryEntitys();
         
+    }
+    
+    public int createSeatsFromSeatInventory(SeatsInventoryEntity seatsInventory, int startNumber) {
+        seatsInventory = entityManager.find(SeatsInventoryEntity.class, seatsInventory.getInventoryId());
+        seatsInventory.getSeats().size();
+        
+        int numAisle = seatsInventory.getCabinClass().getNumAisle();
+        int numRow = seatsInventory.getCabinClass().getNumRow();
+        int numAbreast = seatsInventory.getCabinClass().getNumSeatAbreast();
+        int tempAbreast = 0;
+        int endNumSeat = 0;
+        
+        int totalCapacity = seatsInventory.getCabinClass().getMaxCapacity();
+        
+        String[][] seatsConfig = new String[numAbreast][numRow];
+        
+        for(int i = startNumber + 1; i <= startNumber + numRow; i++) {
+            while(tempAbreast < numAbreast) {
+                char initial = 'A';
+                seatsConfig[i-startNumber-1][tempAbreast] = Integer.toString(i) + initial;
+                initial++;
+            }
+            endNumSeat = i;
+        }
+        
+        for(int i = 0; i < numAbreast; i++) {
+            for(int j = 0; j < numRow; j++) {
+                SeatEntity seat = new SeatEntity(seatsConfig[i][j], false);
+                seat = seatEntitySessionBean.createNewSeat(seat);
+                seat.setSeatsInventory(seatsInventory);
+                seatsInventory.getSeats().add(seat);
+            }
+        }
+        
+        return endNumSeat;
     }
 }

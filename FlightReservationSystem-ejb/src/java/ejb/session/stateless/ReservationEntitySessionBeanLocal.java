@@ -14,7 +14,7 @@ import util.exception.NotMyReservationException;
 
 /**
  *
- * @author miche
+ * @author Chrisya
  */
 @Local
 public interface ReservationEntitySessionBeanLocal {
