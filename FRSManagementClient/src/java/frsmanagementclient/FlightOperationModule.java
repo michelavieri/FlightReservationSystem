@@ -567,20 +567,18 @@ public class FlightOperationModule {
                     DateTimeFormatter dateFormat2 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                     
                     totalLayoverDuration = this.scanLayoverTime(sc);
-                    ZonedDateTime firstDate = ZonedDateTime.parse(schedulePlan.getStartDate(), dateFormat2).plusMinutes(totalLayoverDuration);
-                    String firstDateStr = firstDate.format(dateFormat);
 
-                    returnPlan = flightSchedulePlanEntitySessionBeanRemote.createFlightSchedulePlanEntity(new FlightSchedulePlanEntity(type, firstDateStr, totalLayoverDuration, flight));
+                    returnPlan = flightSchedulePlanEntitySessionBeanRemote.createFlightSchedulePlanEntity(new FlightSchedulePlanEntity(type, schedulePlan.getStartDate(), totalLayoverDuration, flight));
 
                     for (FlightScheduleEntity schedule : schedules) {
                         returnFlightSchedule = this.createReturnFlightSchedule(sc, dateFormat, totalLayoverDuration, schedule);
 
-                        try {
-                            flightScheduleEntitySessionBeanRemote.checkOverlapping(returnPlan, returnFlightSchedule, dateFormat);
-                        } catch (ScheduleOverlapException ex) {
-                            System.out.println("Schedule invalid with exisiting schedule!");
-                            return;
-                        }
+//                        try {
+//                            flightScheduleEntitySessionBeanRemote.checkOverlapping(returnPlan, returnFlightSchedule, dateFormat);
+//                        } catch (ScheduleOverlapException ex) {
+//                            System.out.println("Schedule invalid with exisiting schedule!");
+//                            return;
+//                        }
                         flightScheduleEntitySessionBeanRemote.associateWithPlan(returnFlightSchedule, returnPlan);
                     }
 
@@ -610,6 +608,7 @@ public class FlightOperationModule {
 
             System.out.println("Enter number of recurring days>");
             int recurringDay = sc.nextInt();
+            sc.nextLine();
 
             System.out.println("Enter departure hour (HH:mm)>");
             String departuretime = sc.nextLine();
@@ -884,11 +883,11 @@ public class FlightOperationModule {
         FlightScheduleEntity returnFlightSchedule = replaceReturnFlightSchedule(sc, dateFormat, layover, flightSchedule);
         FlightScheduleEntity overlap = null;
         FlightScheduleEntity returnOverlap = null;
-
-        if (schedule.getReturnSchedule() != null) {
-            overlap = flightScheduleEntitySessionBeanRemote.checkOverlapPlan(flight, plan, flightSchedule, dateFormat);
-            returnOverlap = flightScheduleEntitySessionBeanRemote.checkOverlapPlan(flight, plan, returnFlightSchedule, dateFormat);
-        }
+//
+//        if (schedule.getReturnSchedule() != null) {
+//            overlap = flightScheduleEntitySessionBeanRemote.checkOverlapPlan(flight, plan, flightSchedule, dateFormat);
+//            returnOverlap = flightScheduleEntitySessionBeanRemote.checkOverlapPlan(flight, plan, returnFlightSchedule, dateFormat);
+//        }
 
         if (overlap != null) {
             System.out.println("New flight schedule overlaps with other schedule(s)!");
