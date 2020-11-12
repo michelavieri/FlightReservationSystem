@@ -115,6 +115,7 @@ public class MainApp {
         this.seatsInventoryEntitySessionBeanRemote = seatsInventoryEntitySessionBeanRemote;
         this.bookingTicketEntitySessionBeanRemote = bookingTicketEntitySessionBeanRemote;
         this.fareEntitySessionBeanRemote = fareEntitySessionBeanRemote;
+        this.flightScheduleEntitySessionBeanRemote = flightScheduleEntitySessionBeanRemote;
     }
 
     public void runApp() {

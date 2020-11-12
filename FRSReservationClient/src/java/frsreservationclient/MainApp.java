@@ -6,6 +6,7 @@
 package frsreservationclient;
 
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
+import ejb.session.stateless.FlightScheduleEntitySessionBeanRemote;
 import ejb.session.stateless.ReservationEntitySessionBeanRemote;
 import entity.CustomerEntity;
 import java.util.Scanner;
@@ -23,6 +24,8 @@ public class MainApp {
     public CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote;
 
     public ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote;
+    
+    public FlightScheduleEntitySessionBeanRemote flightScheduleEntitySessionBeanRemote;
 
     public CustomerEntity currentCustomer;
 
@@ -33,9 +36,11 @@ public class MainApp {
     }
 
     public MainApp(CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote,
-            ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote) {
+            ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote,
+            FightScheduleEntitySessionBeanRemote flightScheduleEntitySessionBeanRemote) {
         this.customerEntitySessionBeanRemote = customerEntitySessionBeanRemote;
         this.reservationEntitySessionBeanRemote = reservationEntitySessionBeanRemote;
+        this.flightScheduleEntitySessionBeanRemote = flightScheduleEntitySessionBeanRemote;
     }
 
     public void runApp() {
@@ -132,7 +137,7 @@ public class MainApp {
 
     private void menuMain(Scanner sc) {
         reservationOperationModule = new ReservationOperationModule(reservationEntitySessionBeanRemote,
-                customerEntitySessionBeanRemote);
+                customerEntitySessionBeanRemote, flightScheduleEntitySessionBeanRemote);
         Integer response = 0;
         while (true) {
             System.out.println("*** FRS Reservation Application: Customer Logged In ***");

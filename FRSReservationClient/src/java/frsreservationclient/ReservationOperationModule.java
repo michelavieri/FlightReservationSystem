@@ -6,6 +6,7 @@
 package frsreservationclient;
 
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
+import ejb.session.stateless.FlightScheduleEntitySessionBeanRemote;
 import ejb.session.stateless.ReservationEntitySessionBeanRemote;
 import entity.BookingTicketEntity;
 import entity.CustomerEntity;
@@ -28,15 +29,146 @@ public class ReservationOperationModule {
 
     public ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote;
     public CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote;
+    public FlightScheduleEntitySessionBeanRemote flightScheduleEntitySessionBeanRemote;
 
     public ReservationOperationModule(ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote,
-            CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote) {
+            CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote,
+            FlightScheduleEntitySessionBeanRemote flightScheduleEntitySessionBeanRemote) {
         this.reservationEntitySessionBeanRemote = reservationEntitySessionBeanRemote;
         this.customerEntitySessionBeanRemote = customerEntitySessionBeanRemote;
+        this.flightScheduleEntitySessionBeanRemote = flightScheduleEntitySessionBeanRemote;
     }
 
     public void searchFlights(Scanner sc) {
+        System.out.println("*** SEARCH FOR FLIGHTS ***");
+        System.out.println("1: One-way Trip");
+        System.out.println("2: Round Trip/Return");
+        System.out.println("Enter trip type> ");
+        int tripType = sc.nextInt();
 
+        System.out.println("Enter departure airport code> ");
+        String departureAirportCode = sc.nextLine();
+
+        System.out.println("Enter destination airport> ");
+        String destinationAirportCode = sc.nextLine();
+
+        System.out.println("Enter departure date in this format: YYYY-MM-dd> ");
+        String departureDate = sc.nextLine();
+
+        String returnDate = null;
+        if (tripType == 2) {
+            System.out.println("Enter return date in this format: YYYY-MM-dd> ");
+            returnDate = sc.nextLine();
+        }
+
+        System.out.println("Enter number of passengers> ");
+        int numOfPassengers = sc.nextInt();
+
+        System.out.println("Do you have preference for Direct Flight or Connecting Flight?");
+        System.out.println("1: Direct Flight");
+        System.out.println("2: Connecting Flight");
+        int preferenceFlight = sc.nextInt();
+
+        int stopovers = 0;
+        if (preferenceFlight == 2) {
+            System.out.println("Enter number of stopovers> ");
+            stopovers = sc.nextInt();
+        }
+
+        System.out.println("Do you have preference for Cabin Class?");
+        System.out.println("1: First Class");
+        System.out.println("2: Business Class");
+        System.out.println("3: Premium Economy Class");
+        System.out.println("4: Economy Class");
+        int preferenceClass = sc.nextInt();
+
+        CabinClassTypeEnum preferenceClassEnum;
+        switch (preferenceClass) {
+            case 1:
+                preferenceClassEnum = CabinClassTypeEnum.FIRST_CLASS;
+                break;
+            case 2:
+                preferenceClassEnum = CabinClassTypeEnum.BUSINESS_CLASS;
+                break;
+            case 3:
+                preferenceClassEnum = CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS;
+                break;
+            case 4:
+                preferenceClassEnum = CabinClassTypeEnum.ECONOMY_CLASS;
+                break;
+            default:
+                preferenceClassEnum = CabinClassTypeEnum.ECONOMY_CLASS;
+                break;
+        }
+
+        List<List<FlightScheduleEntity>> outboundFlightsSameDate;
+        List<List<FlightScheduleEntity>> outboundFlightsBeforeDate;
+        List<List<FlightScheduleEntity>> outboundFlightsAfterDate;
+        if (preferenceFlight == 1) {
+            outboundFlightsSameDate = flightScheduleEntitySessionBeanRemote.
+                    searchDirectFlights(departureAirportCode, destinationAirportCode, departureDate, numOfPassengers, preferenceClassEnum);
+            outboundFlightsBeforeDate = flightScheduleEntitySessionBeanRemote.
+                    searchDirectFlightsBefore(departureAirportCode, destinationAirportCode, departureDate, numOfPassengers, preferenceClassEnum);
+            outboundFlightsAfterDate = flightScheduleEntitySessionBeanRemote.
+                    searchDirectFlightsAfter(departureAirportCode, destinationAirportCode, departureDate, numOfPassengers, preferenceClassEnum);
+        } else {
+            outboundFlightsSameDate = flightScheduleEntitySessionBeanRemote.
+                    searchConnectingFlights(departureAirportCode, destinationAirportCode, departureDate, numOfPassengers, stopovers, preferenceClassEnum);
+            outboundFlightsBeforeDate = flightScheduleEntitySessionBeanRemote.
+                    searchConnectingFlightsBefore(departureAirportCode, destinationAirportCode, departureDate, numOfPassengers, stopovers, preferenceClassEnum);
+            outboundFlightsAfterDate = flightScheduleEntitySessionBeanRemote.
+                    searchConnectingFlightsAfter(departureAirportCode, destinationAirportCode, departureDate, numOfPassengers, stopovers, preferenceClassEnum);
+        }
+
+        if (tripType == 2) {
+            List<List<FlightScheduleEntity>> returnFlightsSameDate;
+            List<List<FlightScheduleEntity>> returnFlightsBeforeDate;
+            List<List<FlightScheduleEntity>> returnFlightsAfterDate;
+            if (preferenceFlight == 1) {
+                returnFlightsSameDate = flightScheduleEntitySessionBeanRemote.
+                        searchDirectFlights(destinationAirportCode, departureAirportCode, returnDate, numOfPassengers, preferenceClassEnum);
+                returnFlightsBeforeDate = flightScheduleEntitySessionBeanRemote.
+                        searchDirectFlightsBefore(destinationAirportCode, departureAirportCode, returnDate, numOfPassengers, preferenceClassEnum);
+                returnFlightsAfterDate = flightScheduleEntitySessionBeanRemote.
+                        searchDirectFlightsAfter(destinationAirportCode, departureAirportCode, returnDate, numOfPassengers, preferenceClassEnum);
+            } else {
+                returnFlightsSameDate = flightScheduleEntitySessionBeanRemote.
+                        searchConnectingFlights(destinationAirportCode, departureAirportCode, returnDate, numOfPassengers, stopovers, preferenceClassEnum);
+                returnFlightsBeforeDate = flightScheduleEntitySessionBeanRemote.
+                        searchConnectingFlightsBefore(destinationAirportCode, departureAirportCode, returnDate, numOfPassengers, stopovers, preferenceClassEnum);
+                returnFlightsAfterDate = flightScheduleEntitySessionBeanRemote.
+                        searchConnectingFlightsAfter(destinationAirportCode, departureAirportCode, returnDate, numOfPassengers, stopovers, preferenceClassEnum);
+            }
+        }
+
+        System.out.println("*** SEARCH RESULTS: ***");
+        System.out.println("OUTBOUND FLIGHTS: ");
+        System.out.println("Departure Date " + departureDate + ":");
+        List<CabinClassTypeEnum> cabinClassesAvailable = new ArrayList<>();
+        cabinClassesAvailable.add(CabinClassTypeEnum.FIRST_CLASS);
+        cabinClassesAvailable.add(CabinClassTypeEnum.BUSINESS_CLASS);
+        cabinClassesAvailable.add(CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS);
+        cabinClassesAvailable.add(CabinClassTypeEnum.ECONOMY_CLASS);
+
+        for (List<FlightScheduleEntity> schedules : outboundFlightsSameDate) {
+            for (FlightScheduleEntity schedule : schedules) {
+
+            }
+        }
+        for (int i = 0; i < outboundFlightsSameDate.size(); i++) {
+            System.out.println((i + 1) + ". FLIGHT(s) : ");
+            List<FlightScheduleEntity> schedules = outboundFlightsSameDate.get(i);
+            for (int j = 0; j < schedules.size(); j++) {
+                System.out.println("\t -" + schedules.get(j).getPlan().getFlight().getRoute().getOriginAirport().getAirportCode()
+                        + " - " + schedules.get(j).getPlan().getFlight().getRoute().getDestinationAirport().getAirportCode() + " ("
+                        + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
+                System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
+                System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
+                System.out.println("\t  Cabin Classes Available: ");
+                System.out.println("\t\t ");
+            }
+            System.out.println();
+        }
     }
 
     public void viewMyFlightReservations(CustomerEntity customer) {
