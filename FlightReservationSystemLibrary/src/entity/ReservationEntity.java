@@ -32,6 +32,15 @@ public class ReservationEntity implements Serializable {
     private int numOfPassengers;
     private String totalAmount;
 
+    public ReservationEntity(int numOfPassengers, String totalAmount, List<BookingTicketEntity> tickets) {
+        this.numOfPassengers = numOfPassengers;
+        this.totalAmount = totalAmount;
+        this.tickets = tickets;
+    }
+
+    public ReservationEntity() {
+    }
+
     @OneToMany(mappedBy = "reservationEntity")
     private List<BookingTicketEntity> tickets;
     

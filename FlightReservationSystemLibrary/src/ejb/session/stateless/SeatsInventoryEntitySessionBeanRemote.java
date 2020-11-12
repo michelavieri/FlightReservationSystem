@@ -16,9 +16,11 @@ import util.exception.FlightScheduleNotFoundException;
  */
 @Remote
 public interface SeatsInventoryEntitySessionBeanRemote {
-    
+
     public SeatsInventoryEntity createSeatsInventoryEntity(SeatsInventoryEntity newSeatsInventory);
-    
-     public List<SeatsInventoryEntity> retrieveSeatsInventoryByScheduleId(Long scheduleId) throws FlightScheduleNotFoundException;
-    
+
+    public List<SeatsInventoryEntity> retrieveSeatsInventoryByScheduleId(Long scheduleId) throws FlightScheduleNotFoundException;
+
+    public int createSeatsFromSeatInventory(SeatsInventoryEntity seatsInventory, int startNumber);
+
 }

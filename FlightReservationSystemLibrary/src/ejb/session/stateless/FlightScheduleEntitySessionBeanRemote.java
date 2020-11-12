@@ -9,7 +9,9 @@ import entity.FlightEntity;
 import entity.FlightScheduleEntity;
 import entity.FlightSchedulePlanEntity;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import javax.ejb.Remote;
+import util.enumeration.CabinClassTypeEnum;
 import util.exception.ScheduleIsUsedException;
 import util.exception.ScheduleOverlapException;
 
@@ -45,5 +47,11 @@ public interface FlightScheduleEntitySessionBeanRemote {
     public FlightScheduleEntity retrieveReturnSchedule(FlightScheduleEntity schedule);
 
     public boolean checkOverlapping(FlightSchedulePlanEntity plan, FlightScheduleEntity schedule, DateTimeFormatter dateFormat) throws ScheduleOverlapException;
+
+    public List<List<FlightScheduleEntity>> searchDirectFlights(String departureAirport, String destinationAirport, String departureDate, int numOfPassenger, CabinClassTypeEnum classType);
+
+    public List<List<FlightScheduleEntity>> searchDirectFlightsBefore(String departureAirport, String destinationAirport, String departureDateTime, int numOfPassenger, CabinClassTypeEnum classType);
+
+    public List<List<FlightScheduleEntity>> searchDirectFlightsAfter(String departureAirport, String destinationAirport, String departureDateTime, int numOfPassenger, CabinClassTypeEnum classType);
 
 }

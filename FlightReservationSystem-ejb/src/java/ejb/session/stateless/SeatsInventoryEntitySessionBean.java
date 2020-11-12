@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.FlightScheduleEntity;
+import entity.SeatEntity;
 import entity.SeatsInventoryEntity;
 import java.util.List;
 import javax.ejb.EJB;
@@ -63,6 +64,7 @@ public class SeatsInventoryEntitySessionBean implements SeatsInventoryEntitySess
         
     }
     
+    @Override
     public int createSeatsFromSeatInventory(SeatsInventoryEntity seatsInventory, int startNumber) {
         seatsInventory = entityManager.find(SeatsInventoryEntity.class, seatsInventory.getInventoryId());
         seatsInventory.getSeats().size();

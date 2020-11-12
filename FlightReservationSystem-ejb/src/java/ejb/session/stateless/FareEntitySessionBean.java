@@ -11,6 +11,7 @@ import entity.FlightSchedulePlanEntity;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -42,11 +43,22 @@ public class FareEntitySessionBean implements FareEntitySessionBeanRemote, FareE
         fare.setCabinClass(cabinClass);
     }
     
+    @Override
     public void associateFareWithPlan(FlightSchedulePlanEntity plan, FareEntity fare) {
         plan = entityManager.find(FlightSchedulePlanEntity.class, plan.getSchedulePlanId());
         fare = entityManager.find(FareEntity.class, fare.getFairId());
         
         plan.getFareEntitys().add(fare);
         fare.setFlightSchedulePlan(plan);
+    }
+    
+    @Override
+    public String retrieveFareAmount(String fareCode) {
+        Query query = entityManager.createQuery("SELECT f FROM FareEntity f WHERE f.fareBasisCode = :fareCode");
+        query.setParameter("fareCode", fareCode);
+        
+        FareEntity fare = (FareEntity) query.getSingleResult();
+        
+        return fare.getAmount();
     }
 }

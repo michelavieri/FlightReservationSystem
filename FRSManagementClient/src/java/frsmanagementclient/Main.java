@@ -17,6 +17,7 @@ import ejb.session.stateless.FlightEntitySessionBeanRemote;
 import ejb.session.stateless.FlightRouteEntitySessionBeanRemote;
 import ejb.session.stateless.FlightScheduleEntitySessionBeanRemote;
 import ejb.session.stateless.FlightSchedulePlanEntitySessionBeanRemote;
+import ejb.session.stateless.ReservationEntitySessionBeanRemote;
 //import ejb.session.stateless.ReservationEntitySessionBeanRemote;
 import ejb.session.stateless.SeatsInventoryEntitySessionBeanRemote;
 import javax.ejb.EJB;
@@ -42,8 +43,8 @@ public class Main {
     @EJB
     private static SeatsInventoryEntitySessionBeanRemote seatsInventoryEntitySessionBeanRemote;
 
-//    @EJB
-//    private static ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote;
+    @EJB
+    private static ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote;
 
     @EJB
     private static FlightEntitySessionBeanRemote flightEntitySessionBeanRemote;

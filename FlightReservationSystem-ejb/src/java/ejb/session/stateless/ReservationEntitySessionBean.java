@@ -14,7 +14,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import util.enumeration.CabinClassTypeEnum;
 import util.exception.InvalidReservationId;
 import util.exception.NotMyReservationException;
 
@@ -33,9 +32,16 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
     }
 
     @Override
-    public String test() {
-        return "a";
+    public ReservationEntity createNewReservation(CustomerEntity customer, ReservationEntity newReservation) {
+        customer.getReservationsEntitys().add(newReservation);
+        newReservation.setCustomer(customer);
+        
+        entityManager.persist(newReservation);
+        entityManager.flush();
+
+        return newReservation;
     }
+    
     @Override
     public List<ReservationEntity> retrieveFlightReservationsByCustomer(CustomerEntity cust) {
         cust = entityManager.find(CustomerEntity.class, cust.getCustomerId());
