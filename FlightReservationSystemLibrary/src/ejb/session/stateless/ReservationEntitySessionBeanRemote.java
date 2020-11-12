@@ -5,22 +5,13 @@
  */
 package ejb.session.stateless;
 
-import entity.ReservationEntity;
-import java.util.List;
 import javax.ejb.Remote;
 
 /**
  *
- * @author miche
+ * @author Chrisya
  */
 @Remote
 public interface ReservationEntitySessionBeanRemote {
-
-    public List<ReservationEntity> retrieveReservationsByScheduleIdFirstClass(Long id);
-
-    public List<ReservationEntity> retrieveReservationsByScheduleIdBusinessClass(Long id);
-
-    public List<ReservationEntity> retrieveReservationsByScheduleIdPremiumClass(Long id);
-
-    public List<ReservationEntity> retrieveReservationsByScheduleIdEconomyClass(Long id);
+    
 }

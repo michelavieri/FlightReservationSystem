@@ -29,7 +29,7 @@ import ejb.session.stateless.FlightEntitySessionBeanRemote;
 import ejb.session.stateless.FlightRouteEntitySessionBeanRemote;
 import ejb.session.stateless.FlightScheduleEntitySessionBeanRemote;
 import ejb.session.stateless.FlightSchedulePlanEntitySessionBeanRemote;
-import ejb.session.stateless.ReservationEntitySessionBeanRemote;
+//import ejb.session.stateless.ReservationEntitySessionBeanRemote;
 import ejb.session.stateless.SeatsInventoryEntitySessionBeanRemote;
 import entity.AirportEntity;
 import entity.FlightEntity;
@@ -77,7 +77,7 @@ public class MainApp {
 
     private FlightOperationModule flightOperationModule;
 
-    private ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote;
+   // private ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote;
     
     private SeatsInventoryEntitySessionBeanRemote seatsInventoryEntitySessionBeanRemote;
     
@@ -96,7 +96,7 @@ public class MainApp {
             FlightRouteEntitySessionBeanRemote flightRouteEntitySessionBeanRemote,
             FlightScheduleEntitySessionBeanRemote flightScheduleEntitySessionBeanRemote,
             FlightSchedulePlanEntitySessionBeanRemote flightSchedulePlanEntitySessionBeanRemote,
-            ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote,
+         //   ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote,
             SeatsInventoryEntitySessionBeanRemote seatsInventoryEntitySessionBeanRemote,
             FareEntitySessionBeanRemote fareEntitySessionBeanRemote) {
         this.partnerEntitySessionBeanRemote = partnerEntitySessionBeanRemote;
@@ -109,7 +109,7 @@ public class MainApp {
         this.flightRouteEntitySessionBeanRemote = flightRouteEntitySessionBeanRemote;
         this.flightScheduleEntitySessionBeanRemote = flightScheduleEntitySessionBeanRemote;
         this.flightSchedulePlanEntitySessionBeanRemote = flightSchedulePlanEntitySessionBeanRemote;
-        this.reservationEntitySessionBeanRemote = reservationEntitySessionBeanRemote;
+     //   this.reservationEntitySessionBeanRemote = reservationEntitySessionBeanRemote;
         this.seatsInventoryEntitySessionBeanRemote = seatsInventoryEntitySessionBeanRemote;
         this.fareEntitySessionBeanRemote = fareEntitySessionBeanRemote;
     }
@@ -690,17 +690,17 @@ public class MainApp {
                     System.out.print("Enter Schedule ID to view seats inventory> ");
                     Long scheduleId = sc.nextLong();
 
-                    List<ReservationEntity> firstClassReservations
-                            = reservationEntitySessionBeanRemote.retrieveReservationsByScheduleIdFirstClass(scheduleId);
+                    List<ReservationEntity> firstClassReservations = null;
+             //               = reservationEntitySessionBeanRemote.retrieveReservationsByScheduleIdFirstClass(scheduleId);
 
-                    List<ReservationEntity> businessClassReservations
-                            = reservationEntitySessionBeanRemote.retrieveReservationsByScheduleIdBusinessClass(scheduleId);
+                    List<ReservationEntity> businessClassReservations = null;
+     //                       = reservationEntitySessionBeanRemote.retrieveReservationsByScheduleIdBusinessClass(scheduleId);
 
-                    List<ReservationEntity> premiumClassReservations
-                            = reservationEntitySessionBeanRemote.retrieveReservationsByScheduleIdPremiumClass(scheduleId);
+                    List<ReservationEntity> premiumClassReservations = null;
+          //                  = reservationEntitySessionBeanRemote.retrieveReservationsByScheduleIdPremiumClass(scheduleId);
 
-                    List<ReservationEntity> economyClassReservations
-                            = reservationEntitySessionBeanRemote.retrieveReservationsByScheduleIdEconomyClass(scheduleId);
+                    List<ReservationEntity> economyClassReservations = null;
+              //              = reservationEntitySessionBeanRemote.retrieveReservationsByScheduleIdEconomyClass(scheduleId);
 
                     if (firstClassReservations.isEmpty() && businessClassReservations.isEmpty() && premiumClassReservations.isEmpty()
                             && economyClassReservations.isEmpty()) {

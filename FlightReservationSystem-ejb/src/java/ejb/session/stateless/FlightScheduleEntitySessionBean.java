@@ -32,6 +32,9 @@ import util.exception.ScheduleOverlapException;
 public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySessionBeanRemote, FlightScheduleEntitySessionBeanLocal {
 
     @EJB
+    private SeatEntitySessionBeanLocal seatEntitySessionBean;
+
+    @EJB
     private SeatsInventoryEntitySessionBeanLocal seatsInventoryEntitySessionBean;
 
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
@@ -74,6 +77,8 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
         aircraftConfig = entityManager.find(AircraftConfigurationEntity.class, aircraftConfig.getId());
 
         List<CabinClassConfigurationEntity> cabinClasses = aircraftConfig.getCabinClassConfigurationEntitys();
+        
+        int startSeatNumber = 0;
 
         for (FlightScheduleEntity schedule : schedules) {
             for (CabinClassConfigurationEntity cabinClass : cabinClasses) {
@@ -85,6 +90,8 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
                 seatsInventory = seatsInventoryEntitySessionBean.createSeatsInventoryEntity(seatsInventory);
                 seatsInventory.setFlightSchedule(schedule);
                 schedule.getSeatsInventoryEntitys().add(seatsInventory);
+                
+                startSeatNumber = seatsInventoryEntitySessionBean.createSeatsFromSeatInventory(seatsInventory, startSeatNumber);
             }
         }
     }
@@ -137,6 +144,41 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
         }
     }
 
+    @Override
+    public boolean checkOverlapping(FlightSchedulePlanEntity plan, FlightScheduleEntity schedule, DateTimeFormatter dateFormat) throws ScheduleOverlapException{
+        plan = entityManager.find(FlightSchedulePlanEntity.class, plan.getSchedulePlanId());
+        schedule = entityManager.find(FlightScheduleEntity.class, schedule.getScheduleId());
+        boolean overlap = false;
+        
+        FlightEntity flight = plan.getFlight();
+        flight.getFlightSchedulePlans().size();
+        List<FlightSchedulePlanEntity> plans = flight.getFlightSchedulePlans();
+        
+        for(FlightSchedulePlanEntity schedulePlan:plans) {
+            if(!schedulePlan.equals(plan)) {
+                
+                List<FlightScheduleEntity> schedules = schedulePlan.getFlightSchedules();
+                schedules.size();
+                
+                for(FlightScheduleEntity otherSchedule:schedules) {
+                    ZonedDateTime oldScheduleDep = ZonedDateTime.parse(otherSchedule.getDepartureDateTime(), dateFormat);
+                    ZonedDateTime oldScheduleArr = ZonedDateTime.parse(otherSchedule.getArrivalDateTime(), dateFormat);
+                    
+                    ZonedDateTime newScheduleDep = ZonedDateTime.parse(schedule.getDepartureDateTime(), dateFormat);
+                    ZonedDateTime newScheduleArr = ZonedDateTime.parse(schedule.getArrivalDateTime(), dateFormat);
+                    
+                    if(newScheduleDep.isAfter(oldScheduleArr) || newScheduleArr.isBefore(oldScheduleDep)) {
+                        overlap = false;
+                    } else {
+                        throw new ScheduleOverlapException();
+                    }
+                }
+            }
+        }
+        
+        return false;
+    }
+    
     @Override
     public boolean checkOverlapSchedule(FlightSchedulePlanEntity plan, FlightScheduleEntity schedule, DateTimeFormatter dateFormat) throws ScheduleOverlapException {
         plan = entityManager.find(FlightSchedulePlanEntity.class, plan.getSchedulePlanId());

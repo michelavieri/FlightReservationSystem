@@ -235,4 +235,21 @@ public class FlightSchedulePlanEntitySessionBean implements FlightSchedulePlanEn
 
         }
     }
+    
+    @Override
+    public void associateReturnSchedulePlan(FlightSchedulePlanEntity departure, FlightSchedulePlanEntity returning) {
+        departure = entityManager.find(FlightSchedulePlanEntity.class, departure.getSchedulePlanId());
+        returning = entityManager.find(FlightSchedulePlanEntity.class, returning.getSchedulePlanId());
+
+        departure.setReturnSchedulePlan(returning);
+        returning.setDepartureSchedulePlan(departure);
+    }
+    
+    public String retrieveDepartureDateTime(FlightSchedulePlanEntity plan) {
+        plan = entityManager.find(FlightSchedulePlanEntity.class, plan.getSchedulePlanId());
+        
+        plan.getFlightSchedules().size();
+        
+        return plan.getFlightSchedules().get(0).getDepartureDateTime();
+    }
 }

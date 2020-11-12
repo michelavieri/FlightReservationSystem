@@ -12,6 +12,6 @@ import javax.ejb.Local;
  * @author Chrisya
  */
 @Local
-public interface ReservationEntitySessionBeanLocal {
+public interface SeatEntitySessionBeanLocal {
     
 }
