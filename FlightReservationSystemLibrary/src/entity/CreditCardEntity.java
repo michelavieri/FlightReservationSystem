@@ -23,8 +23,24 @@ public class CreditCardEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cardId;
+    private String cardNumber;
+    private String cardName;
+    private String expiryDate;
+    private String cvv;
     @OneToOne
     private ReservationEntity reservation;
+
+    public CreditCardEntity() {
+    }
+
+    public CreditCardEntity(String cardNumber, String cardName, String expiryDate, String cvv) {
+        this.cardNumber = cardNumber;
+        this.cardName = cardName;
+        this.expiryDate = expiryDate;
+        this.cvv = cvv;
+    }
+    
+    
 
     public Long getCardId() {
         return cardId;
@@ -57,6 +73,76 @@ public class CreditCardEntity implements Serializable {
     @Override
     public String toString() {
         return "entity.CreditCardEntity[ id=" + cardId + " ]";
+    }
+
+    /**
+     * @return the reservation
+     */
+    public ReservationEntity getReservation() {
+        return reservation;
+    }
+
+    /**
+     * @param reservation the reservation to set
+     */
+    public void setReservation(ReservationEntity reservation) {
+        this.reservation = reservation;
+    }
+
+    /**
+     * @return the cardNumber
+     */
+    public String getCardNumber() {
+        return cardNumber;
+    }
+
+    /**
+     * @param cardNumber the cardNumber to set
+     */
+    public void setCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber;
+    }
+
+    /**
+     * @return the cardName
+     */
+    public String getCardName() {
+        return cardName;
+    }
+
+    /**
+     * @param cardName the cardName to set
+     */
+    public void setCardName(String cardName) {
+        this.cardName = cardName;
+    }
+
+    /**
+     * @return the expiryDate
+     */
+    public String getExpiryDate() {
+        return expiryDate;
+    }
+
+    /**
+     * @param expiryDate the expiryDate to set
+     */
+    public void setExpiryDate(String expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
+    /**
+     * @return the cvv
+     */
+    public String getCvv() {
+        return cvv;
+    }
+
+    /**
+     * @param cvv the cvv to set
+     */
+    public void setCvv(String cvv) {
+        this.cvv = cvv;
     }
     
 }

@@ -78,7 +78,7 @@ public class MainApp {
                     }
                 } else if (response == 3) {
                     System.out.println("*** FRS Reservation System :: Search Flights ***");
-                    reservationOperationModule.searchFlights(sc);
+                    reservationOperationModule.searchFlights(sc, null);
                 } else if (response == 4) {
                     break;
                 } else {
@@ -154,7 +154,7 @@ public class MainApp {
 
                 if (response == 1) {
                     System.out.println("*** FRS Customer :: Search Flights ***");
-                    reservationOperationModule.searchFlights(sc);
+                    reservationOperationModule.searchFlights(sc, currentCustomer);
                 } else if (response == 2) {
                     System.out.println("*** FRS Customer :: View My Flight Reservations ***");
                     this.reservationOperationModule.viewMyFlightReservations(currentCustomer);

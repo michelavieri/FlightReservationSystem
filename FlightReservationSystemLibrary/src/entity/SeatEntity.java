@@ -24,7 +24,8 @@ public class SeatEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seatId;
-    private String seatNumber;
+    private int seatNumber;
+    private String seatLetter;
     private boolean booked;
     
     @ManyToOne
@@ -32,6 +33,11 @@ public class SeatEntity implements Serializable {
 
     @OneToOne(mappedBy = "seat")
     private BookingTicketEntity bookingTicketEntity;
+
+    public SeatEntity() {
+    }
+    
+    
 
     public Long getSeatId() {
         return seatId;
@@ -97,14 +103,14 @@ public class SeatEntity implements Serializable {
     /**
      * @return the seatNumber
      */
-    public String getSeatNumber() {
+    public int getSeatNumber() {
         return seatNumber;
     }
 
     /**
      * @param seatNumber the seatNumber to set
      */
-    public void setSeatNumber(String seatNumber) {
+    public void setSeatNumber(int seatNumber) {
         this.seatNumber = seatNumber;
     }
 
@@ -120,6 +126,20 @@ public class SeatEntity implements Serializable {
      */
     public void setBooked(boolean booked) {
         this.booked = booked;
+    }
+
+    /**
+     * @return the seatLetter
+     */
+    public String getSeatLetter() {
+        return seatLetter;
+    }
+
+    /**
+     * @param seatLetter the seatLetter to set
+     */
+    public void setSeatLetter(String seatLetter) {
+        this.seatLetter = seatLetter;
     }
 
 }

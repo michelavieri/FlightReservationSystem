@@ -9,11 +9,17 @@ import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import ejb.session.stateless.FlightScheduleEntitySessionBeanRemote;
 import ejb.session.stateless.ReservationEntitySessionBeanRemote;
 import entity.BookingTicketEntity;
+import entity.CreditCardEntity;
 import entity.CustomerEntity;
+import entity.FareEntity;
 import entity.FlightEntity;
 import entity.FlightScheduleEntity;
+import entity.PassengerEntity;
 import entity.ReservationEntity;
+import entity.SeatEntity;
+import static java.lang.System.out;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import util.enumeration.CabinClassTypeEnum;
@@ -39,7 +45,8 @@ public class ReservationOperationModule {
         this.flightScheduleEntitySessionBeanRemote = flightScheduleEntitySessionBeanRemote;
     }
 
-    public void searchFlights(Scanner sc) {
+    public void searchFlights(Scanner sc, CustomerEntity customer) {
+        boolean validReserve = true;
         System.out.println("*** SEARCH FOR FLIGHTS ***");
         System.out.println("1: One-way Trip");
         System.out.println("2: Round Trip/Return");
@@ -119,11 +126,10 @@ public class ReservationOperationModule {
             outboundFlightsAfterDate = flightScheduleEntitySessionBeanRemote.
                     searchConnectingFlightsAfter(departureAirportCode, destinationAirportCode, departureDate, numOfPassengers, stopovers, preferenceClassEnum);
         }
-
+        List<List<FlightScheduleEntity>> returnFlightsSameDate = new ArrayList<>();
+        List<List<FlightScheduleEntity>> returnFlightsBeforeDate = new ArrayList<>();
+        List<List<FlightScheduleEntity>> returnFlightsAfterDate = new ArrayList<>();
         if (tripType == 2) {
-            List<List<FlightScheduleEntity>> returnFlightsSameDate;
-            List<List<FlightScheduleEntity>> returnFlightsBeforeDate;
-            List<List<FlightScheduleEntity>> returnFlightsAfterDate;
             if (preferenceFlight == 1) {
                 returnFlightsSameDate = flightScheduleEntitySessionBeanRemote.
                         searchDirectFlights(destinationAirportCode, departureAirportCode, returnDate, numOfPassengers, preferenceClassEnum);
@@ -144,30 +150,230 @@ public class ReservationOperationModule {
         System.out.println("*** SEARCH RESULTS: ***");
         System.out.println("OUTBOUND FLIGHTS: ");
         System.out.println("Departure Date " + departureDate + ":");
-        List<CabinClassTypeEnum> cabinClassesAvailable = new ArrayList<>();
-        cabinClassesAvailable.add(CabinClassTypeEnum.FIRST_CLASS);
-        cabinClassesAvailable.add(CabinClassTypeEnum.BUSINESS_CLASS);
-        cabinClassesAvailable.add(CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS);
-        cabinClassesAvailable.add(CabinClassTypeEnum.ECONOMY_CLASS);
 
-        for (List<FlightScheduleEntity> schedules : outboundFlightsSameDate) {
-            for (FlightScheduleEntity schedule : schedules) {
-
-            }
-        }
+        int pricePerPassenger = 0;
         for (int i = 0; i < outboundFlightsSameDate.size(); i++) {
             System.out.println((i + 1) + ". FLIGHT(s) : ");
             List<FlightScheduleEntity> schedules = outboundFlightsSameDate.get(i);
+            for (int j = 0; j < schedules.size(); j++) {
+                System.out.println("\t -SCHEDULE ID: " + schedules.get(j).getScheduleId());
+                System.out.println("\t  " + schedules.get(j).getPlan().getFlight().getRoute().getOriginAirport().getAirportCode()
+                        + " - " + schedules.get(j).getPlan().getFlight().getRoute().getDestinationAirport().getAirportCode() + " ("
+                        + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
+                System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
+                System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
+                pricePerPassenger += satsInventoryEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum);
+            }
+            System.out.println();
+
+            System.out.println("   Price: ");
+            System.out.println("   \t Price per passenger for " + searchCabinType(preferenceClassEnum) + ": " + pricePerPassenger);
+            System.out.println("   \t Total Price: " + pricePerPassenger * numOfPassengers);
+        }
+
+        System.out.println("***");
+        System.out.println("Departure Date 3/2/1 Days before " + departureDate + ":");
+
+        pricePerPassenger = 0;
+        for (int i = 0; i < outboundFlightsBeforeDate.size(); i++) {
+            System.out.println((i + 1) + ". FLIGHT(s) : ");
+            List<FlightScheduleEntity> schedules = outboundFlightsBeforeDate.get(i);
             for (int j = 0; j < schedules.size(); j++) {
                 System.out.println("\t -" + schedules.get(j).getPlan().getFlight().getRoute().getOriginAirport().getAirportCode()
                         + " - " + schedules.get(j).getPlan().getFlight().getRoute().getDestinationAirport().getAirportCode() + " ("
                         + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
                 System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
                 System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
-                System.out.println("\t  Cabin Classes Available: ");
-                System.out.println("\t\t ");
+                pricePerPassenger += satsInventoryEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum);
             }
             System.out.println();
+
+            System.out.println("   Price: ");
+            System.out.println("   \t Price per passenger for " + searchCabinType(preferenceClassEnum) + ": " + pricePerPassenger);
+            System.out.println("   \t Total Price: " + pricePerPassenger * numOfPassengers);
+        }
+
+        System.out.println("***");
+
+        System.out.println("Departure Date 3/2/1 Days after " + departureDate + ":");
+
+        pricePerPassenger = 0;
+        for (int i = 0; i < outboundFlightsAfterDate.size(); i++) {
+            System.out.println((i + 1) + ". FLIGHT(s) : ");
+            List<FlightScheduleEntity> schedules = outboundFlightsAfterDate.get(i);
+            for (int j = 0; j < schedules.size(); j++) {
+                System.out.println("\t -" + schedules.get(j).getPlan().getFlight().getRoute().getOriginAirport().getAirportCode()
+                        + " - " + schedules.get(j).getPlan().getFlight().getRoute().getDestinationAirport().getAirportCode() + " ("
+                        + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
+                System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
+                System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
+                pricePerPassenger += seatsInventoryEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum);
+            }
+            System.out.println();
+
+            System.out.println("   Price: ");
+            System.out.println("   \t Price per passenger for " + searchCabinType(preferenceClassEnum) + ": " + pricePerPassenger);
+            System.out.println("   \t Total Price: " + pricePerPassenger * numOfPassengers);
+        }
+
+        System.out.println("***********************************");
+        System.out.println("RETURN FLIGHTS: ");
+
+        System.out.println("Return Date " + returnDate + ":");
+
+        pricePerPassenger = 0;
+        for (int i = 0; i < returnFlightsSameDate.size(); i++) {
+            System.out.println((i + 1) + ". FLIGHT(s) : ");
+            List<FlightScheduleEntity> schedules = returnFlightsSameDate.get(i);
+            for (int j = 0; j < schedules.size(); j++) {
+                System.out.println("\t -" + schedules.get(j).getPlan().getFlight().getRoute().getOriginAirport().getAirportCode()
+                        + " - " + schedules.get(j).getPlan().getFlight().getRoute().getDestinationAirport().getAirportCode() + " ("
+                        + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
+                System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
+                System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
+                pricePerPassenger += seatsInventoryEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum);
+            }
+            System.out.println();
+
+            System.out.println("   Price: ");
+            System.out.println("   \t Price per passenger for " + searchCabinType(preferenceClassEnum) + ": " + pricePerPassenger);
+            System.out.println("   \t Total Price: " + pricePerPassenger * numOfPassengers);
+        }
+
+        System.out.println("***");
+        System.out.println("Return Date 3/2/1 Days before " + returnDate + ":");
+
+        pricePerPassenger = 0;
+        for (int i = 0; i < returnFlightsBeforeDate.size(); i++) {
+            System.out.println((i + 1) + ". FLIGHT(s) : ");
+            List<FlightScheduleEntity> schedules = returnFlightsBeforeDate.get(i);
+            for (int j = 0; j < schedules.size(); j++) {
+                System.out.println("\t -" + schedules.get(j).getPlan().getFlight().getRoute().getOriginAirport().getAirportCode()
+                        + " - " + schedules.get(j).getPlan().getFlight().getRoute().getDestinationAirport().getAirportCode() + " ("
+                        + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
+                System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
+                System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
+                pricePerPassenger += Integer.parseInt(seatsInventoryEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum).getAmount());
+            }
+            System.out.println();
+
+            System.out.println("   Price: ");
+            System.out.println("   \t Price per passenger for " + searchCabinType(preferenceClassEnum) + ": " + pricePerPassenger);
+            System.out.println("   \t Total Price: " + pricePerPassenger * numOfPassengers);
+        }
+
+        System.out.println("***");
+
+        System.out.println("Return Date 3/2/1 Days after " + returnDate + ":");
+
+        pricePerPassenger = 0;
+        for (int i = 0; i < returnFlightsAfterDate.size(); i++) {
+            System.out.println((i + 1) + ". FLIGHT(s) : ");
+            List<FlightScheduleEntity> schedules = returnFlightsAfterDate.get(i);
+            for (int j = 0; j < schedules.size(); j++) {
+                System.out.println("\t -SCHEDULE ID: " + schedules.get(j).getScheduleId());
+                System.out.println("\t  " + schedules.get(j).getPlan().getFlight().getRoute().getOriginAirport().getAirportCode()
+                        + " - " + schedules.get(j).getPlan().getFlight().getRoute().getDestinationAirport().getAirportCode() + " ("
+                        + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
+                System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
+                System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
+                pricePerPassenger += seatsInventoryEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum);
+            }
+            System.out.println();
+
+            System.out.println("   Price: ");
+            System.out.println("   \t Price per passenger for " + searchCabinType(preferenceClassEnum) + ": " + pricePerPassenger);
+            System.out.println("   \t Total Price: " + pricePerPassenger * numOfPassengers);
+        }
+        if (customer == null) {
+            System.out.println("Please sign in if you want to reserve a flight!");
+            return;
+        }
+        System.out.println("Do you want to reserve flight? (Y/N)");
+        String reserveFlight = sc.nextLine();
+
+        if (reserveFlight.equals("N")) {
+            return;
+        } else {
+            HashSet<SeatEntity> seatOutbound = new HashSet<>();
+            HashSet<SeatEntity> seatReturn = new HashSet<>();
+
+            System.out.println("Enter the Schedule ID for Outbound Flight> ");
+            long outboundId = sc.nextLong();
+
+            long returnId = 0L;
+            if (tripType == 2) {
+                System.out.println("Enter the Schedule ID for Return Flight> ");
+                returnId = sc.nextLong();
+            }
+            FlightScheduleEntity outboundFlightSchedule = flightScheduleEntitySessionBeanRemote.retrieveFlightScheduleById(outboundId);
+            FlightScheduleEntity returnFlightSchedule = flightScheduleEntitySessionBeanRemote.retrieveFlightScheduleById(returnId);
+
+            List<BookingTicketEntity> tickets = new ArrayList<>();
+            for (int i = 0; i < numOfPassengers; i++) {
+                System.out.print((i + 1) + ". ");
+                System.out.println("Enter the passenger name>");
+                String passengerName = sc.nextLine();
+                System.out.println("Enter the pasport number>");
+                String passportNumber = sc.nextLine();
+                PassengerEntity passenger = new PassengerEntity(passengerName, passportNumber);
+                System.out.println("CHOOSE SEAT FOR OUTBOUND FLIGHT:");
+                printAirplaneSeats(outboundFlightSchedule);
+                System.out.print("Enter seat number (e.g. 12)> ");
+                int seatNumber = sc.nextInt();
+
+                sc.nextLine();
+                System.out.print("Enter seat letter(e.g. A)> ");
+                String seatLetter = sc.nextLine();
+
+                SeatEntity seat = seatEntitySessionBeanRemote.retrieveSeat(seatNumber, seatLetter);
+
+                if (seat.isBooked() || seatOutbound.contains(seat)) {
+                    System.out.println("This seat has been booked!");
+                    validReserve = false;
+                    break;
+                }
+                FareEntity fare = flightScheduleEntitySessionBeanRemote.retrieveLowestFare(outboundFlightSchedule, preferenceClassEnum);
+                seatOutbound.add(seat);
+                BookingTicketEntity ticket = new BookingTicketEntity(passenger, seat, fare, outboundFlightSchedule, FlightTypeEnum.OUTBOUND_FLIGHT);
+                tickets.add(ticket);
+
+                if (tripType == 2) {
+                    System.out.println("CHOOSE SEAT FOR RETURN FLIGHT:");
+                    printAirplaneSeats(returnFlightSchedule);
+                    System.out.print("Enter seat number (e.g. 12)> ");
+                    seatNumber = sc.nextInt();
+
+                    sc.nextLine();
+                    System.out.print("Enter seat letter(e.g. A)> ");
+                    seatLetter = sc.nextLine();
+
+                    seat = seatEntitySessionBeanRemote.retrieveSeat(seatNumber, seatLetter);
+
+                    if (seat.isBooked() || seatReturn.contains(seat)) {
+                        System.out.println("This seat has been booked!");
+                        validReserve = false;
+                        break;
+                    }
+
+                    fare = flightScheduleEntitySessionBeanRemote.retrieveLowestFare(returnFlightSchedule, preferenceClassEnum);
+                    seatReturn.add(seat);
+                    ticket = new BookingTicketEntity(passenger, seat, fare, returnFlightSchedule, FlightTypeEnum.RETURN_FLIGHT);
+                    tickets.add(ticket);
+                }
+            }
+            if (validReserve) {
+                System.out.println("Enter Credit Card Number> ");
+                String cardNum = sc.nextLine();
+                System.out.println("Enter Credit Card Name> ");
+                String cardName = sc.nextLine();
+                System.out.println("Enter Credit Card Expiry Date> ");
+                String expiryDate = sc.nextLine();
+                System.out.println("Enter Credit Card CVV> ");
+                String cvv = sc.nextLine();
+                CreditCardEntity card = creditCardEntitySessionBeanRemote.createCreditCard(new CreditCardEntity(cardNum, cardName, expiryDate, cvv));
+                reservationEntitySessionBeanRemote.createReservation(tickets, customer, card);
+            }
         }
     }
 
@@ -227,7 +433,7 @@ public class ReservationOperationModule {
             System.out.println("\t\t Passenger's Passport number: " + ticket.getPassenger().getPassportNumber());
             System.out.println("\t\t Cabin Class: " + searchCabinType(ticket.getSeat().getSeatsInventory().getCabinClass().getType()));
             System.out.println("\t\t Seat Number: " + ticket.getSeat().getSeatNumber());
-            System.out.println("\t\t Fare Basis Code: " + ticket.getFareBasisCode());
+            System.out.println("\t\t Fare Basis Code: " + ticket.getFare().getFareBasisCode());
             System.out.println();
         }
 
@@ -249,7 +455,7 @@ public class ReservationOperationModule {
                 System.out.println("\t\t Passenger's Passport number: " + ticket.getPassenger().getPassportNumber());
                 System.out.println("\t\t Cabin Class: " + searchCabinType(ticket.getSeat().getSeatsInventory().getCabinClass().getType()));
                 System.out.println("\t\t Seat Number: " + ticket.getSeat().getSeatNumber());
-                System.out.println("\t\t Fare Basis Code: " + ticket.getFareBasisCode());
+                System.out.println("\t\t Fare Basis Code: " + ticket.getFare().getFareBasisCode());
                 System.out.println();
             }
         }

@@ -31,19 +31,29 @@ public class BookingTicketEntity implements Serializable {
 
     @ManyToOne
     private PassengerEntity passenger;
-    
-    private String fareBasisCode;
 
     @OneToOne
     private SeatEntity seat;
-    
+
     @ManyToOne
     private FareEntity fare;
-    
+
     @ManyToOne
     private FlightScheduleEntity flightSchedule;
-    
-    private FlightTypeEnum flightType; 
+
+    private FlightTypeEnum flightType;
+
+    public BookingTicketEntity() {
+    }
+
+    public BookingTicketEntity(PassengerEntity passenger, SeatEntity seat, FareEntity fare, FlightScheduleEntity flightSchedule,
+            FlightTypeEnum type) {
+        this.passenger = passenger;
+        this.seat = seat;
+        this.fare = fare;
+        this.flightSchedule = flightSchedule;
+        this.flightType = type;
+    }
 
     public Long getBookingTicketId() {
         return bookingTicketId;
@@ -132,20 +142,6 @@ public class BookingTicketEntity implements Serializable {
      */
     public void setFlightSchedule(FlightScheduleEntity flightSchedule) {
         this.flightSchedule = flightSchedule;
-    }
-
-    /**
-     * @return the fareBasisCode
-     */
-    public String getFareBasisCode() {
-        return fareBasisCode;
-    }
-
-    /**
-     * @param fareBasisCode the fareBasisCode to set
-     */
-    public void setFareBasisCode(String fareBasisCode) {
-        this.fareBasisCode = fareBasisCode;
     }
 
     /**

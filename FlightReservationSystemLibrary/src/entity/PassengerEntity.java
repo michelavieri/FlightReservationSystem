@@ -30,6 +30,14 @@ public class PassengerEntity implements Serializable {
     @OneToMany(mappedBy = "passenger")
     private List<BookingTicketEntity> bookingTicketEntitys;
 
+    public PassengerEntity() {
+    }
+
+    public PassengerEntity(String passengerName, String passportNumber) {
+        this.passengerName = passengerName;
+        this.passportNumber = passportNumber;
+    }
+
     public Long getPassengerId() {
         return passengerId;
     }
