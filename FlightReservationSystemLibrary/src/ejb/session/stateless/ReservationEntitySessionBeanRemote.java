@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.CreditCardEntity;
 import entity.CustomerEntity;
 import entity.ReservationEntity;
 import java.util.List;
@@ -23,6 +24,6 @@ public interface ReservationEntitySessionBeanRemote {
 
     public ReservationEntity retrieveReservationByReservationId(long reservationId, CustomerEntity customer) throws InvalidReservationId, NotMyReservationException;
 
-    public ReservationEntity createNewReservation(CustomerEntity customer, ReservationEntity newReservation);
+    public ReservationEntity createNewReservation(CustomerEntity customer, CreditCardEntity card, ReservationEntity newReservation);
 
 }

@@ -5,6 +5,7 @@
  */
 package frsreservationclient;
 
+import ejb.session.stateless.CreditCardEntitySessionBeanRemote;
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import ejb.session.stateless.FareEntitySessionBeanRemote;
 import ejb.session.stateless.FlightScheduleEntitySessionBeanRemote;
@@ -12,6 +13,7 @@ import ejb.session.stateless.ReservationEntitySessionBeanRemote;
 import ejb.session.stateless.SeatEntitySessionBeanRemote;
 import ejb.session.stateless.SeatsInventoryEntitySessionBeanRemote;
 import entity.BookingTicketEntity;
+import entity.CreditCardEntity;
 import entity.CustomerEntity;
 import entity.FareEntity;
 import entity.FlightEntity;
@@ -40,29 +42,34 @@ public class ReservationOperationModule {
     public SeatsInventoryEntitySessionBeanRemote seatsInventoryEntitySessionBeanRemote;
     public SeatEntitySessionBeanRemote seatEntitySessionBeanRemote;
     public FareEntitySessionBeanRemote fareEntitySessionBeanRemote;
+    public CreditCardEntitySessionBeanRemote creditCardEntitySessionBeanRemote;
 
     public ReservationOperationModule(ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote,
             CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote,
             FlightScheduleEntitySessionBeanRemote flightScheduleEntitySessionBeanRemote,
             SeatsInventoryEntitySessionBeanRemote seatsInventoryEntitySessionBeanRemote,
             SeatEntitySessionBeanRemote seatEntitySessionBeanRemote,
-            FareEntitySessionBeanRemote fareEntitySessionBeanRemote) {
+            FareEntitySessionBeanRemote fareEntitySessionBeanRemote,
+            CreditCardEntitySessionBeanRemote creditCardEntitySessionBeanRemote) {
         this.reservationEntitySessionBeanRemote = reservationEntitySessionBeanRemote;
         this.customerEntitySessionBeanRemote = customerEntitySessionBeanRemote;
         this.flightScheduleEntitySessionBeanRemote = flightScheduleEntitySessionBeanRemote;
         this.seatsInventoryEntitySessionBeanRemote = seatsInventoryEntitySessionBeanRemote;
         this.seatEntitySessionBeanRemote = seatEntitySessionBeanRemote;
         this.fareEntitySessionBeanRemote = fareEntitySessionBeanRemote;
+        this.creditCardEntitySessionBeanRemote = creditCardEntitySessionBeanRemote;
     }
 
     public void searchFlights(Scanner sc, CustomerEntity customer) {
         boolean validReserve = true;
+        long totalAmount = 0L;
         System.out.println("*** SEARCH FOR FLIGHTS ***");
         System.out.println("1: One-way Trip");
         System.out.println("2: Round Trip/Return");
         System.out.println("Enter trip type> ");
         int tripType = sc.nextInt();
 
+        sc.nextLine();
         System.out.println("Enter departure airport code> ");
         String departureAirportCode = sc.nextLine();
 
@@ -344,6 +351,7 @@ public class ReservationOperationModule {
                     break;
                 }
                 FareEntity fare = fareEntitySessionBeanRemote.retrieveLowestFare(outboundFlightSchedule, preferenceClassEnum);
+                totalAmount += Integer.parseInt(fare.getAmount());
                 seatOutbound.add(seat);
                 BookingTicketEntity ticket = new BookingTicketEntity(passenger, seat, fare, outboundFlightSchedule, FlightTypeEnum.OUTBOUND_FLIGHT);
                 tickets.add(ticket);
@@ -364,12 +372,14 @@ public class ReservationOperationModule {
                         System.out.println("This seat has been booked!");
                         validReserve = false;
                         break;
-                   }
+                    }
 
                     fare = fareEntitySessionBeanRemote.retrieveLowestFare(returnFlightSchedule, preferenceClassEnum);
                     seatReturn.add(seat);
                     ticket = new BookingTicketEntity(passenger, seat, fare, returnFlightSchedule, FlightTypeEnum.RETURN_FLIGHT);
                     tickets.add(ticket);
+                    totalAmount += Integer.parseInt(fare.getAmount());
+
                 }
             }
             if (validReserve) {
@@ -381,8 +391,8 @@ public class ReservationOperationModule {
                 String expiryDate = sc.nextLine();
                 System.out.println("Enter Credit Card CVV> ");
                 String cvv = sc.nextLine();
-//                CreditCardEntity card = creditCardEntitySessionBeanRemote.createCreditCard(new CreditCardEntity(cardNum, cardName, expiryDate, cvv));
-//                reservationEntitySessionBeanRemote.createReservation(tickets, customer, card);
+                CreditCardEntity card = creditCardEntitySessionBeanRemote.createCreditCard(new CreditCardEntity(cardNum, cardName, expiryDate, cvv));
+                reservationEntitySessionBeanRemote.createNewReservation(customer, card, new ReservationEntity(numOfPassengers, String.valueOf(totalAmount), tickets));
             }
         }
     }
@@ -418,7 +428,7 @@ public class ReservationOperationModule {
 
         for (BookingTicketEntity ticket : tickets) {
             if (ticket.getFlightType().equals(FlightTypeEnum.OUTBOUND_FLIGHT)) {
-               outboundSchedule = ticket.getFlightSchedule();
+                outboundSchedule = ticket.getFlightSchedule();
                 outboundTickets.add(ticket);
             } else {
                 returnSchedule = ticket.getFlightSchedule();
