@@ -146,7 +146,7 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
     }
 
     @Override
-    public boolean checkOverlapping(FlightSchedulePlanEntity plan, FlightScheduleEntity schedule, DateTimeFormatter dateFormat) {
+    public boolean checkOverlapping(FlightSchedulePlanEntity plan, FlightScheduleEntity schedule, DateTimeFormatter dateFormat) throws ScheduleOverlapException{
         plan = entityManager.find(FlightSchedulePlanEntity.class, plan.getSchedulePlanId());
         schedule = entityManager.find(FlightScheduleEntity.class, schedule.getScheduleId());
         boolean overlap = false;
@@ -171,7 +171,7 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
                     if (newScheduleDep.isAfter(oldScheduleArr) || newScheduleArr.isBefore(oldScheduleDep)) {
                         overlap = false;
                     } else {
-                        return true;
+                        throw new ScheduleOverlapException("Overlap!");
                     }
                 }
             }
