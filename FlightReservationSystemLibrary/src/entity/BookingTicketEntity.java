@@ -46,8 +46,8 @@ public class BookingTicketEntity implements Serializable {
     public BookingTicketEntity() {
     }
 
-    public BookingTicketEntity(PassengerEntity passenger, SeatEntity seat, FareEntity fare, FlightScheduleEntity flightSchedule,
-            FlightTypeEnum type) {
+    public BookingTicketEntity(PassengerEntity passenger, SeatEntity seat, FareEntity fare,
+            FlightScheduleEntity flightSchedule,FlightTypeEnum type) {
         this.passenger = passenger;
         this.seat = seat;
         this.fare = fare;

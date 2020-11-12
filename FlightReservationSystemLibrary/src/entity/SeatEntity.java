@@ -34,8 +34,9 @@ public class SeatEntity implements Serializable {
     @OneToOne(mappedBy = "seat")
     private BookingTicketEntity bookingTicketEntity;
 
-    public SeatEntity(String seatNumber, boolean booked) {
+    public SeatEntity(int seatNumber, String seatLetter, boolean booked) {
         this.seatNumber = seatNumber;
+        this.seatLetter = seatLetter;
         this.booked = booked;
     }
 

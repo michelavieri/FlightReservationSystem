@@ -37,7 +37,7 @@ public class MainApp {
 
     public MainApp(CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote,
             ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote,
-            FightScheduleEntitySessionBeanRemote flightScheduleEntitySessionBeanRemote) {
+            FlightScheduleEntitySessionBeanRemote flightScheduleEntitySessionBeanRemote) {
         this.customerEntitySessionBeanRemote = customerEntitySessionBeanRemote;
         this.reservationEntitySessionBeanRemote = reservationEntitySessionBeanRemote;
         this.flightScheduleEntitySessionBeanRemote = flightScheduleEntitySessionBeanRemote;

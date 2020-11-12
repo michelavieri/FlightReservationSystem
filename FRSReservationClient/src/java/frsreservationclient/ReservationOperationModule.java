@@ -334,13 +334,13 @@ public class ReservationOperationModule {
                     break;
                 }
                 FareEntity fare = flightScheduleEntitySessionBeanRemote.retrieveLowestFare(outboundFlightSchedule, preferenceClassEnum);
-                seatOutbound.add(seat);
+                //seatOutbound.add(seat);
                 BookingTicketEntity ticket = new BookingTicketEntity(passenger, seat, fare, outboundFlightSchedule, FlightTypeEnum.OUTBOUND_FLIGHT);
                 tickets.add(ticket);
 
                 if (tripType == 2) {
                     System.out.println("CHOOSE SEAT FOR RETURN FLIGHT:");
-                    printAirplaneSeats(returnFlightSchedule);
+                    //printAirplaneSeats(returnFlightSchedule);
                     System.out.print("Enter seat number (e.g. 12)> ");
                     seatNumber = sc.nextInt();
 
@@ -354,7 +354,7 @@ public class ReservationOperationModule {
                         System.out.println("This seat has been booked!");
                         validReserve = false;
                         break;
-                    }
+                   }
 
                     fare = flightScheduleEntitySessionBeanRemote.retrieveLowestFare(returnFlightSchedule, preferenceClassEnum);
                     seatReturn.add(seat);
@@ -408,7 +408,7 @@ public class ReservationOperationModule {
 
         for (BookingTicketEntity ticket : tickets) {
             if (ticket.getFlightType().equals(FlightTypeEnum.OUTBOUND_FLIGHT)) {
-                outboundSchedule = ticket.getFlightSchedule();
+               outboundSchedule = ticket.getFlightSchedule();
                 outboundTickets.add(ticket);
             } else {
                 returnSchedule = ticket.getFlightSchedule();

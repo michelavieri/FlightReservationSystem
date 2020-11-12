@@ -23,6 +23,6 @@ public interface FareEntitySessionBeanLocal {
 
     public void associateFareWithPlan(FlightSchedulePlanEntity plan, FareEntity fare);
 
-    public String retrieveFareAmount(String fareCode);
+    public String retrieveFareAmount(FareEntity fare);
     
 }
