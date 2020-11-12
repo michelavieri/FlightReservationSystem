@@ -543,12 +543,12 @@ public class FlightOperationModule {
             for (int i = 0; i < numSchedule; i++) {
                 FlightScheduleEntity flightSchedule = this.createFlightSchedule(sc, dateFormat, flight);
 
-//                try {
-//                    flightScheduleEntitySessionBeanRemote.checkOverlapping(schedulePlan, flightSchedule, dateFormat);
-//                } catch (ScheduleOverlapException ex) {
-//                    System.out.println("Schedule invalid with exisiting schedule!");
-//                    return;
-//                }
+                try {
+                    flightScheduleEntitySessionBeanRemote.checkOverlapping(schedulePlan, flightSchedule, dateFormat);
+                } catch (ScheduleOverlapException ex) {
+                    System.out.println("Schedule invalid with exisiting schedule!");
+                    return;
+                }
                 flightScheduleEntitySessionBeanRemote.associateWithPlan(flightSchedule, schedulePlan);
             }
 
@@ -574,12 +574,12 @@ public class FlightOperationModule {
                     for (FlightScheduleEntity schedule : schedules) {
                         returnFlightSchedule = this.createReturnFlightSchedule(sc, dateFormat, totalLayoverDuration, schedule);
 
-//                        try {
-//                            flightScheduleEntitySessionBeanRemote.checkOverlapping(returnPlan, returnFlightSchedule, dateFormat);
-//                        } catch (ScheduleOverlapException ex) {
-//                            System.out.println("Schedule invalid with exisiting schedule!");
-//                            return;
-//                        }
+                        try {
+                            flightScheduleEntitySessionBeanRemote.checkOverlapping(returnPlan, returnFlightSchedule, dateFormat);
+                        } catch (ScheduleOverlapException ex) {
+                            System.out.println("Schedule invalid with exisiting schedule!");
+                            return;
+                        }
                         flightScheduleEntitySessionBeanRemote.associateWithPlan(returnFlightSchedule, returnPlan);
                     }
 
@@ -853,7 +853,8 @@ public class FlightOperationModule {
         }
     }
 
-    public void updateSingleSchedule(Scanner sc, DateTimeFormatter dateFormat, FlightEntity flight, FlightSchedulePlanEntity plan, FlightScheduleEntity schedule) {
+    public void updateSingleSchedule(Scanner sc, DateTimeFormatter dateFormat, FlightEntity flight, FlightSchedulePlanEntity plan,
+            FlightScheduleEntity schedule) {
         System.out.println("Enter new departure date and time (yyyy-MM-dd HH:mm)>");
         String newDepartureDateTime = sc.nextLine();
 

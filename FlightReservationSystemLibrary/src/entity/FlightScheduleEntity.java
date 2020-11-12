@@ -18,7 +18,7 @@ import javax.persistence.OneToOne;
 
 /**
  *
- * @author miche
+ * @author Chrisya
  */
 @Entity
 public class FlightScheduleEntity implements Serializable {
@@ -27,6 +27,7 @@ public class FlightScheduleEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long scheduleId;
+    
     private String departureDateTime;
     private int duration;
     private String arrivalDateTime;
@@ -199,5 +200,4 @@ public class FlightScheduleEntity implements Serializable {
     public void setBookingTicketEntitys(List<BookingTicketEntity> bookingTicketEntitys) {
         this.bookingTicketEntitys = bookingTicketEntitys;
     }
-
 }

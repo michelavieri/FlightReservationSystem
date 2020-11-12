@@ -7,8 +7,10 @@ package ejb.session.stateless;
 
 import entity.CabinClassConfigurationEntity;
 import entity.FareEntity;
+import entity.FlightScheduleEntity;
 import entity.FlightSchedulePlanEntity;
 import javax.ejb.Remote;
+import util.enumeration.CabinClassTypeEnum;
 
 /**
  *
@@ -23,6 +25,8 @@ public interface FareEntitySessionBeanRemote {
     
     public void associateFareWithPlan(FlightSchedulePlanEntity plan, FareEntity fare);
     
-    public String retrieveFareAmount(String fareCode);
+    public String retrieveFareAmount(FareEntity fare);
+    
+     public FareEntity retrieveLowestFare(FlightScheduleEntity schedule, CabinClassTypeEnum type);
     
 }

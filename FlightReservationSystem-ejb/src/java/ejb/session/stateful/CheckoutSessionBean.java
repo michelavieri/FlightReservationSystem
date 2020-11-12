@@ -55,7 +55,7 @@ public class CheckoutSessionBean implements CheckoutSessionBeanRemote, CheckoutS
     public void addBoooking(BookingTicketEntity ticket) {
         bookings.add(ticket);
         
-        totalAmount += Long.parseLong(fareEntitySessionBean.retrieveFareAmount(ticket.getFareBasisCode()));
+        totalAmount += Long.parseLong(fareEntitySessionBean.retrieveFareAmount(ticket.getFare()));
     }
     
     @Override

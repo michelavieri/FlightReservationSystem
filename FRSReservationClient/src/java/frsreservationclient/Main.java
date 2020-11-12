@@ -6,8 +6,11 @@
 package frsreservationclient;
 
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
+import ejb.session.stateless.FareEntitySessionBeanRemote;
 import ejb.session.stateless.FlightScheduleEntitySessionBeanRemote;
 import ejb.session.stateless.ReservationEntitySessionBeanRemote;
+import ejb.session.stateless.SeatEntitySessionBeanRemote;
+import ejb.session.stateless.SeatsInventoryEntitySessionBeanRemote;
 import javax.ejb.EJB;
 
 /**
@@ -15,6 +18,15 @@ import javax.ejb.EJB;
  * @author miche
  */
 public class Main {
+
+    @EJB
+    private static FareEntitySessionBeanRemote fareEntitySessionBeanRemote;
+
+    @EJB
+    private static SeatEntitySessionBeanRemote seatEntitySessionBeanRemote;
+
+    @EJB
+    private static SeatsInventoryEntitySessionBeanRemote seatsInventoryEntitySessionBeanRemote;
 
     @EJB
     private static FlightScheduleEntitySessionBeanRemote flightScheduleEntitySessionBeanRemote;
@@ -33,7 +45,8 @@ public class Main {
      */
     public static void main(String[] args) {
         MainApp mainApp = new MainApp(customerEntitySessionBeanRemote, reservationEntitySessionBeanRemote,
-        flightScheduleEntitySessionBeanRemote);
+        flightScheduleEntitySessionBeanRemote, seatsInventoryEntitySessionBeanRemote, seatEntitySessionBeanRemote,
+        fareEntitySessionBeanRemote);
         mainApp.runApp();
     }
 }

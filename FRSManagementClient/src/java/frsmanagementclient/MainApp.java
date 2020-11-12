@@ -31,7 +31,7 @@ import ejb.session.stateless.FlightRouteEntitySessionBeanRemote;
 import ejb.session.stateless.FlightScheduleEntitySessionBeanRemote;
 import ejb.session.stateless.FlightSchedulePlanEntitySessionBeanRemote;
 import ejb.session.stateless.ReservationEntitySessionBeanRemote;
-//import ejb.session.stateless.ReservationEntitySessionBeanRemote;
+import ejb.session.stateless.ReservationEntitySessionBeanRemote;
 import ejb.session.stateless.SeatsInventoryEntitySessionBeanRemote;
 import entity.AirportEntity;
 import entity.BookingTicketEntity;
@@ -40,7 +40,12 @@ import entity.FlightRouteEntity;
 import entity.FlightScheduleEntity;
 import entity.FlightSchedulePlanEntity;
 import entity.SeatsInventoryEntity;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import util.exception.AircraftConfigurationNotFoundException;
 import util.exception.AirportNotFoundException;
 import util.exception.FlightNotFoundException;
@@ -711,7 +716,7 @@ public class MainApp {
                         for (BookingTicketEntity ticket : firstClassTickets) {
                             System.out.println("Passenger name: " + ticket.getPassenger().getPassengerName());
                             System.out.println("Seat number: " + ticket.getSeat().getSeatNumber());
-                            System.out.println("Fare Basis Code: " + ticket.getFareBasisCode());
+                            System.out.println("Fare Basis Code: " + ticket.getFare().getFareBasisCode());
                             System.out.println();
                         }
                     }
@@ -721,7 +726,7 @@ public class MainApp {
                         for (BookingTicketEntity ticket : businessClassTickets) {
                             System.out.println("Passenger name: " + ticket.getPassenger().getPassengerName());
                             System.out.println("Seat number: " + ticket.getSeat().getSeatNumber());
-                            System.out.println("Fare Basis Code: " + ticket.getFareBasisCode());
+                            System.out.println("Fare Basis Code: " + ticket.getFare().getFareBasisCode());
                             System.out.println();
                         }
                     }
@@ -731,7 +736,7 @@ public class MainApp {
                         for (BookingTicketEntity ticket : premiumEconomyClassTickets) {
                             System.out.println("Passenger name: " + ticket.getPassenger().getPassengerName());
                             System.out.println("Seat number: " + ticket.getSeat().getSeatNumber());
-                            System.out.println("Fare Basis Code: " + ticket.getFareBasisCode());
+                            System.out.println("Fare Basis Code: " + ticket.getFare().getFareBasisCode());
                             System.out.println();
                         }
                     }
@@ -741,7 +746,7 @@ public class MainApp {
                         for (BookingTicketEntity ticket : economyClassTickets) {
                             System.out.println("Passenger name: " + ticket.getPassenger().getPassengerName());
                             System.out.println("Seat number: " + ticket.getSeat().getSeatNumber());
-                            System.out.println("Fare Basis Code: " + ticket.getFareBasisCode());
+                            System.out.println("Fare Basis Code: " + ticket.getFare().getFareBasisCode());
                             System.out.println();
                         }
                     }

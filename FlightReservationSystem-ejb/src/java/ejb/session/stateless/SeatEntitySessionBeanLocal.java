@@ -16,5 +16,7 @@ import javax.ejb.Local;
 public interface SeatEntitySessionBeanLocal {
 
     public SeatEntity createNewSeat(SeatEntity newSeat);
+
+    public SeatEntity retrieveSeat(int seatNumber, String seatLetter);
     
 }

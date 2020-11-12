@@ -59,7 +59,6 @@ public class SeatsInventoryEntitySessionBean implements SeatsInventoryEntitySess
         {
             throw new FlightScheduleNotFoundException("Flight Schedule id " + scheduleId + " does not exist!");
         }
-        
         return schedule.getSeatsInventoryEntitys();
         
     }
@@ -77,24 +76,19 @@ public class SeatsInventoryEntitySessionBean implements SeatsInventoryEntitySess
         
         int totalCapacity = seatsInventory.getCabinClass().getMaxCapacity();
         
-        String[][] seatsConfig = new String[numAbreast][numRow];
-        
         for(int i = startNumber + 1; i <= startNumber + numRow; i++) {
             while(tempAbreast < numAbreast) {
                 char initial = 'A';
-                seatsConfig[i-startNumber-1][tempAbreast] = Integer.toString(i) + initial;
-                initial++;
-            }
-            endNumSeat = i;
-        }
-        
-        for(int i = 0; i < numAbreast; i++) {
-            for(int j = 0; j < numRow; j++) {
-                SeatEntity seat = new SeatEntity(seatsConfig[i][j], false);
+                
+                SeatEntity seat = new SeatEntity(i, Character.toString(initial), false);
                 seat = seatEntitySessionBean.createNewSeat(seat);
                 seat.setSeatsInventory(seatsInventory);
                 seatsInventory.getSeats().add(seat);
+                
+                initial++;
+                tempAbreast++;
             }
+            endNumSeat = i;
         }
         
         return endNumSeat;

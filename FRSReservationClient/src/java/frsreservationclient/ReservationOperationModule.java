@@ -6,10 +6,12 @@
 package frsreservationclient;
 
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
+import ejb.session.stateless.FareEntitySessionBeanRemote;
 import ejb.session.stateless.FlightScheduleEntitySessionBeanRemote;
 import ejb.session.stateless.ReservationEntitySessionBeanRemote;
+import ejb.session.stateless.SeatEntitySessionBeanRemote;
+import ejb.session.stateless.SeatsInventoryEntitySessionBeanRemote;
 import entity.BookingTicketEntity;
-import entity.CreditCardEntity;
 import entity.CustomerEntity;
 import entity.FareEntity;
 import entity.FlightEntity;
@@ -17,7 +19,6 @@ import entity.FlightScheduleEntity;
 import entity.PassengerEntity;
 import entity.ReservationEntity;
 import entity.SeatEntity;
-import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -36,13 +37,22 @@ public class ReservationOperationModule {
     public ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote;
     public CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote;
     public FlightScheduleEntitySessionBeanRemote flightScheduleEntitySessionBeanRemote;
+    public SeatsInventoryEntitySessionBeanRemote seatsInventoryEntitySessionBeanRemote;
+    public SeatEntitySessionBeanRemote seatEntitySessionBeanRemote;
+    public FareEntitySessionBeanRemote fareEntitySessionBeanRemote;
 
     public ReservationOperationModule(ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote,
             CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote,
-            FlightScheduleEntitySessionBeanRemote flightScheduleEntitySessionBeanRemote) {
+            FlightScheduleEntitySessionBeanRemote flightScheduleEntitySessionBeanRemote,
+            SeatsInventoryEntitySessionBeanRemote seatsInventoryEntitySessionBeanRemote,
+            SeatEntitySessionBeanRemote seatEntitySessionBeanRemote,
+            FareEntitySessionBeanRemote fareEntitySessionBeanRemote) {
         this.reservationEntitySessionBeanRemote = reservationEntitySessionBeanRemote;
         this.customerEntitySessionBeanRemote = customerEntitySessionBeanRemote;
         this.flightScheduleEntitySessionBeanRemote = flightScheduleEntitySessionBeanRemote;
+        this.seatsInventoryEntitySessionBeanRemote = seatsInventoryEntitySessionBeanRemote;
+        this.seatEntitySessionBeanRemote = seatEntitySessionBeanRemote;
+        this.fareEntitySessionBeanRemote = fareEntitySessionBeanRemote;
     }
 
     public void searchFlights(Scanner sc, CustomerEntity customer) {
@@ -162,7 +172,7 @@ public class ReservationOperationModule {
                         + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
                 System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
                 System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
-                pricePerPassenger += seatsInventoryEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum);
+                pricePerPassenger += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum).getAmount());
             }
             System.out.println();
 
@@ -184,7 +194,7 @@ public class ReservationOperationModule {
                         + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
                 System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
                 System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
-                pricePerPassenger += satsInventoryEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum);
+                pricePerPassenger += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum).getAmount());
             }
             System.out.println();
 
@@ -207,7 +217,7 @@ public class ReservationOperationModule {
                         + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
                 System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
                 System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
-                pricePerPassenger += seatsInventoryEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum);
+                pricePerPassenger += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum).getAmount());
             }
             System.out.println();
 
@@ -231,7 +241,7 @@ public class ReservationOperationModule {
                         + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
                 System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
                 System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
-                pricePerPassenger += seatsInventoryEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum);
+                pricePerPassenger += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum).getAmount());
             }
             System.out.println();
 
@@ -253,7 +263,7 @@ public class ReservationOperationModule {
                         + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
                 System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
                 System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
-                pricePerPassenger += Integer.parseInt(seatsInventoryEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum).getAmount());
+                pricePerPassenger += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum).getAmount());
             }
             System.out.println();
 
@@ -277,7 +287,7 @@ public class ReservationOperationModule {
                         + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
                 System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
                 System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
-                pricePerPassenger += seatsInventoryEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum);
+                pricePerPassenger += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum).getAmount());
             }
             System.out.println();
 
@@ -318,7 +328,7 @@ public class ReservationOperationModule {
                 String passportNumber = sc.nextLine();
                 PassengerEntity passenger = new PassengerEntity(passengerName, passportNumber);
                 System.out.println("CHOOSE SEAT FOR OUTBOUND FLIGHT:");
-                printAirplaneSeats(outboundFlightSchedule);
+                //printAirplaneSeats(outboundFlightSchedule);
                 System.out.print("Enter seat number (e.g. 12)> ");
                 int seatNumber = sc.nextInt();
 
@@ -333,14 +343,14 @@ public class ReservationOperationModule {
                     validReserve = false;
                     break;
                 }
-                FareEntity fare = flightScheduleEntitySessionBeanRemote.retrieveLowestFare(outboundFlightSchedule, preferenceClassEnum);
+                FareEntity fare = fareEntitySessionBeanRemote.retrieveLowestFare(outboundFlightSchedule, preferenceClassEnum);
                 seatOutbound.add(seat);
                 BookingTicketEntity ticket = new BookingTicketEntity(passenger, seat, fare, outboundFlightSchedule, FlightTypeEnum.OUTBOUND_FLIGHT);
                 tickets.add(ticket);
 
                 if (tripType == 2) {
                     System.out.println("CHOOSE SEAT FOR RETURN FLIGHT:");
-                    printAirplaneSeats(returnFlightSchedule);
+                    //printAirplaneSeats(returnFlightSchedule);
                     System.out.print("Enter seat number (e.g. 12)> ");
                     seatNumber = sc.nextInt();
 
@@ -354,9 +364,9 @@ public class ReservationOperationModule {
                         System.out.println("This seat has been booked!");
                         validReserve = false;
                         break;
-                    }
+                   }
 
-                    fare = flightScheduleEntitySessionBeanRemote.retrieveLowestFare(returnFlightSchedule, preferenceClassEnum);
+                    fare = fareEntitySessionBeanRemote.retrieveLowestFare(returnFlightSchedule, preferenceClassEnum);
                     seatReturn.add(seat);
                     ticket = new BookingTicketEntity(passenger, seat, fare, returnFlightSchedule, FlightTypeEnum.RETURN_FLIGHT);
                     tickets.add(ticket);
@@ -371,8 +381,8 @@ public class ReservationOperationModule {
                 String expiryDate = sc.nextLine();
                 System.out.println("Enter Credit Card CVV> ");
                 String cvv = sc.nextLine();
-                CreditCardEntity card = creditCardEntitySessionBeanRemote.createCreditCard(new CreditCardEntity(cardNum, cardName, expiryDate, cvv));
-                reservationEntitySessionBeanRemote.createReservation(tickets, customer, card);
+//                CreditCardEntity card = creditCardEntitySessionBeanRemote.createCreditCard(new CreditCardEntity(cardNum, cardName, expiryDate, cvv));
+//                reservationEntitySessionBeanRemote.createReservation(tickets, customer, card);
             }
         }
     }
@@ -408,7 +418,7 @@ public class ReservationOperationModule {
 
         for (BookingTicketEntity ticket : tickets) {
             if (ticket.getFlightType().equals(FlightTypeEnum.OUTBOUND_FLIGHT)) {
-                outboundSchedule = ticket.getFlightSchedule();
+               outboundSchedule = ticket.getFlightSchedule();
                 outboundTickets.add(ticket);
             } else {
                 returnSchedule = ticket.getFlightSchedule();

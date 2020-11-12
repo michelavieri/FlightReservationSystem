@@ -7,11 +7,14 @@ package ejb.session.stateless;
 
 import entity.CabinClassConfigurationEntity;
 import entity.FareEntity;
+import entity.FlightScheduleEntity;
 import entity.FlightSchedulePlanEntity;
+import entity.SeatsInventoryEntity;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import util.enumeration.CabinClassTypeEnum;
 
 /**
  *
@@ -53,12 +56,34 @@ public class FareEntitySessionBean implements FareEntitySessionBeanRemote, FareE
     }
     
     @Override
-    public String retrieveFareAmount(String fareCode) {
-        Query query = entityManager.createQuery("SELECT f FROM FareEntity f WHERE f.fareBasisCode = :fareCode");
-        query.setParameter("fareCode", fareCode);
-        
-        FareEntity fare = (FareEntity) query.getSingleResult();
+    public String retrieveFareAmount(FareEntity fare) {
+        fare = entityManager.find(FareEntity.class, fare.getFairId());
         
         return fare.getAmount();
+    }
+    
+    @Override
+    public FareEntity retrieveLowestFare(FlightScheduleEntity schedule, CabinClassTypeEnum type) {
+        schedule = entityManager.find(FlightScheduleEntity.class, schedule.getScheduleId());
+        
+        List<SeatsInventoryEntity> seats = schedule.getSeatsInventoryEntitys();
+        FareEntity lowestFare = null;
+        
+        for(SeatsInventoryEntity seat:seats) {
+            if(seat.getCabinClass().getType().equals(type)) {
+                List<FareEntity> fares = seat.getCabinClass().getFareEntitys();
+                
+                for(int i = 0; i < fares.size() - 1; i++) {
+                    
+                    if(Long.parseLong(fares.get(i).getAmount()) <= Long.parseLong(fares.get(i + 1).getAmount())) {
+                        lowestFare = fares.get(i);
+                    } else {
+                        lowestFare = fares.get(i+1);
+                    }
+                }
+            }
+        }
+        
+        return lowestFare;
     }
 }
