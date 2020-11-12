@@ -470,7 +470,7 @@ public class FlightOperationModule {
         int typeResponse = sc.nextInt();
         sc.nextLine();
 
-        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm Z");;
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm Z");
 
         if (typeResponse == 1) {
             FlightSchedulePlanTypeEnum type = FlightSchedulePlanTypeEnum.SINGLE;

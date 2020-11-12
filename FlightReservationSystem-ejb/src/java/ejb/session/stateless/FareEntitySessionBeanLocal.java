@@ -22,5 +22,7 @@ public interface FareEntitySessionBeanLocal {
     public void associateFareWithCabinClass(CabinClassConfigurationEntity cabinClass, FareEntity fare);
 
     public void associateFareWithPlan(FlightSchedulePlanEntity plan, FareEntity fare);
+
+    public String retrieveFareAmount(String fareCode);
     
 }

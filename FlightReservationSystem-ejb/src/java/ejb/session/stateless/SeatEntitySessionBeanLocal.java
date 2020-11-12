@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.SeatEntity;
 import javax.ejb.Local;
 
 /**
@@ -13,5 +14,7 @@ import javax.ejb.Local;
  */
 @Local
 public interface SeatEntitySessionBeanLocal {
+
+    public SeatEntity createNewSeat(SeatEntity newSeat);
     
 }

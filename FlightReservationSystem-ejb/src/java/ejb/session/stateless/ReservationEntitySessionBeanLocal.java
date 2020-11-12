@@ -23,6 +23,6 @@ public interface ReservationEntitySessionBeanLocal {
 
     public ReservationEntity retrieveReservationByReservationId(long reservationId, CustomerEntity customer) throws InvalidReservationId, NotMyReservationException;
 
-    public String test();
+    public ReservationEntity createNewReservation(CustomerEntity customer, ReservationEntity newReservation);
 
 }

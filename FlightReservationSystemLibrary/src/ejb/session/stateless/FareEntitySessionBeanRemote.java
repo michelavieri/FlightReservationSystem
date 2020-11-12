@@ -23,4 +23,6 @@ public interface FareEntitySessionBeanRemote {
     
     public void associateFareWithPlan(FlightSchedulePlanEntity plan, FareEntity fare);
     
+    public String retrieveFareAmount(String fareCode);
+    
 }

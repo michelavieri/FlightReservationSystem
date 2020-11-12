@@ -30,6 +30,7 @@ import ejb.session.stateless.FlightEntitySessionBeanRemote;
 import ejb.session.stateless.FlightRouteEntitySessionBeanRemote;
 import ejb.session.stateless.FlightScheduleEntitySessionBeanRemote;
 import ejb.session.stateless.FlightSchedulePlanEntitySessionBeanRemote;
+import ejb.session.stateless.ReservationEntitySessionBeanRemote;
 //import ejb.session.stateless.ReservationEntitySessionBeanRemote;
 import ejb.session.stateless.SeatsInventoryEntitySessionBeanRemote;
 import entity.AirportEntity;
@@ -97,7 +98,7 @@ public class MainApp {
             FlightRouteEntitySessionBeanRemote flightRouteEntitySessionBeanRemote,
             FlightScheduleEntitySessionBeanRemote flightScheduleEntitySessionBeanRemote,
             FlightSchedulePlanEntitySessionBeanRemote flightSchedulePlanEntitySessionBeanRemote,
-         //   ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote,
+            ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote,
             SeatsInventoryEntitySessionBeanRemote seatsInventoryEntitySessionBeanRemote,
             BookingTicketEntitySessionBeanRemote bookingTicketEntitySessionBeanRemote,
             FareEntitySessionBeanRemote fareEntitySessionBeanRemote) {
@@ -111,7 +112,7 @@ public class MainApp {
         this.flightRouteEntitySessionBeanRemote = flightRouteEntitySessionBeanRemote;
         this.flightScheduleEntitySessionBeanRemote = flightScheduleEntitySessionBeanRemote;
         this.flightSchedulePlanEntitySessionBeanRemote = flightSchedulePlanEntitySessionBeanRemote;
-     //   this.reservationEntitySessionBeanRemote = reservationEntitySessionBeanRemote;
+        this.reservationEntitySessionBeanRemote = reservationEntitySessionBeanRemote;
         this.seatsInventoryEntitySessionBeanRemote = seatsInventoryEntitySessionBeanRemote;
         this.bookingTicketEntitySessionBeanRemote = bookingTicketEntitySessionBeanRemote;
         this.fareEntitySessionBeanRemote = fareEntitySessionBeanRemote;
