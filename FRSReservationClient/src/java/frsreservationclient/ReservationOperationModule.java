@@ -162,7 +162,7 @@ public class ReservationOperationModule {
                         + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
                 System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
                 System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
-                pricePerPassenger += satsInventoryEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum);
+                pricePerPassenger += seatsInventoryEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum);
             }
             System.out.println();
 
