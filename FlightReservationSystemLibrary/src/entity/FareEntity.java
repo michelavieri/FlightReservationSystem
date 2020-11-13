@@ -17,7 +17,7 @@ public class FareEntity implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long fairId;
+    private Long fareId;
     private String fareBasisCode;
     private String amount;
     
@@ -39,12 +39,12 @@ public class FareEntity implements Serializable {
     }
     
  
-    public Long getFairId() {
-        return fairId;
+    public Long getFareId() {
+        return fareId;
     }
 
-    public void setFairId(Long fairId) {
-        this.fairId = fairId;
+    public void setFareId(Long fareId) {
+        this.fareId = fareId;
     }
 
     public String getFareBasisCode() {
@@ -67,18 +67,18 @@ public class FareEntity implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (fairId != null ? fairId.hashCode() : 0);
+        hash += (fareId != null ? fareId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the fairId fields are not set
+        // TODO: Warning - this method won't work in the case the fareId fields are not set
         if (!(object instanceof FareEntity)) {
             return false;
         }
         FareEntity other = (FareEntity) object;
-        if ((this.fairId == null && other.fairId != null) || (this.fairId != null && !this.fairId.equals(other.fairId))) {
+        if ((this.fareId == null && other.fareId != null) || (this.fareId != null && !this.fareId.equals(other.fareId))) {
             return false;
         }
         return true;
@@ -86,7 +86,7 @@ public class FareEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.FareEntity[ id=" + fairId + " ]";
+        return "entity.FareEntity[ id=" + fareId + " ]";
     }
 
     /**

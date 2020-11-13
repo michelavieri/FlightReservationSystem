@@ -38,60 +38,56 @@ public class SeatsInventoryEntitySessionBean implements SeatsInventoryEntitySess
     public SeatsInventoryEntity createSeatsInventoryEntity(SeatsInventoryEntity newSeatsInventory) {
         entityManager.persist(newSeatsInventory);
         entityManager.flush();
-        
-        
+
         return newSeatsInventory;
     }
-    
+
     @Override
     public List<SeatsInventoryEntity> retrieveSeatsInventoryByScheduleId(Long scheduleId) throws FlightScheduleNotFoundException {
-        
+
         Query query = entityManager.createQuery("SELECT f FROM FlightScheduleEntity f WHERE f.scheduleId = :inScheduleId");
         query.setParameter("inScheduleId", scheduleId);
-        
+
         FlightScheduleEntity schedule = null;
-        
-        try
-        {
-            schedule =  (FlightScheduleEntity)query.getSingleResult();
-        }
-        catch(NoResultException | NonUniqueResultException ex)
-        {
+
+        try {
+            schedule = (FlightScheduleEntity) query.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
             throw new FlightScheduleNotFoundException("Flight Schedule id " + scheduleId + " does not exist!");
         }
         schedule.getSeatsInventoryEntitys().size();
         return schedule.getSeatsInventoryEntitys();
-        
+
     }
-    
+
     @Override
     public int createSeatsFromSeatInventory(SeatsInventoryEntity seatsInventory, int startNumber) {
         seatsInventory = entityManager.find(SeatsInventoryEntity.class, seatsInventory.getInventoryId());
         seatsInventory.getSeats().size();
-        
+
         int numAisle = seatsInventory.getCabinClass().getNumAisle();
         int numRow = seatsInventory.getCabinClass().getNumRow();
         int numAbreast = seatsInventory.getCabinClass().getNumSeatAbreast();
         int tempAbreast = 0;
         int endNumSeat = 0;
-        
+
         int totalCapacity = seatsInventory.getCabinClass().getMaxCapacity();
-        
-        for(int i = startNumber + 1; i <= startNumber + numRow; i++) {
-            while(tempAbreast < numAbreast) {
-                char initial = 'A';
-                
+
+        for (int i = startNumber + 1; i <= startNumber + numRow; i++) {
+            char initial = 'A';
+           for (int j = 0; j < numAbreast; j++) {
+
                 SeatEntity seat = new SeatEntity(i, Character.toString(initial), false);
                 seat = seatEntitySessionBean.createNewSeat(seat);
                 seat.setSeatsInventory(seatsInventory);
                 seatsInventory.getSeats().add(seat);
-                
+
                 initial++;
                 tempAbreast++;
             }
             endNumSeat = i;
         }
-        
+
         return endNumSeat;
     }
     

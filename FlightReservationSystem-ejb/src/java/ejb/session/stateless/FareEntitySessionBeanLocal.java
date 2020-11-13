@@ -9,6 +9,7 @@ import entity.CabinClassConfigurationEntity;
 import entity.FareEntity;
 import entity.FlightScheduleEntity;
 import entity.FlightSchedulePlanEntity;
+import java.util.List;
 import javax.ejb.Local;
 import util.enumeration.CabinClassTypeEnum;
 
@@ -28,5 +29,7 @@ public interface FareEntitySessionBeanLocal {
     public String retrieveFareAmount(FareEntity fare);
 
     public FareEntity retrieveLowestFare(FlightScheduleEntity schedule, CabinClassTypeEnum type);
+
+   public List<FareEntity> retrieveFareBySchedulePlan(FlightSchedulePlanEntity schedule);
     
 }

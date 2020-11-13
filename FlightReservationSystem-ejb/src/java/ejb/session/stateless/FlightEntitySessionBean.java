@@ -10,14 +10,19 @@ import entity.AirportEntity;
 import entity.CabinClassConfigurationEntity;
 import entity.FlightEntity;
 import entity.FlightRouteEntity;
+import entity.FlightScheduleEntity;
 import entity.FlightSchedulePlanEntity;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.enumeration.FlightSchedulePlanTypeEnum;
 import util.exception.FlightDisabledException;
 import util.exception.FlightNotFoundException;
 
@@ -27,6 +32,9 @@ import util.exception.FlightNotFoundException;
  */
 @Stateless
 public class FlightEntitySessionBean implements FlightEntitySessionBeanRemote, FlightEntitySessionBeanLocal {
+
+    @EJB
+    private FlightScheduleEntitySessionBeanLocal flightScheduleEntitySessionBean;
 
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
     private EntityManager entityManager;
@@ -256,5 +264,43 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanRemote, F
         flight.setReturnFlight(null);
 
         entityManager.remove(returnFlight);
+    }
+    
+    public void createRecurrentSchedule(String day, FlightSchedulePlanEntity schedule, String startDate, String endDate, int days, String departureTime, DateTimeFormatter dateFormat, String duration, int layoverDuration) {
+
+        ZonedDateTime startingDate = ZonedDateTime.parse((startDate + departureTime), dateFormat);
+
+        if (schedule.getType().equals(FlightSchedulePlanTypeEnum.RECURRENT_WEEK)) {
+            while (!startingDate.getDayOfWeek().toString().equals(day)) {
+                startingDate = startingDate.plusDays(1);
+            }
+        }
+
+        String startingDateTime = startingDate.format(dateFormat);
+        ZonedDateTime endingDate = ZonedDateTime.parse(endDate, dateFormat);
+
+        String durationHour = duration.substring(0, 1);
+        String durationMin = duration.substring(3, 4);
+
+        int durationHourInt = Integer.parseInt(durationHour);
+        int durationMinInt = Integer.parseInt(durationMin);
+        int totalDuration = durationMinInt + (60 * durationHourInt);
+
+        ZonedDateTime arrivalDateTime = startingDate.plusMinutes(totalDuration);
+        String arrDateTime = arrivalDateTime.format(dateFormat);
+
+        while (startingDate.isBefore(endingDate)) {
+            startingDate = ZonedDateTime.parse((startDate + departureTime), dateFormat);
+            startingDateTime = startingDate.format(dateFormat);
+
+            arrivalDateTime = startingDate.plusMinutes(totalDuration);
+            arrDateTime = arrivalDateTime.format(dateFormat);
+
+            FlightScheduleEntity departure = flightScheduleEntitySessionBean.createFlightScheduleEntity(new FlightScheduleEntity(startingDateTime, totalDuration, arrDateTime));
+            flightScheduleEntitySessionBean.associateWithPlan(departure, schedule);
+
+            startingDate = startingDate.plusDays(days);
+            arrivalDateTime = arrivalDateTime.plusDays(days);
+        }
     }
 }

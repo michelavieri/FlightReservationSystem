@@ -10,6 +10,7 @@ import entity.CabinClassConfigurationEntity;
 import entity.FlightEntity;
 import entity.FlightRouteEntity;
 import entity.FlightSchedulePlanEntity;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.ejb.Remote;
 import util.exception.FlightDisabledException;
@@ -50,4 +51,5 @@ public interface FlightEntitySessionBeanRemote {
 
     public void removeReturnFlight(FlightEntity flight);
     
+    public void createRecurrentSchedule(String day, FlightSchedulePlanEntity schedule, String startDate, String endDate, int days, String departureTime, DateTimeFormatter dateFormat, String duration, int layoverDuration);
 }

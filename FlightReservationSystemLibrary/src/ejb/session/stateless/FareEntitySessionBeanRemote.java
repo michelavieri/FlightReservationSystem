@@ -9,6 +9,7 @@ import entity.CabinClassConfigurationEntity;
 import entity.FareEntity;
 import entity.FlightScheduleEntity;
 import entity.FlightSchedulePlanEntity;
+import java.util.List;
 import javax.ejb.Remote;
 import util.enumeration.CabinClassTypeEnum;
 
@@ -18,15 +19,17 @@ import util.enumeration.CabinClassTypeEnum;
  */
 @Remote
 public interface FareEntitySessionBeanRemote {
- 
+
     public FareEntity createFlightSchedulePlanEntity(FareEntity newFare);
-    
+
     public void associateFareWithCabinClass(CabinClassConfigurationEntity cabinClass, FareEntity fare);
-    
+
     public void associateFareWithPlan(FlightSchedulePlanEntity plan, FareEntity fare);
-    
+
     public String retrieveFareAmount(FareEntity fare);
-    
-     public FareEntity retrieveLowestFare(FlightScheduleEntity schedule, CabinClassTypeEnum type);
-    
+
+    public FareEntity retrieveLowestFare(FlightScheduleEntity schedule, CabinClassTypeEnum type);
+
+    public List<FareEntity> retrieveFareBySchedulePlan(FlightSchedulePlanEntity schedule);
+
 }
