@@ -59,6 +59,7 @@ public class SeatsInventoryEntitySessionBean implements SeatsInventoryEntitySess
         {
             throw new FlightScheduleNotFoundException("Flight Schedule id " + scheduleId + " does not exist!");
         }
+        schedule.getSeatsInventoryEntitys().size();
         return schedule.getSeatsInventoryEntitys();
         
     }
@@ -92,5 +93,12 @@ public class SeatsInventoryEntitySessionBean implements SeatsInventoryEntitySess
         }
         
         return endNumSeat;
+    }
+    
+    @Override
+    public List<SeatEntity> retrieveSeats (SeatsInventoryEntity seatsInventory) {
+        seatsInventory = entityManager.find(SeatsInventoryEntity.class, seatsInventory.getInventoryId());
+        seatsInventory.getSeats().size();
+        return seatsInventory.getSeats();
     }
 }

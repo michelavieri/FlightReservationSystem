@@ -32,8 +32,8 @@ import util.exception.UnknownPersistenceException;
  */
 @Singleton
 @LocalBean
-//@Startup
-public class DataInitSessionBean {
+@Startup
+public class DataInitSessionBean2 {
 
     @EJB
     private EmployeeEntitySessionBeanLocal employeeEntitySessionBeanLocal;
@@ -47,7 +47,7 @@ public class DataInitSessionBean {
     @EJB
     private AircraftTypeEntitySessionBeanLocal aircraftTypeEntitySessionBeanLocal;
 
-    public DataInitSessionBean() {
+    public DataInitSessionBean2() {
     }
 
     @PostConstruct
@@ -61,25 +61,29 @@ public class DataInitSessionBean {
 
     private void initializeData() {
         try {
-            employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("employee", "Default Employee", "password", UserRoleEnum.EMPLOYEE));
-            
-            employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("fleetManager", "Default Fleet Manager", "password", UserRoleEnum.FLEET_MANAGER));
-            
-            employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("routePlanner", "Default Route Planner", "password", UserRoleEnum.ROUTE_PLANNER));
-            
-            employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("salesManager", "Default Sales Manager", "password", UserRoleEnum.SALES_MANAGER));
-            
-            employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("scheduleManager", "Default Schedule Manager", "password", UserRoleEnum.SCHEDULE_MANAGER));
+            employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("fleetmanager", "Fleet Manager", "password", UserRoleEnum.FLEET_MANAGER));
 
-            partnerEntitySessionBeanLocal.createNewPartner(new PartnerEntity("holidayReservation", "Holiday Reservation System", "password"));
+            employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("routeplanner", " Route Planner", "password", UserRoleEnum.ROUTE_PLANNER));
 
-            airportEntitySessionBeanLocal.createNewAirport(new AirportEntity("SIN", "Singapore Changi Airport", "Singapore", "Singapore", "Singapore", "+0800"));
+            employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("salesmanager", "Sales Manager", "password", UserRoleEnum.SALES_MANAGER));
 
-            airportEntitySessionBeanLocal.createNewAirport(new AirportEntity("TPE", "Taoyuan International Airport", "Taipei", "Taipei", "Taiwan", "+0800"));
+            employeeEntitySessionBeanLocal.createNewEmployee(new EmployeeEntity("schedulemanager", "Schedule Manager", "password", UserRoleEnum.SCHEDULE_MANAGER));
 
-            aircraftTypeEntitySessionBeanLocal.createNewAircraftType(new AircraftTypeEntity("Boeing 737", 230));
+            partnerEntitySessionBeanLocal.createNewPartner(new PartnerEntity("holidaydotcom", "Holiday.com", "password"));
 
-            aircraftTypeEntitySessionBeanLocal.createNewAircraftType(new AircraftTypeEntity("Boeing 747", 410));
+            airportEntitySessionBeanLocal.createNewAirport(new AirportEntity("SIN", "Changi", "Singapore", "Singapore", "Singapore", "+0800"));
+
+            airportEntitySessionBeanLocal.createNewAirport(new AirportEntity("TPE", "Taoyuan", "Taoyuan", "Taipei", "Taiwan R.O.C.", "+0800"));
+
+            airportEntitySessionBeanLocal.createNewAirport(new AirportEntity("HKG", "Hong Kong", "Chek Lap Kok", "Hong Kong", "China", "+0800"));
+
+            airportEntitySessionBeanLocal.createNewAirport(new AirportEntity("NRT", "Narita", "Narita", "Chiba", "Japan", "+0900"));
+
+            airportEntitySessionBeanLocal.createNewAirport(new AirportEntity("SYD", "Sydney", "Taoyuan", "New South Wales", "Australia", "+1100"));
+
+            aircraftTypeEntitySessionBeanLocal.createNewAircraftType(new AircraftTypeEntity("Boeing 737", 200));
+
+            aircraftTypeEntitySessionBeanLocal.createNewAircraftType(new AircraftTypeEntity("Boeing 747", 400));
         } catch (EmployeeUsernameExistException | PartnerUsernameExistException | AirportNameExistException | AircraftTypeNameExistException | UnknownPersistenceException ex) {
             ex.printStackTrace();
         }

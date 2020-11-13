@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.SeatEntity;
 import entity.SeatsInventoryEntity;
 import java.util.List;
 import javax.ejb.Remote;
@@ -22,5 +23,7 @@ public interface SeatsInventoryEntitySessionBeanRemote {
     public List<SeatsInventoryEntity> retrieveSeatsInventoryByScheduleId(Long scheduleId) throws FlightScheduleNotFoundException;
 
     public int createSeatsFromSeatInventory(SeatsInventoryEntity seatsInventory, int startNumber);
+    
+    public List<SeatEntity> retrieveSeats (SeatsInventoryEntity seatsInventory);
 
 }

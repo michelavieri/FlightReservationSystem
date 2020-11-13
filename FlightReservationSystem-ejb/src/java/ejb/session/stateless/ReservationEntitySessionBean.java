@@ -5,18 +5,27 @@
  */
 package ejb.session.stateless;
 
+import entity.AirportEntity;
 import entity.BookingTicketEntity;
 import entity.CreditCardEntity;
 import entity.CustomerEntity;
+import entity.FlightRouteEntity;
+import entity.FlightScheduleEntity;
 import entity.ReservationEntity;
 import entity.SeatEntity;
+import entity.SeatsInventoryEntity;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.enumeration.CabinClassTypeEnum;
 import util.exception.InvalidReservationId;
 import util.exception.NotMyReservationException;
 
@@ -84,5 +93,204 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
             throw new NotMyReservationException("This reservation is not your reservation!");
         }
         return reservation;
+    }
+
+    @Override
+    public List<List<FlightScheduleEntity>> searchConnectingFlights(String departureAirport,
+            String destinationAirport, String departureDateTime, int numOfPassenger, int stopovers, CabinClassTypeEnum classType) {
+        List<FlightScheduleEntity> availableSchedule = new ArrayList<>();
+        List<List<FlightScheduleEntity>> finalSchedule = new ArrayList<>();
+
+        Query query = entityManager.createQuery("SELECT a FROM AirportEntity a WHERE a.airportCode = :depAirportCode");
+        query.setParameter("depAirportCode", departureAirport);
+        AirportEntity departure = (AirportEntity) query.getSingleResult();
+
+        query = entityManager.createQuery("SELECT a FROM AirportEntity a WHERE a.airportCode = :destAirportCode");
+        query.setParameter("destAirportCode", destinationAirport);
+        AirportEntity destination = (AirportEntity) query.getSingleResult();
+
+        query = entityManager.createQuery("SELECT a FROM FlightScheduleEntity a");
+        List<FlightScheduleEntity> allSchedules = query.getResultList();
+        recurseTransit(allSchedules, departure, destination, stopovers, availableSchedule, finalSchedule, classType, numOfPassenger);
+
+        List<List<FlightScheduleEntity>> copyTemp = new ArrayList<>();
+        copyTemp.addAll(finalSchedule);
+        for (List<FlightScheduleEntity> schedules : copyTemp) {
+            if (!schedules.get(0).getDepartureDateTime().substring(0, 10).equals(departureDateTime)) {
+                finalSchedule.remove(schedules);
+            }
+        }
+        return finalSchedule;
+    }
+
+    @Override
+    public List<List<FlightScheduleEntity>> searchConnectingFlightsBefore(String departureAirport,
+            String destinationAirport, String departureDateTime, int numOfPassenger, int stopovers, CabinClassTypeEnum classType) {
+        List<FlightScheduleEntity> availableSchedule = new ArrayList<>();
+        List<List<FlightScheduleEntity>> finalSchedule = new ArrayList<>();
+
+        Query query = entityManager.createQuery("SELECT a FROM AirportEntity a WHERE a.airportCode = :depAirportCode");
+        query.setParameter("depAirportCode", departureAirport);
+        AirportEntity departure = (AirportEntity) query.getSingleResult();
+
+        query = entityManager.createQuery("SELECT a FROM AirportEntity a WHERE a.airportCode = :destAirportCode");
+        query.setParameter("destAirportCode", destinationAirport);
+        AirportEntity destination = (AirportEntity) query.getSingleResult();
+
+        query = entityManager.createQuery("SELECT a FROM FlightScheduleEntity a");
+        List<FlightScheduleEntity> allSchedules = query.getResultList();
+
+        recurseTransit(allSchedules, departure, destination, stopovers, availableSchedule, finalSchedule, classType, numOfPassenger);
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm Z");
+        DateTimeFormatter dateFormat2 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate ddate = LocalDate.parse(departureDateTime, dateFormat2);
+//        ZonedDateTime date = ddate.atStartOfDay(ZoneId.systemDefault());
+
+        List<List<FlightScheduleEntity>> copyTemp = new ArrayList<>();
+        copyTemp.addAll(finalSchedule);
+        for (List<FlightScheduleEntity> schedules : copyTemp) {
+            LocalDate departureTime = LocalDate.parse(schedules.get(0).getDepartureDateTime().substring(0, 10), dateFormat2);
+            LocalDate minusOne = ddate.minusDays(1);
+            LocalDate minusTwo = ddate.minusDays(2);
+            LocalDate minusThree = ddate.minusDays(3);
+            if (!departureTime.equals(minusOne) && !departureTime.equals(minusTwo) && !departureTime.equals(minusThree)) {
+                finalSchedule.remove(schedules);
+            }
+        }
+        return finalSchedule;
+    }
+
+    @Override
+    public List<List<FlightScheduleEntity>> searchConnectingFlightsAfter(String departureAirport,
+            String destinationAirport, String departureDateTime, int numOfPassenger, int stopovers, CabinClassTypeEnum classType) {
+        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        List<FlightScheduleEntity> availableSchedule = new ArrayList<>();
+        List<List<FlightScheduleEntity>> finalSchedule = new ArrayList<>();
+
+        Query query = entityManager.createQuery("SELECT a FROM AirportEntity a WHERE a.airportCode = :depAirportCode");
+        query.setParameter("depAirportCode", departureAirport);
+        AirportEntity departure = (AirportEntity) query.getSingleResult();
+
+        query = entityManager.createQuery("SELECT a FROM AirportEntity a WHERE a.airportCode = :destAirportCode");
+        query.setParameter("destAirportCode", destinationAirport);
+        AirportEntity destination = (AirportEntity) query.getSingleResult();
+
+        query = entityManager.createQuery("SELECT a FROM FlightScheduleEntity a");
+        List<FlightScheduleEntity> allSchedules = query.getResultList();
+        recurseTransit(allSchedules, departure, destination, stopovers, availableSchedule, finalSchedule, classType, numOfPassenger);
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm Z");
+        DateTimeFormatter dateFormat2 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate ddate = LocalDate.parse(departureDateTime, dateFormat2);
+//        ZonedDateTime date = ddate.atStartOfDay(ZoneId.systemDefault());
+
+        List<List<FlightScheduleEntity>> copyTemp = new ArrayList<>();
+        copyTemp.addAll(finalSchedule);
+        for (List<FlightScheduleEntity> schedules : copyTemp) {
+            LocalDate departureTime = LocalDate.parse(schedules.get(0).getDepartureDateTime().substring(0, 10), dateFormat2);
+            LocalDate minusOne = ddate.plusDays(1);
+            LocalDate minusTwo = ddate.plusDays(2);
+            LocalDate minusThree = ddate.plusDays(3);
+            if (!departureTime.equals(minusOne) && !departureTime.equals(minusTwo) && !departureTime.equals(minusThree)) {
+                finalSchedule.remove(schedules);
+            }
+        }
+
+        return finalSchedule;
+    }
+
+    @Override
+    public List<List<FlightScheduleEntity>> recurseTransit(List<FlightScheduleEntity> allSchedules, AirportEntity departureAirport, AirportEntity destinationAirport,
+            int stopovers, List<FlightScheduleEntity> availableSchedule,
+            List<List<FlightScheduleEntity>> finalSchedule, CabinClassTypeEnum classType, int numOfPassenger) {
+        System.out.println("HEREEEEEEEEEEEEEEEEE" + allSchedules.size());
+        if (stopovers <= 0) {
+            return finalSchedule;
+        }
+        for (int i = 0; i < allSchedules.size(); i++) {
+            FlightRouteEntity route = allSchedules.get(i).getPlan().getFlight().getRoute();
+
+            if (availableSchedule.isEmpty()) {
+                if (route.getOriginAirport().equals(departureAirport)) {
+                    if (route.getDestinationAirport().equals(destinationAirport)) {
+                        if (classType != null) {
+                            List<SeatsInventoryEntity> seats = allSchedules.get(i).getSeatsInventoryEntitys();
+                            for (SeatsInventoryEntity seat : seats) {
+                                if (seat.getCabinClass().getType().equals(classType)) {
+                                    List<FlightScheduleEntity> scheduleTemp = new ArrayList<>();
+                                    Collections.copy(scheduleTemp, availableSchedule);
+                                    scheduleTemp.add(allSchedules.get(i));
+                                    finalSchedule.add(scheduleTemp);
+                                }
+                            }
+                        } else {
+                            List<FlightScheduleEntity> scheduleTemp = new ArrayList<>();
+                            Collections.copy(scheduleTemp, availableSchedule);
+                            scheduleTemp.add(allSchedules.get(i));
+                            finalSchedule.add(scheduleTemp);
+//                            System.out.println("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
+                        }
+                    } else {
+                        departureAirport = route.getDestinationAirport();
+                    }
+                }
+            } else {
+                DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm Z");
+                ZonedDateTime departureTime = ZonedDateTime.parse(allSchedules.get(i).getDepartureDateTime(), dateFormat);
+                ZonedDateTime arrivalTime = ZonedDateTime.parse(availableSchedule.get(availableSchedule.size() - 1).getArrivalDateTime(), dateFormat);
+
+                if (route.getOriginAirport().equals(departureAirport) && departureTime.isAfter(arrivalTime)) {
+                    if (route.getDestinationAirport().equals(destinationAirport) && departureTime.isAfter(arrivalTime)) {
+                        if (route.getOriginAirport().equals(departureAirport) && departureTime.isAfter(arrivalTime)) {
+                            List<SeatsInventoryEntity> seats = allSchedules.get(i).getSeatsInventoryEntitys();
+                            if (classType != null) {
+                                for (SeatsInventoryEntity seat : seats) {
+                                    if (seat.getCabinClass().getType().equals(classType)) {
+                                        List<FlightScheduleEntity> scheduleTemp = new ArrayList<>();
+                                        Collections.copy(scheduleTemp, availableSchedule);
+                                        scheduleTemp.add(allSchedules.get(i));
+                                        finalSchedule.add(scheduleTemp);
+                                        recurseTransit(allSchedules, departureAirport, destinationAirport, stopovers - 1, availableSchedule, finalSchedule, classType, numOfPassenger);
+                                        System.out.println("ttttt");
+                                        continue;
+                                    }
+                                }
+                            } else {
+                                List<FlightScheduleEntity> scheduleTemp = new ArrayList<>();
+                                Collections.copy(scheduleTemp, availableSchedule);
+                                scheduleTemp.add(allSchedules.get(i));
+                                finalSchedule.add(scheduleTemp);
+                                recurseTransit(allSchedules, departureAirport, destinationAirport, stopovers - 1, availableSchedule, finalSchedule, classType, numOfPassenger);
+
+                                continue;
+                            }
+                        }
+                    } else {
+                        List<SeatsInventoryEntity> seats = allSchedules.get(i).getSeatsInventoryEntitys();
+                        for (SeatsInventoryEntity seat : seats) {
+                            if (seat.getCabinClass().getType().equals(classType)) {
+                                if (seat.getBalanceSeatsSize() < numOfPassenger) {
+                                    List<FlightScheduleEntity> scheduleTemp = new ArrayList<>();
+                                    Collections.copy(scheduleTemp, availableSchedule);
+                                    scheduleTemp.add(allSchedules.get(i));
+                                    recurseTransit(allSchedules, route.getDestinationAirport(), destinationAirport, stopovers - 1, scheduleTemp, finalSchedule, classType, numOfPassenger);
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return finalSchedule;
+    }
+    
+    @Override
+    public FlightScheduleEntity retrieveFlightScheduleById(Long id) {
+        Query query = entityManager.createQuery("SELECT s FROM FlightScheduleEntity s WHERE s.scheduleId = :id");
+        query.setParameter("id", id);
+
+        FlightScheduleEntity schedule = (FlightScheduleEntity) query.getSingleResult();
+
+        return schedule;
     }
 }

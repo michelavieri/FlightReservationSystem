@@ -65,12 +65,13 @@ public class FareEntitySessionBean implements FareEntitySessionBeanRemote, FareE
     @Override
     public FareEntity retrieveLowestFare(FlightScheduleEntity schedule, CabinClassTypeEnum type) {
         schedule = entityManager.find(FlightScheduleEntity.class, schedule.getScheduleId());
-        
+        schedule.getSeatsInventoryEntitys().size();
         List<SeatsInventoryEntity> seats = schedule.getSeatsInventoryEntitys();
         FareEntity lowestFare = null;
         
         for(SeatsInventoryEntity seat:seats) {
             if(seat.getCabinClass().getType().equals(type)) {
+                seat.getCabinClass().getFareEntitys().size();
                 List<FareEntity> fares = seat.getCabinClass().getFareEntitys();
                 
                 for(int i = 0; i < fares.size() - 1; i++) {
