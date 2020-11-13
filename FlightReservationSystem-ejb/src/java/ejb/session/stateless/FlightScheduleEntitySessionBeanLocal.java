@@ -62,4 +62,6 @@ public interface FlightScheduleEntitySessionBeanLocal {
 //    public List<List<FlightScheduleEntity>> searchConnectingFlightsAfter(String departureAirport, String destinationAirport, String departureDateTime, int numOfPassenger, int stopovers, CabinClassTypeEnum classType);
 //
 //    public void recurseTransit(List<FlightScheduleEntity> allSchedules, AirportEntity departureAirport, AirportEntity destinationAirport, int stopovers, List<FlightScheduleEntity> availableSchedule, List<List<FlightScheduleEntity>> finalSchedule, CabinClassTypeEnum classType, int numOfPassenger);
+
+    public void setLayover(FlightSchedulePlanEntity plan, int layover);
 }

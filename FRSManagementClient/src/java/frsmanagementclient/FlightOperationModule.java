@@ -551,13 +551,17 @@ public class FlightOperationModule {
                 flightScheduleEntitySessionBeanRemote.associateNewSeatsInventory(returnPlan);
 
                 flightSchedulePlanEntitySessionBeanRemote.associateReturnSchedulePlan(schedulePlan, returnPlan);
-                createFare(sc, flight.getReturnFlight(), returnPlan);
             }
 
             flightSchedulePlanEntitySessionBeanRemote.associatePlanWithFlight(schedulePlan, flight);
             flightScheduleEntitySessionBeanRemote.associateNewSeatsInventory(schedulePlan);
 
             createFare(sc, flight, schedulePlan);
+
+            schedulePlan.getFareEntitys().size();
+            List<FareEntity> fares = schedulePlan.getFareEntitys();
+
+            returnPlan.setFareEntitys(fares);
 
             System.out.println("Flight schedule plan with id " + schedulePlan.getSchedulePlanId() + " is created!");
             if (response.equals("Y")) {
@@ -625,9 +629,11 @@ public class FlightOperationModule {
                     createFare(sc, flight.getReturnFlight(), returnPlan);
 
                     flightSchedulePlanEntitySessionBeanRemote.associateReturnSchedulePlan(schedulePlan, returnPlan);
+                    flightScheduleEntitySessionBeanRemote.associateNewSeatsInventory(returnPlan);
                 }
             }
-
+            flightSchedulePlanEntitySessionBeanRemote.associatePlanWithFlight(schedulePlan, flight);
+            flightScheduleEntitySessionBeanRemote.associateNewSeatsInventory(schedulePlan);
             createFare(sc, flight, schedulePlan);
 
             System.out.println("Flight schedule plan with id " + schedulePlan.getSchedulePlanId() + " is created!");
@@ -637,17 +643,17 @@ public class FlightOperationModule {
             }
 
         } else if (typeResponse == 3) {
-            FlightSchedulePlanTypeEnum type = FlightSchedulePlanTypeEnum.RECURRENT_DAY;
+            FlightSchedulePlanTypeEnum type = FlightSchedulePlanTypeEnum.RECURRENT_WEEK;
+
+            System.out.println("Enter number of recurring days>");
+            int day = sc.nextInt();
+            sc.nextLine();
 
             System.out.println("Enter starting date (yyyy-mm-dd)>");
             String startDate = sc.nextLine();
 
             System.out.println("Enter ending date (yyyy-mm-dd)>");
             String endDate = sc.nextLine();
-
-            System.out.println("Enter number of recurring days>");
-            int recurringDay = sc.nextInt();
-            sc.nextLine();
 
             System.out.println("Enter departure hour (HH:mm)>");
             String departuretime = sc.nextLine();
@@ -665,30 +671,40 @@ public class FlightOperationModule {
 
                 if (response.equals("Y")) {
                     int totalLayoverDuration = this.scanLayoverTime(sc);
-                    this.createRecurrentSchedule("", schedulePlan, startDate, endDate, recurringDay, departuretime, dateFormat, duration, totalLayoverDuration);
 
-                    ZonedDateTime firstDate = ZonedDateTime.parse(schedulePlan.getStartDate(), dateFormat);
+                    flightScheduleEntitySessionBeanRemote.setLayover(returnPlan, totalLayoverDuration);
+
+                    String returnTime = this.createRecurrentSchedule("", schedulePlan, startDate, endDate, day, departuretime, dateFormat, duration, totalLayoverDuration);
+                    String zone = flightEntitySessionBeanRemote.retrieveTimeZoneByFlight(flight);
+
+                    LocalDate localfirstDate = LocalDate.parse(schedulePlan.getStartDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                    ZonedDateTime firstDate = localfirstDate.atStartOfDay(ZoneId.systemDefault());
+
                     firstDate = firstDate.plusMinutes(totalLayoverDuration);
-                    String firstDateStr = firstDate.format(dateFormat);
+                    String firstDateStr = firstDate.format(dateFormat).substring(0, 10);
 
-                    ZonedDateTime lastDate = ZonedDateTime.parse(schedulePlan.getEndDate(), dateFormat);
+                    LocalDate localLastDate = LocalDate.parse(schedulePlan.getEndDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                    ZonedDateTime lastDate = localLastDate.atStartOfDay(ZoneId.systemDefault());
+
                     lastDate = lastDate.plusMinutes(totalLayoverDuration);
-                    String lastDateStr = lastDate.format(dateFormat);
+                    String lastDateStr = lastDate.format(dateFormat).substring(0, 10);
 
                     returnPlan = flightSchedulePlanEntitySessionBeanRemote.createFlightSchedulePlanEntity(new FlightSchedulePlanEntity(type, firstDateStr, lastDateStr, 0, flight.getReturnFlight()));
                     flightSchedulePlanEntitySessionBeanRemote.associateReturnSchedulePlan(schedulePlan, returnPlan);
 
-                    this.createRecurrentSchedule("", returnPlan, firstDateStr, lastDateStr, recurringDay, departuretime, dateFormat, duration, totalLayoverDuration);
+                    this.createRecurrentSchedule("", returnPlan, firstDateStr, lastDateStr, day, returnTime, dateFormat, duration, totalLayoverDuration);
                     flightSchedulePlanEntitySessionBeanRemote.associatePlanWithFlight(returnPlan, flight.getReturnFlight());
+                    flightScheduleEntitySessionBeanRemote.associateNewSeatsInventory(returnPlan);
                     createFare(sc, flight.getReturnFlight(), returnPlan);
 
                 } else {
-                    this.createRecurrentSchedule("", schedulePlan, startDate, endDate, recurringDay, departuretime, dateFormat, duration, 0);
+                    this.createRecurrentSchedule("", schedulePlan, startDate, endDate, day, departuretime, dateFormat, duration, 0);
                 }
             }
 
             createFare(sc, flight, schedulePlan);
             flightSchedulePlanEntitySessionBeanRemote.associatePlanWithFlight(schedulePlan, flight);
+            flightScheduleEntitySessionBeanRemote.associateNewSeatsInventory(schedulePlan);
             System.out.println("Flight schedule with id " + schedulePlan.getSchedulePlanId() + "is created!");
 
             if (response.equals("Y")) {
@@ -743,6 +759,7 @@ public class FlightOperationModule {
 
                     this.createRecurrentSchedule(day, returnPlan, firstDateStr, lastDateStr, 7, returnTime, dateFormat, duration, totalLayoverDuration);
                     flightSchedulePlanEntitySessionBeanRemote.associatePlanWithFlight(returnPlan, flight.getReturnFlight());
+                    flightScheduleEntitySessionBeanRemote.associateNewSeatsInventory(returnPlan);
                     createFare(sc, flight.getReturnFlight(), returnPlan);
 
                 } else {
@@ -752,6 +769,7 @@ public class FlightOperationModule {
 
             createFare(sc, flight, schedulePlan);
             flightSchedulePlanEntitySessionBeanRemote.associatePlanWithFlight(schedulePlan, flight);
+            flightScheduleEntitySessionBeanRemote.associateNewSeatsInventory(schedulePlan);
             System.out.println("Flight schedule with id " + schedulePlan.getSchedulePlanId() + "is created!");
 
             if (response.equals("Y")) {
@@ -968,18 +986,19 @@ public class FlightOperationModule {
             int layoverDurationMinInt = Integer.parseInt(layoverDurationMin);
             layoverDurationMinInt += (60 * layoverDurationHourInt);
 
-            FlightSchedulePlanEntity newPlan = new FlightSchedulePlanEntity(FlightSchedulePlanTypeEnum.RECURRENT_WEEK, startDate, endDate, layoverDurationMinInt, flight);
+            //FlightSchedulePlanEntity newPlan = new FlightSchedulePlanEntity(FlightSchedulePlanTypeEnum.RECURRENT_WEEK, startDate, endDate, layoverDurationMinInt, flight);
 
-            try {
-                flightSchedulePlanEntitySessionBeanRemote.replaceRecurrentSchedulePlan(plan, newPlan, dateFormat, departuretime, duration, 7, layoverDurationMinInt);
-                System.out.println("Schedule plan updated!");
-            } catch (ScheduleIsUsedException ex) {
-                System.out.println("Failed in updating schedule plan! At least one schedule is used!");
-                return;
-            } catch (ScheduleOverlapException ex) {
-                System.out.println("Failed in updating schedule plan! Updated scheduled overlapped with existing schedule!");
-                return;
-            }
+//           try {              
+//             flightSchedulePlanEntitySessionBeanRemote.replaceRecurrentSchedulePlan(plan, newPlan, dateFormat, departuretime, duration, 7, layoverDurationMinInt);
+//              System.out.println("Schedule plan updated!");
+//          } catch (ScheduleIsUsedException ex) {
+//              System.out.println("Failed in updating schedule plan! At least one schedule is used!");
+//              return;
+//          } catch (ScheduleOverlapException ex) {
+//              System.out.println("Failed in updating schedule plan! Updated scheduled overlapped with existing schedule!");
+//              return;
+//          }
+            this.updateFare(sc, plan);
         }
     }
 

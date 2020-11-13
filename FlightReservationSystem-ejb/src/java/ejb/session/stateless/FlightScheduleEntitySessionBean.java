@@ -667,4 +667,11 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
 //            }
 //        }
 //    }
+    
+    @Override
+    public void setLayover(FlightSchedulePlanEntity plan, int layover) {
+        plan = entityManager.find(FlightSchedulePlanEntity.class, plan.getSchedulePlanId());
+        
+        plan.setLayoverDuration(layover);
+    }
 }

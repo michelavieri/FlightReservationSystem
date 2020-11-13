@@ -96,4 +96,15 @@ public class FareEntitySessionBean implements FareEntitySessionBeanRemote, FareE
         
         return  schedule.getFareEntitys();
     }
+    
+    public void setReturnFare(FlightSchedulePlanEntity outboundPlan, FlightSchedulePlanEntity returnPlan) {
+        outboundPlan = entityManager.find(FlightSchedulePlanEntity.class, outboundPlan.getSchedulePlanId());
+        returnPlan = entityManager.find(FlightSchedulePlanEntity.class, returnPlan.getSchedulePlanId());
+        
+        List<FareEntity> fares = outboundPlan.getFareEntitys();
+        
+        returnPlan.setFareEntitys(fares);
+        
+
+    }
 }

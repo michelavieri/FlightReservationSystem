@@ -63,4 +63,5 @@ public interface FlightScheduleEntitySessionBeanRemote {
 //
 //    public void recurseTransit(List<FlightScheduleEntity> allSchedules, AirportEntity departureAirport, AirportEntity destinationAirport, int stopovers, List<FlightScheduleEntity> availableSchedule, List<List<FlightScheduleEntity>> finalSchedule, CabinClassTypeEnum classType, int numOfPassenger);
     
+    public void setLayover(FlightSchedulePlanEntity plan, int layover);
 }
