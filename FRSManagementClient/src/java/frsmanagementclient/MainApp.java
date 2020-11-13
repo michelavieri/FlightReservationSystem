@@ -585,7 +585,7 @@ public class MainApp {
                 } else if (response == 5) {
                     flightOperationModule.viewAllSchedulePlan(sc);
                 } else if (response == 6) {
-
+                    flightOperationModule.viewSchedulePlanDetails(sc);
                 } else if (response == 7) {
                     break;
                 } else {

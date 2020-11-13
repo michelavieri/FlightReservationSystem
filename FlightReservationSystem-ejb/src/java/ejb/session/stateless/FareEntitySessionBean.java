@@ -40,7 +40,7 @@ public class FareEntitySessionBean implements FareEntitySessionBeanRemote, FareE
     @Override
     public void associateFareWithCabinClass(CabinClassConfigurationEntity cabinClass, FareEntity fare) {
         cabinClass = entityManager.find(CabinClassConfigurationEntity.class, cabinClass.getId());
-        fare = entityManager.find(FareEntity.class, fare.getFairId());
+        fare = entityManager.find(FareEntity.class, fare.getFareId());
         
         cabinClass.getFareEntitys().add(fare);
         fare.setCabinClass(cabinClass);
@@ -49,7 +49,7 @@ public class FareEntitySessionBean implements FareEntitySessionBeanRemote, FareE
     @Override
     public void associateFareWithPlan(FlightSchedulePlanEntity plan, FareEntity fare) {
         plan = entityManager.find(FlightSchedulePlanEntity.class, plan.getSchedulePlanId());
-        fare = entityManager.find(FareEntity.class, fare.getFairId());
+        fare = entityManager.find(FareEntity.class, fare.getFareId());
         
         plan.getFareEntitys().add(fare);
         fare.setFlightSchedulePlan(plan);
@@ -57,7 +57,7 @@ public class FareEntitySessionBean implements FareEntitySessionBeanRemote, FareE
     
     @Override
     public String retrieveFareAmount(FareEntity fare) {
-        fare = entityManager.find(FareEntity.class, fare.getFairId());
+        fare = entityManager.find(FareEntity.class, fare.getFareId());
         
         return fare.getAmount();
     }
@@ -85,5 +85,14 @@ public class FareEntitySessionBean implements FareEntitySessionBeanRemote, FareE
         }
         
         return lowestFare;
+    }
+    
+    @Override
+    public List<FareEntity> retrieveFareBySchedulePlan(FlightSchedulePlanEntity schedule) {
+        schedule = entityManager.find(FlightSchedulePlanEntity.class, schedule.getSchedulePlanId());
+        
+        schedule.getFareEntitys().size();
+        
+        return  schedule.getFareEntitys();
     }
 }

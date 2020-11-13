@@ -41,4 +41,10 @@ public interface FlightSchedulePlanEntitySessionBeanLocal {
 
     public String retrieveDepartureDateTime(FlightSchedulePlanEntity plan);
 
+    public List<FlightSchedulePlanEntity> retrievePlanByFlight(FlightEntity flight);
+
+    public List<FlightScheduleEntity> retrieveSchedulesByPlan(FlightSchedulePlanEntity plan);
+
+    public void createRecurrentSchedule(String day, FlightSchedulePlanEntity schedule, String startDate, String endDate, int days, String departureTime, DateTimeFormatter dateFormat, String duration, int layoverDuration);
+
 }

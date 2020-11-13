@@ -32,42 +32,39 @@ public class CheckoutSessionBean implements CheckoutSessionBeanRemote, CheckoutS
     List<BookingTicketEntity> bookings;
     int numOfPassenger;
     long totalAmount;
-    
-    public CheckoutSessionBean() 
-    {
+
+    public CheckoutSessionBean() {
         initialiseState();
     }
-    
+
     @Remove
     @Override
-    public void remove()
-    {        
-    }  
-    
-    private void initialiseState()
-    {
+    public void remove() {
+    }
+
+    private void initialiseState() {
         bookings = new ArrayList<>();
         numOfPassenger = 0;
         totalAmount = 0L;
     }
-    
+
     @Override
     public void addBoooking(BookingTicketEntity ticket) {
         bookings.add(ticket);
-        
+
         totalAmount += Long.parseLong(fareEntitySessionBean.retrieveFareAmount(ticket.getFare()));
     }
-    
+
     @Override
     public ReservationEntity doCheckout(CustomerEntity customer) {
-        ReservationEntity newReservation = reservationEntitySessionBean.createNewReservation(customer, new ReservationEntity(numOfPassenger, Long.toString(totalAmount), bookings));
-        
-        return newReservation;
+        // ReservationEntity newReservation = reservationEntitySessionBean.createNewReservation(customer, new ReservationEntity(numOfPassenger, Long.toString(totalAmount), bookings));
+
+//        return newReservation;
+        return null;
     }
-    
+
     @Override
-    public void clearCart()
-    {
+    public void clearCart() {
         initialiseState();
     }
 }

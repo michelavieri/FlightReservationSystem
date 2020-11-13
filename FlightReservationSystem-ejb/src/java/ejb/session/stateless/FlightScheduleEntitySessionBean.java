@@ -286,7 +286,7 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
         schedule = entityManager.find(FlightScheduleEntity.class, schedule.getScheduleId());
 
         FlightScheduleEntity returnSchedule = schedule.getReturnSchedule();
-        returnSchedule.getSeatsInventoryEntitys().size();
+//        returnSchedule.getSeatsInventoryEntitys().size();
 
         return returnSchedule;
     }
