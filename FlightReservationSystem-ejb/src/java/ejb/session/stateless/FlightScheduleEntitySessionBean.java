@@ -108,7 +108,7 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
 
     @Override
     public void createRecurrentSchedule(String day, FlightSchedulePlanEntity schedule, String startDate, String endDate, int days, String departureTime, DateTimeFormatter dateFormat, String duration, int layoverDuration) {
-
+        schedule = entityManager.find(FlightSchedulePlanEntity.class, schedule.getSchedulePlanId());
         ZonedDateTime startingDate = ZonedDateTime.parse((startDate + departureTime), dateFormat);
 
         if (schedule.getType().equals(FlightSchedulePlanTypeEnum.RECURRENT_WEEK)) {
@@ -146,7 +146,7 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
     }
 
     @Override
-    public boolean checkOverlapping(FlightSchedulePlanEntity plan, FlightScheduleEntity schedule, DateTimeFormatter dateFormat) throws ScheduleOverlapException{
+    public boolean checkOverlapping(FlightSchedulePlanEntity plan, FlightScheduleEntity schedule, DateTimeFormatter dateFormat) throws ScheduleOverlapException {
         plan = entityManager.find(FlightSchedulePlanEntity.class, plan.getSchedulePlanId());
         schedule = entityManager.find(FlightScheduleEntity.class, schedule.getScheduleId());
         boolean overlap = false;
@@ -324,12 +324,14 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
                     if (depDateTime.equals(departureDate)) {
                         List<SeatsInventoryEntity> seats = schedule.getSeatsInventoryEntitys();
 
-                        for (SeatsInventoryEntity seat : seats) {
-                            if (seat.getCabinClass().getType().equals(classType)) {
-                                if (seat.getBalanceSeatsSize() >= numOfPassenger) {
+                        if (classType != null) {
+                            for (SeatsInventoryEntity seat : seats) {
+                                if (seat.getCabinClass().getType().equals(classType)) {
                                     availableSchedule.add(schedule);
                                 }
                             }
+                        } else {
+                            availableSchedule.add(schedule);
                         }
                     }
                 }
@@ -379,12 +381,14 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
                     if (depDate.equals(departureDate.minusDays(1)) || depDate.equals(departureDate.minusDays(2)) || depDate.equals(departureDate.minusDays(3))) {
                         List<SeatsInventoryEntity> seats = schedule.getSeatsInventoryEntitys();
 
-                        for (SeatsInventoryEntity seat : seats) {
-                            if (seat.getCabinClass().getType().equals(classType)) {
-                                if (seat.getBalanceSeatsSize() >= numOfPassenger) {
+                        if (classType != null) {
+                            for (SeatsInventoryEntity seat : seats) {
+                                if (seat.getCabinClass().getType().equals(classType)) {
                                     availableSchedule.add(schedule);
                                 }
                             }
+                        } else {
+                            availableSchedule.add(schedule);
                         }
                     }
                 }
@@ -434,12 +438,14 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
                     if (depDate.equals(departureDate.plusDays(1)) || depDate.equals(departureDate.plusDays(2)) || depDate.equals(departureDate.plusDays(3))) {
                         List<SeatsInventoryEntity> seats = schedule.getSeatsInventoryEntitys();
 
-                        for (SeatsInventoryEntity seat : seats) {
-                            if (seat.getCabinClass().getType().equals(classType)) {
-                                if (seat.getBalanceSeatsSize() >= numOfPassenger) {
+                        if (classType != null) {
+                            for (SeatsInventoryEntity seat : seats) {
+                                if (seat.getCabinClass().getType().equals(classType)) {
                                     availableSchedule.add(schedule);
                                 }
                             }
+                        } else {
+                            availableSchedule.add(schedule);
                         }
                     }
                 }
@@ -551,15 +557,20 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
             if (route.getDestinationAirport().equals(destinationAirport) && departureTime.isAfter(arrivalTime)) {
                 if (route.getOriginAirport().equals(departureAirport) && departureTime.isAfter(arrivalTime)) {
                     List<SeatsInventoryEntity> seats = allSchedules.get(i).getSeatsInventoryEntitys();
-                    for (SeatsInventoryEntity seat : seats) {
-                        if (seat.getCabinClass().getType().equals(classType)) {
-                            if (seat.getBalanceSeatsSize() < numOfPassenger) {
+                    if (classType != null) {
+                        for (SeatsInventoryEntity seat : seats) {
+                            if (seat.getCabinClass().getType().equals(classType)) {
                                 availableSchedule.add(allSchedules.get(i));
                                 finalSchedule.add(availableSchedule);
                                 availableSchedule.remove(allSchedules.get(i));
                                 continue;
                             }
                         }
+                    } else {
+                        availableSchedule.add(allSchedules.get(i));
+                        finalSchedule.add(availableSchedule);
+                        availableSchedule.remove(allSchedules.get(i));
+                        continue;
                     }
                 }
             }

@@ -21,7 +21,7 @@ public interface CheckoutSessionBeanRemote {
 
     public void addBoooking(BookingTicketEntity ticket);
 
-    public ReservationEntity doCheckout(CustomerEntity customer);
+//    public ReservationEntity doCheckout(CustomerEntity customer);
 
     public void clearCart();
     

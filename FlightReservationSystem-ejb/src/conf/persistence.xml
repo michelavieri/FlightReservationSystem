@@ -16,11 +16,7 @@
     <class>entity.PartnerEntity</class>
     <class>entity.ReservationEntity</class>
     <class>entity.SeatsInventoryEntity</class>
-    <class>entity.FareEntity.FareEntity</class>
-    <class>entity.FlightScheduleEntity.FlightScheduleEntity</class>
     <class>entity.ReservationsEntity</class>
-    <class>entity.AircraftTypeEntity.AircraftTypeEntity</class>
-    <class>entity.AirportEntity.AirportEntity</class>
     <class>entity.BookingTicketEntity</class>
     <class>entity.CreditCardEntity</class>
     <class>entity.PassengerEntity</class>

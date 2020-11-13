@@ -5,6 +5,7 @@
  */
 package frsreservationclient;
 
+import ejb.session.stateless.AircraftConfigurationEntitySessionBeanRemote;
 import ejb.session.stateless.CreditCardEntitySessionBeanRemote;
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import ejb.session.stateless.FareEntitySessionBeanRemote;
@@ -19,6 +20,9 @@ import javax.ejb.EJB;
  * @author miche
  */
 public class Main {
+
+    @EJB
+    private static AircraftConfigurationEntitySessionBeanRemote aircraftConfigurationEntitySessionBeanRemote;
 
     @EJB
     private static CreditCardEntitySessionBeanRemote creditCardEntitySessionBeanRemote;
@@ -50,7 +54,7 @@ public class Main {
     public static void main(String[] args) {
         MainApp mainApp = new MainApp(customerEntitySessionBeanRemote, reservationEntitySessionBeanRemote,
         flightScheduleEntitySessionBeanRemote, seatsInventoryEntitySessionBeanRemote, seatEntitySessionBeanRemote,
-        fareEntitySessionBeanRemote, creditCardEntitySessionBeanRemote);
+        fareEntitySessionBeanRemote, creditCardEntitySessionBeanRemote, aircraftConfigurationEntitySessionBeanRemote);
         mainApp.runApp();
     }
 }

@@ -5,6 +5,7 @@
  */
 package frsreservationclient;
 
+import ejb.session.stateless.AircraftConfigurationEntitySessionBeanRemote;
 import ejb.session.stateless.CreditCardEntitySessionBeanRemote;
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import ejb.session.stateless.FareEntitySessionBeanRemote;
@@ -13,6 +14,7 @@ import ejb.session.stateless.ReservationEntitySessionBeanRemote;
 import ejb.session.stateless.SeatEntitySessionBeanRemote;
 import ejb.session.stateless.SeatsInventoryEntitySessionBeanRemote;
 import entity.BookingTicketEntity;
+import entity.CabinClassConfigurationEntity;
 import entity.CreditCardEntity;
 import entity.CustomerEntity;
 import entity.FareEntity;
@@ -43,6 +45,7 @@ public class ReservationOperationModule {
     public SeatEntitySessionBeanRemote seatEntitySessionBeanRemote;
     public FareEntitySessionBeanRemote fareEntitySessionBeanRemote;
     public CreditCardEntitySessionBeanRemote creditCardEntitySessionBeanRemote;
+    public AircraftConfigurationEntitySessionBeanRemote aircraftConfigurationEntitySessionBeanRemote;
 
     public ReservationOperationModule(ReservationEntitySessionBeanRemote reservationEntitySessionBeanRemote,
             CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote,
@@ -50,7 +53,8 @@ public class ReservationOperationModule {
             SeatsInventoryEntitySessionBeanRemote seatsInventoryEntitySessionBeanRemote,
             SeatEntitySessionBeanRemote seatEntitySessionBeanRemote,
             FareEntitySessionBeanRemote fareEntitySessionBeanRemote,
-            CreditCardEntitySessionBeanRemote creditCardEntitySessionBeanRemote) {
+            CreditCardEntitySessionBeanRemote creditCardEntitySessionBeanRemote,
+            AircraftConfigurationEntitySessionBeanRemote aircraftConfigurationEntitySessionBeanRemote) {
         this.reservationEntitySessionBeanRemote = reservationEntitySessionBeanRemote;
         this.customerEntitySessionBeanRemote = customerEntitySessionBeanRemote;
         this.flightScheduleEntitySessionBeanRemote = flightScheduleEntitySessionBeanRemote;
@@ -58,6 +62,7 @@ public class ReservationOperationModule {
         this.seatEntitySessionBeanRemote = seatEntitySessionBeanRemote;
         this.fareEntitySessionBeanRemote = fareEntitySessionBeanRemote;
         this.creditCardEntitySessionBeanRemote = creditCardEntitySessionBeanRemote;
+        this.aircraftConfigurationEntitySessionBeanRemote = aircraftConfigurationEntitySessionBeanRemote;
     }
 
     public void searchFlights(Scanner sc, CustomerEntity customer) {
@@ -90,7 +95,7 @@ public class ReservationOperationModule {
 
         System.out.println("Do you have preference for Direct Flight or Connecting Flight?");
         System.out.println("1: Direct Flight");
-        System.out.println("2: Connecting Flight");
+        System.out.println("2: No preference for Direct or Connecting Flight");
         int preferenceFlight = sc.nextInt();
 
         int stopovers = 0;
@@ -104,6 +109,7 @@ public class ReservationOperationModule {
         System.out.println("2: Business Class");
         System.out.println("3: Premium Economy Class");
         System.out.println("4: Economy Class");
+        System.out.println("5: No Preference");
         int preferenceClass = sc.nextInt();
 
         CabinClassTypeEnum preferenceClassEnum;
@@ -121,7 +127,7 @@ public class ReservationOperationModule {
                 preferenceClassEnum = CabinClassTypeEnum.ECONOMY_CLASS;
                 break;
             default:
-                preferenceClassEnum = CabinClassTypeEnum.ECONOMY_CLASS;
+                preferenceClassEnum = null;
                 break;
         }
 
@@ -172,6 +178,12 @@ public class ReservationOperationModule {
         for (int i = 0; i < outboundFlightsSameDate.size(); i++) {
             System.out.println((i + 1) + ". FLIGHT(s) : ");
             List<FlightScheduleEntity> schedules = outboundFlightsSameDate.get(i);
+            long priceFirstClass = 0;
+            long priceBusinessClass = 0;
+            long pricePremiumEconomyClass = 0;
+            long priceEconomyClass = 0;
+
+            List<CabinClassConfigurationEntity> classes = new ArrayList<>();
             for (int j = 0; j < schedules.size(); j++) {
                 System.out.println("\t -SCHEDULE ID: " + schedules.get(j).getScheduleId());
                 System.out.println("\t  " + schedules.get(j).getPlan().getFlight().getRoute().getOriginAirport().getAirportCode()
@@ -179,13 +191,63 @@ public class ReservationOperationModule {
                         + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
                 System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
                 System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
-                pricePerPassenger += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum).getAmount());
+                classes = aircraftConfigurationEntitySessionBeanRemote.getCabinClassConfig(schedules.get(j).getPlan().getFlight().getAircraftConfigurationEntity());
+                System.out.println("\t  Available Classes: ");
+                for (CabinClassConfigurationEntity c : classes) {
+                    System.out.println("\t\t " + searchCabinType(c.getType()));
+                    switch (c.getType()) {
+                        case FIRST_CLASS:
+                            priceFirstClass += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), CabinClassTypeEnum.FIRST_CLASS).getAmount());
+                            break;
+                        case BUSINESS_CLASS:
+                            priceBusinessClass += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), CabinClassTypeEnum.BUSINESS_CLASS).getAmount());
+                            break;
+                        case PREMIUM_ECONOMY_CLASS:
+                            pricePremiumEconomyClass += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS).getAmount());
+                            break;
+                        case ECONOMY_CLASS:
+                            priceEconomyClass += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), CabinClassTypeEnum.ECONOMY_CLASS).getAmount());
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                if (preferenceClassEnum != null) {
+                    pricePerPassenger += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum).getAmount());
+                }
             }
             System.out.println();
-
-            System.out.println("   Price: ");
-            System.out.println("   \t Price per passenger for " + searchCabinType(preferenceClassEnum) + ": " + pricePerPassenger);
-            System.out.println("   \t Total Price: " + pricePerPassenger * numOfPassengers);
+            if (preferenceClassEnum != null) {
+                System.out.println("   Price: ");
+                System.out.println("   \t Price per passenger for " + searchCabinType(preferenceClassEnum) + ": " + pricePerPassenger);
+                System.out.println("   \t Total Price: " + pricePerPassenger * numOfPassengers);
+            } else {
+                System.out.println("   Price: ");
+                for (CabinClassConfigurationEntity c : classes) {
+                    System.out.println("\t " + searchCabinType(c.getType()) + ":");
+                    System.out.print("\t\t Price per passenger: ");
+                    switch (c.getType()) {
+                        case FIRST_CLASS:
+                            System.out.println(priceFirstClass);
+                            System.out.println("\t\t Total Price: " + priceFirstClass * numOfPassengers);
+                            break;
+                        case BUSINESS_CLASS:
+                            System.out.println(priceBusinessClass);
+                            System.out.println("\t\t Total Price: " + priceBusinessClass * numOfPassengers);
+                            break;
+                        case PREMIUM_ECONOMY_CLASS:
+                            System.out.println(pricePremiumEconomyClass);
+                            System.out.println("\t\t Total Price: " + pricePremiumEconomyClass * numOfPassengers);
+                            break;
+                        case ECONOMY_CLASS:
+                            System.out.println(priceEconomyClass);
+                            System.out.println("\t\t Total Price: " + priceEconomyClass * numOfPassengers);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
         }
 
         System.out.println("***");
@@ -195,19 +257,76 @@ public class ReservationOperationModule {
         for (int i = 0; i < outboundFlightsBeforeDate.size(); i++) {
             System.out.println((i + 1) + ". FLIGHT(s) : ");
             List<FlightScheduleEntity> schedules = outboundFlightsBeforeDate.get(i);
+            long priceFirstClass = 0;
+            long priceBusinessClass = 0;
+            long pricePremiumEconomyClass = 0;
+            long priceEconomyClass = 0;
+
+            List<CabinClassConfigurationEntity> classes = new ArrayList<>();
             for (int j = 0; j < schedules.size(); j++) {
-                System.out.println("\t -" + schedules.get(j).getPlan().getFlight().getRoute().getOriginAirport().getAirportCode()
+                System.out.println("\t -SCHEDULE ID: " + schedules.get(j).getScheduleId());
+                System.out.println("\t  " + schedules.get(j).getPlan().getFlight().getRoute().getOriginAirport().getAirportCode()
                         + " - " + schedules.get(j).getPlan().getFlight().getRoute().getDestinationAirport().getAirportCode() + " ("
                         + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
                 System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
                 System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
-                pricePerPassenger += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum).getAmount());
+                classes = aircraftConfigurationEntitySessionBeanRemote.getCabinClassConfig(schedules.get(j).getPlan().getFlight().getAircraftConfigurationEntity());
+                System.out.println("\t  Available Classes: ");
+                for (CabinClassConfigurationEntity c : classes) {
+                    System.out.println("\t\t " + searchCabinType(c.getType()));
+                    switch (c.getType()) {
+                        case FIRST_CLASS:
+                            priceFirstClass += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), CabinClassTypeEnum.FIRST_CLASS).getAmount());
+                            break;
+                        case BUSINESS_CLASS:
+                            priceBusinessClass += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), CabinClassTypeEnum.BUSINESS_CLASS).getAmount());
+                            break;
+                        case PREMIUM_ECONOMY_CLASS:
+                            pricePremiumEconomyClass += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS).getAmount());
+                            break;
+                        case ECONOMY_CLASS:
+                            priceEconomyClass += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), CabinClassTypeEnum.ECONOMY_CLASS).getAmount());
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                if (preferenceClassEnum != null) {
+                    pricePerPassenger += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum).getAmount());
+                }
             }
             System.out.println();
-
-            System.out.println("   Price: ");
-            System.out.println("   \t Price per passenger for " + searchCabinType(preferenceClassEnum) + ": " + pricePerPassenger);
-            System.out.println("   \t Total Price: " + pricePerPassenger * numOfPassengers);
+            if (preferenceClassEnum != null) {
+                System.out.println("   Price: ");
+                System.out.println("   \t Price per passenger for " + searchCabinType(preferenceClassEnum) + ": " + pricePerPassenger);
+                System.out.println("   \t Total Price: " + pricePerPassenger * numOfPassengers);
+            } else {
+                System.out.println("   Price: ");
+                for (CabinClassConfigurationEntity c : classes) {
+                    System.out.println("\t " + searchCabinType(c.getType()) + ":");
+                    System.out.print("\t\t Price per passenger: ");
+                    switch (c.getType()) {
+                        case FIRST_CLASS:
+                            System.out.println(priceFirstClass);
+                            System.out.println("\t\t Total Price: " + priceFirstClass * numOfPassengers);
+                            break;
+                        case BUSINESS_CLASS:
+                            System.out.println(priceBusinessClass);
+                            System.out.println("\t\t Total Price: " + priceBusinessClass * numOfPassengers);
+                            break;
+                        case PREMIUM_ECONOMY_CLASS:
+                            System.out.println(pricePremiumEconomyClass);
+                            System.out.println("\t\t Total Price: " + pricePremiumEconomyClass * numOfPassengers);
+                            break;
+                        case ECONOMY_CLASS:
+                            System.out.println(priceEconomyClass);
+                            System.out.println("\t\t Total Price: " + priceEconomyClass * numOfPassengers);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
         }
 
         System.out.println("***");
@@ -218,19 +337,76 @@ public class ReservationOperationModule {
         for (int i = 0; i < outboundFlightsAfterDate.size(); i++) {
             System.out.println((i + 1) + ". FLIGHT(s) : ");
             List<FlightScheduleEntity> schedules = outboundFlightsAfterDate.get(i);
+            long priceFirstClass = 0;
+            long priceBusinessClass = 0;
+            long pricePremiumEconomyClass = 0;
+            long priceEconomyClass = 0;
+
+            List<CabinClassConfigurationEntity> classes = new ArrayList<>();
             for (int j = 0; j < schedules.size(); j++) {
-                System.out.println("\t -" + schedules.get(j).getPlan().getFlight().getRoute().getOriginAirport().getAirportCode()
+                System.out.println("\t -SCHEDULE ID: " + schedules.get(j).getScheduleId());
+                System.out.println("\t  " + schedules.get(j).getPlan().getFlight().getRoute().getOriginAirport().getAirportCode()
                         + " - " + schedules.get(j).getPlan().getFlight().getRoute().getDestinationAirport().getAirportCode() + " ("
                         + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
                 System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
                 System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
-                pricePerPassenger += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum).getAmount());
+                classes = aircraftConfigurationEntitySessionBeanRemote.getCabinClassConfig(schedules.get(j).getPlan().getFlight().getAircraftConfigurationEntity());
+                System.out.println("\t  Available Classes: ");
+                for (CabinClassConfigurationEntity c : classes) {
+                    System.out.println("\t\t " + searchCabinType(c.getType()));
+                    switch (c.getType()) {
+                        case FIRST_CLASS:
+                            priceFirstClass += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), CabinClassTypeEnum.FIRST_CLASS).getAmount());
+                            break;
+                        case BUSINESS_CLASS:
+                            priceBusinessClass += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), CabinClassTypeEnum.BUSINESS_CLASS).getAmount());
+                            break;
+                        case PREMIUM_ECONOMY_CLASS:
+                            pricePremiumEconomyClass += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS).getAmount());
+                            break;
+                        case ECONOMY_CLASS:
+                            priceEconomyClass += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), CabinClassTypeEnum.ECONOMY_CLASS).getAmount());
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                if (preferenceClassEnum != null) {
+                    pricePerPassenger += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum).getAmount());
+                }
             }
             System.out.println();
-
-            System.out.println("   Price: ");
-            System.out.println("   \t Price per passenger for " + searchCabinType(preferenceClassEnum) + ": " + pricePerPassenger);
-            System.out.println("   \t Total Price: " + pricePerPassenger * numOfPassengers);
+            if (preferenceClassEnum != null) {
+                System.out.println("   Price: ");
+                System.out.println("   \t Price per passenger for " + searchCabinType(preferenceClassEnum) + ": " + pricePerPassenger);
+                System.out.println("   \t Total Price: " + pricePerPassenger * numOfPassengers);
+            } else {
+                System.out.println("   Price: ");
+                for (CabinClassConfigurationEntity c : classes) {
+                    System.out.println("\t " + searchCabinType(c.getType()) + ":");
+                    System.out.print("\t\t Price per passenger: ");
+                    switch (c.getType()) {
+                        case FIRST_CLASS:
+                            System.out.println(priceFirstClass);
+                            System.out.println("\t\t Total Price: " + priceFirstClass * numOfPassengers);
+                            break;
+                        case BUSINESS_CLASS:
+                            System.out.println(priceBusinessClass);
+                            System.out.println("\t\t Total Price: " + priceBusinessClass * numOfPassengers);
+                            break;
+                        case PREMIUM_ECONOMY_CLASS:
+                            System.out.println(pricePremiumEconomyClass);
+                            System.out.println("\t\t Total Price: " + pricePremiumEconomyClass * numOfPassengers);
+                            break;
+                        case ECONOMY_CLASS:
+                            System.out.println(priceEconomyClass);
+                            System.out.println("\t\t Total Price: " + priceEconomyClass * numOfPassengers);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
         }
 
         System.out.println("***********************************");
@@ -242,19 +418,76 @@ public class ReservationOperationModule {
         for (int i = 0; i < returnFlightsSameDate.size(); i++) {
             System.out.println((i + 1) + ". FLIGHT(s) : ");
             List<FlightScheduleEntity> schedules = returnFlightsSameDate.get(i);
+            long priceFirstClass = 0;
+            long priceBusinessClass = 0;
+            long pricePremiumEconomyClass = 0;
+            long priceEconomyClass = 0;
+
+            List<CabinClassConfigurationEntity> classes = new ArrayList<>();
             for (int j = 0; j < schedules.size(); j++) {
-                System.out.println("\t -" + schedules.get(j).getPlan().getFlight().getRoute().getOriginAirport().getAirportCode()
+                System.out.println("\t -SCHEDULE ID: " + schedules.get(j).getScheduleId());
+                System.out.println("\t  " + schedules.get(j).getPlan().getFlight().getRoute().getOriginAirport().getAirportCode()
                         + " - " + schedules.get(j).getPlan().getFlight().getRoute().getDestinationAirport().getAirportCode() + " ("
                         + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
                 System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
                 System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
-                pricePerPassenger += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum).getAmount());
+                classes = aircraftConfigurationEntitySessionBeanRemote.getCabinClassConfig(schedules.get(j).getPlan().getFlight().getAircraftConfigurationEntity());
+                System.out.println("\t  Available Classes: ");
+                for (CabinClassConfigurationEntity c : classes) {
+                    System.out.println("\t\t " + searchCabinType(c.getType()));
+                    switch (c.getType()) {
+                        case FIRST_CLASS:
+                            priceFirstClass += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), CabinClassTypeEnum.FIRST_CLASS).getAmount());
+                            break;
+                        case BUSINESS_CLASS:
+                            priceBusinessClass += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), CabinClassTypeEnum.BUSINESS_CLASS).getAmount());
+                            break;
+                        case PREMIUM_ECONOMY_CLASS:
+                            pricePremiumEconomyClass += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS).getAmount());
+                            break;
+                        case ECONOMY_CLASS:
+                            priceEconomyClass += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), CabinClassTypeEnum.ECONOMY_CLASS).getAmount());
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                if (preferenceClassEnum != null) {
+                    pricePerPassenger += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum).getAmount());
+                }
             }
             System.out.println();
-
-            System.out.println("   Price: ");
-            System.out.println("   \t Price per passenger for " + searchCabinType(preferenceClassEnum) + ": " + pricePerPassenger);
-            System.out.println("   \t Total Price: " + pricePerPassenger * numOfPassengers);
+            if (preferenceClassEnum != null) {
+                System.out.println("   Price: ");
+                System.out.println("   \t Price per passenger for " + searchCabinType(preferenceClassEnum) + ": " + pricePerPassenger);
+                System.out.println("   \t Total Price: " + pricePerPassenger * numOfPassengers);
+            } else {
+                System.out.println("   Price: ");
+                for (CabinClassConfigurationEntity c : classes) {
+                    System.out.println("\t " + searchCabinType(c.getType()) + ":");
+                    System.out.print("\t\t Price per passenger: ");
+                    switch (c.getType()) {
+                        case FIRST_CLASS:
+                            System.out.println(priceFirstClass);
+                            System.out.println("\t\t Total Price: " + priceFirstClass * numOfPassengers);
+                            break;
+                        case BUSINESS_CLASS:
+                            System.out.println(priceBusinessClass);
+                            System.out.println("\t\t Total Price: " + priceBusinessClass * numOfPassengers);
+                            break;
+                        case PREMIUM_ECONOMY_CLASS:
+                            System.out.println(pricePremiumEconomyClass);
+                            System.out.println("\t\t Total Price: " + pricePremiumEconomyClass * numOfPassengers);
+                            break;
+                        case ECONOMY_CLASS:
+                            System.out.println(priceEconomyClass);
+                            System.out.println("\t\t Total Price: " + priceEconomyClass * numOfPassengers);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
         }
 
         System.out.println("***");
@@ -264,19 +497,76 @@ public class ReservationOperationModule {
         for (int i = 0; i < returnFlightsBeforeDate.size(); i++) {
             System.out.println((i + 1) + ". FLIGHT(s) : ");
             List<FlightScheduleEntity> schedules = returnFlightsBeforeDate.get(i);
+            long priceFirstClass = 0;
+            long priceBusinessClass = 0;
+            long pricePremiumEconomyClass = 0;
+            long priceEconomyClass = 0;
+
+            List<CabinClassConfigurationEntity> classes = new ArrayList<>();
             for (int j = 0; j < schedules.size(); j++) {
-                System.out.println("\t -" + schedules.get(j).getPlan().getFlight().getRoute().getOriginAirport().getAirportCode()
+                System.out.println("\t -SCHEDULE ID: " + schedules.get(j).getScheduleId());
+                System.out.println("\t  " + schedules.get(j).getPlan().getFlight().getRoute().getOriginAirport().getAirportCode()
                         + " - " + schedules.get(j).getPlan().getFlight().getRoute().getDestinationAirport().getAirportCode() + " ("
                         + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
                 System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
                 System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
-                pricePerPassenger += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum).getAmount());
+                classes = aircraftConfigurationEntitySessionBeanRemote.getCabinClassConfig(schedules.get(j).getPlan().getFlight().getAircraftConfigurationEntity());
+                System.out.println("\t  Available Classes: ");
+                for (CabinClassConfigurationEntity c : classes) {
+                    System.out.println("\t\t " + searchCabinType(c.getType()));
+                    switch (c.getType()) {
+                        case FIRST_CLASS:
+                            priceFirstClass += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), CabinClassTypeEnum.FIRST_CLASS).getAmount());
+                            break;
+                        case BUSINESS_CLASS:
+                            priceBusinessClass += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), CabinClassTypeEnum.BUSINESS_CLASS).getAmount());
+                            break;
+                        case PREMIUM_ECONOMY_CLASS:
+                            pricePremiumEconomyClass += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS).getAmount());
+                            break;
+                        case ECONOMY_CLASS:
+                            priceEconomyClass += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), CabinClassTypeEnum.ECONOMY_CLASS).getAmount());
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                if (preferenceClassEnum != null) {
+                    pricePerPassenger += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum).getAmount());
+                }
             }
             System.out.println();
-
-            System.out.println("   Price: ");
-            System.out.println("   \t Price per passenger for " + searchCabinType(preferenceClassEnum) + ": " + pricePerPassenger);
-            System.out.println("   \t Total Price: " + pricePerPassenger * numOfPassengers);
+            if (preferenceClassEnum != null) {
+                System.out.println("   Price: ");
+                System.out.println("   \t Price per passenger for " + searchCabinType(preferenceClassEnum) + ": " + pricePerPassenger);
+                System.out.println("   \t Total Price: " + pricePerPassenger * numOfPassengers);
+            } else {
+                System.out.println("   Price: ");
+                for (CabinClassConfigurationEntity c : classes) {
+                    System.out.println("\t " + searchCabinType(c.getType()) + ":");
+                    System.out.print("\t\t Price per passenger: ");
+                    switch (c.getType()) {
+                        case FIRST_CLASS:
+                            System.out.println(priceFirstClass);
+                            System.out.println("\t\t Total Price: " + priceFirstClass * numOfPassengers);
+                            break;
+                        case BUSINESS_CLASS:
+                            System.out.println(priceBusinessClass);
+                            System.out.println("\t\t Total Price: " + priceBusinessClass * numOfPassengers);
+                            break;
+                        case PREMIUM_ECONOMY_CLASS:
+                            System.out.println(pricePremiumEconomyClass);
+                            System.out.println("\t\t Total Price: " + pricePremiumEconomyClass * numOfPassengers);
+                            break;
+                        case ECONOMY_CLASS:
+                            System.out.println(priceEconomyClass);
+                            System.out.println("\t\t Total Price: " + priceEconomyClass * numOfPassengers);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
         }
 
         System.out.println("***");
@@ -287,6 +577,12 @@ public class ReservationOperationModule {
         for (int i = 0; i < returnFlightsAfterDate.size(); i++) {
             System.out.println((i + 1) + ". FLIGHT(s) : ");
             List<FlightScheduleEntity> schedules = returnFlightsAfterDate.get(i);
+            long priceFirstClass = 0;
+            long priceBusinessClass = 0;
+            long pricePremiumEconomyClass = 0;
+            long priceEconomyClass = 0;
+
+            List<CabinClassConfigurationEntity> classes = new ArrayList<>();
             for (int j = 0; j < schedules.size(); j++) {
                 System.out.println("\t -SCHEDULE ID: " + schedules.get(j).getScheduleId());
                 System.out.println("\t  " + schedules.get(j).getPlan().getFlight().getRoute().getOriginAirport().getAirportCode()
@@ -294,14 +590,67 @@ public class ReservationOperationModule {
                         + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
                 System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
                 System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
-                pricePerPassenger += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum).getAmount());
+                classes = aircraftConfigurationEntitySessionBeanRemote.getCabinClassConfig(schedules.get(j).getPlan().getFlight().getAircraftConfigurationEntity());
+                System.out.println("\t  Available Classes: ");
+                for (CabinClassConfigurationEntity c : classes) {
+                    System.out.println("\t\t " + searchCabinType(c.getType()));
+                    switch (c.getType()) {
+                        case FIRST_CLASS:
+                            priceFirstClass += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), CabinClassTypeEnum.FIRST_CLASS).getAmount());
+                            break;
+                        case BUSINESS_CLASS:
+                            priceBusinessClass += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), CabinClassTypeEnum.BUSINESS_CLASS).getAmount());
+                            break;
+                        case PREMIUM_ECONOMY_CLASS:
+                            pricePremiumEconomyClass += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS).getAmount());
+                            break;
+                        case ECONOMY_CLASS:
+                            priceEconomyClass += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), CabinClassTypeEnum.ECONOMY_CLASS).getAmount());
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                if (preferenceClassEnum != null) {
+                    pricePerPassenger += Long.parseLong(fareEntitySessionBeanRemote.retrieveLowestFare(schedules.get(j), preferenceClassEnum).getAmount());
+                }
             }
             System.out.println();
-
-            System.out.println("   Price: ");
-            System.out.println("   \t Price per passenger for " + searchCabinType(preferenceClassEnum) + ": " + pricePerPassenger);
-            System.out.println("   \t Total Price: " + pricePerPassenger * numOfPassengers);
+            if (preferenceClassEnum != null) {
+                System.out.println("   Price: ");
+                System.out.println("   \t Price per passenger for " + searchCabinType(preferenceClassEnum) + ": " + pricePerPassenger);
+                System.out.println("   \t Total Price: " + pricePerPassenger * numOfPassengers);
+            } else {
+                System.out.println("   Price: ");
+                for (CabinClassConfigurationEntity c : classes) {
+                    System.out.println("\t " + searchCabinType(c.getType()) + ":");
+                    System.out.print("\t\t Price per passenger: ");
+                    switch (c.getType()) {
+                        case FIRST_CLASS:
+                            System.out.println(priceFirstClass);
+                            System.out.println("\t\t Total Price: " + priceFirstClass * numOfPassengers);
+                            break;
+                        case BUSINESS_CLASS:
+                            System.out.println(priceBusinessClass);
+                            System.out.println("\t\t Total Price: " + priceBusinessClass * numOfPassengers);
+                            break;
+                        case PREMIUM_ECONOMY_CLASS:
+                            System.out.println(pricePremiumEconomyClass);
+                            System.out.println("\t\t Total Price: " + pricePremiumEconomyClass * numOfPassengers);
+                            break;
+                        case ECONOMY_CLASS:
+                            System.out.println(priceEconomyClass);
+                            System.out.println("\t\t Total Price: " + priceEconomyClass * numOfPassengers);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
         }
+        
+        
+        
         if (customer == null) {
             System.out.println("Please sign in if you want to reserve a flight!");
             return;

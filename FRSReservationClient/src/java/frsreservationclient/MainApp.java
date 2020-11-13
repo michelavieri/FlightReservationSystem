@@ -5,6 +5,7 @@
  */
 package frsreservationclient;
 
+import ejb.session.stateless.AircraftConfigurationEntitySessionBeanRemote;
 import ejb.session.stateless.CreditCardEntitySessionBeanRemote;
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import ejb.session.stateless.FareEntitySessionBeanRemote;
@@ -42,6 +43,8 @@ public class MainApp {
     public FareEntitySessionBeanRemote fareEntitySessionBeanRemote;
     
     public CreditCardEntitySessionBeanRemote creditCardEntitySessionBeanRemote;
+    
+    public AircraftConfigurationEntitySessionBeanRemote aircraftConfigurationEntitySessionBeanRemote;
 
     public MainApp() {
 
@@ -53,7 +56,8 @@ public class MainApp {
             SeatsInventoryEntitySessionBeanRemote seatsInventoryEntitySessionBeanRemote,
             SeatEntitySessionBeanRemote seatEntitySessionBeanRemote,
             FareEntitySessionBeanRemote fareEntitySessionBeanRemote,
-            CreditCardEntitySessionBeanRemote creditCardEntitySessionBeanRemote) {
+            CreditCardEntitySessionBeanRemote creditCardEntitySessionBeanRemote,
+            AircraftConfigurationEntitySessionBeanRemote aircraftConfigurationEntitySessionBeanRemote) {
         this.customerEntitySessionBeanRemote = customerEntitySessionBeanRemote;
         this.reservationEntitySessionBeanRemote = reservationEntitySessionBeanRemote;
         this.flightScheduleEntitySessionBeanRemote = flightScheduleEntitySessionBeanRemote;
@@ -61,12 +65,13 @@ public class MainApp {
         this.seatEntitySessionBeanRemote = seatEntitySessionBeanRemote;
         this.fareEntitySessionBeanRemote = fareEntitySessionBeanRemote;
         this.creditCardEntitySessionBeanRemote = creditCardEntitySessionBeanRemote;
+        this.aircraftConfigurationEntitySessionBeanRemote = aircraftConfigurationEntitySessionBeanRemote;
     }
 
     public void runApp() {
         reservationOperationModule = new ReservationOperationModule(reservationEntitySessionBeanRemote,
                 customerEntitySessionBeanRemote, flightScheduleEntitySessionBeanRemote, seatsInventoryEntitySessionBeanRemote,
-                 seatEntitySessionBeanRemote, fareEntitySessionBeanRemote, creditCardEntitySessionBeanRemote);
+                 seatEntitySessionBeanRemote, fareEntitySessionBeanRemote, creditCardEntitySessionBeanRemote, aircraftConfigurationEntitySessionBeanRemote);
         Scanner sc = new Scanner(System.in);
         Integer response = 0;
         while (true) {
@@ -161,7 +166,7 @@ public class MainApp {
     private void menuMain(Scanner sc) {
         reservationOperationModule = new ReservationOperationModule(reservationEntitySessionBeanRemote,
                 customerEntitySessionBeanRemote, flightScheduleEntitySessionBeanRemote, seatsInventoryEntitySessionBeanRemote,
-                 seatEntitySessionBeanRemote, fareEntitySessionBeanRemote, creditCardEntitySessionBeanRemote);
+                 seatEntitySessionBeanRemote, fareEntitySessionBeanRemote, creditCardEntitySessionBeanRemote, aircraftConfigurationEntitySessionBeanRemote);
         Integer response = 0;
         while (true) {
             System.out.println("*** FRS Reservation Application: Customer Logged In ***");

@@ -58,12 +58,12 @@ public class CheckoutSessionBean implements CheckoutSessionBeanRemote, CheckoutS
         totalAmount += Long.parseLong(fareEntitySessionBean.retrieveFareAmount(ticket.getFare()));
     }
     
-    @Override
-    public ReservationEntity doCheckout(CustomerEntity customer) {
-        ReservationEntity newReservation = reservationEntitySessionBean.createNewReservation(customer, new ReservationEntity(numOfPassenger, Long.toString(totalAmount), bookings));
-        
-        return newReservation;
-    }
+//    @Override
+//    public ReservationEntity doCheckout(CustomerEntity customer) {
+//        ReservationEntity newReservation = reservationEntitySessionBean.createNewReservation(customer, new ReservationEntity(numOfPassenger, Long.toString(totalAmount), bookings));
+//        
+//        return newReservation;
+//    }
     
     @Override
     public void clearCart()
