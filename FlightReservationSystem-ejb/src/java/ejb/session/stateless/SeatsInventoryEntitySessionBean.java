@@ -83,7 +83,6 @@ public class SeatsInventoryEntitySessionBean implements SeatsInventoryEntitySess
                 seatsInventory.getSeats().add(seat);
 
                 initial++;
-                tempAbreast++;
             }
             endNumSeat = i;
         }

@@ -536,7 +536,7 @@ public class FlightOperationModule {
 
             if (returnFlightSchedule == null) {
 
-                schedulePlan = new FlightSchedulePlanEntity(type, startDate, 0, flight);
+                schedulePlan = flightSchedulePlanEntitySessionBeanRemote.createFlightSchedulePlanEntity(new FlightSchedulePlanEntity(type, startDate, 0, flight));
                 flightScheduleEntitySessionBeanRemote.associateWithPlan(flightSchedule, schedulePlan);
 
             } else {
@@ -734,7 +734,7 @@ public class FlightOperationModule {
             System.out.println("Enter duration of flight (HH:MM)>");
             String duration = sc.nextLine();
 
-            FlightSchedulePlanEntity schedulePlan = flightSchedulePlanEntitySessionBeanRemote.createFlightSchedulePlanEntity(new FlightSchedulePlanEntity(type, startDate, endDate, 7, flight));
+            FlightSchedulePlanEntity schedulePlan = flightSchedulePlanEntitySessionBeanRemote.createFlightSchedulePlanEntity(new FlightSchedulePlanEntity(type, startDate, endDate, 0, flight));
             FlightSchedulePlanEntity returnPlan = null;
             String response = "";
 
@@ -744,6 +744,8 @@ public class FlightOperationModule {
 
                 if (response.equals("Y")) {
                     int totalLayoverDuration = this.scanLayoverTime(sc);
+                    
+                    flightScheduleEntitySessionBeanRemote.setLayover(schedulePlan, totalLayoverDuration);
                     String returnTime = this.createRecurrentSchedule(day, schedulePlan, startDate, endDate, 7, departuretime, dateFormat, duration, totalLayoverDuration);
                     String zone = flightEntitySessionBeanRemote.retrieveTimeZoneByFlight(flight);
 
