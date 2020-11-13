@@ -32,4 +32,6 @@ public interface FareEntitySessionBeanRemote {
 
     public List<FareEntity> retrieveFareBySchedulePlan(FlightSchedulePlanEntity schedule);
 
+    public void setReturnFare(FlightSchedulePlanEntity outboundPlan, FlightSchedulePlanEntity returnPlan);
+    
 }

@@ -31,5 +31,7 @@ public interface FareEntitySessionBeanLocal {
     public FareEntity retrieveLowestFare(FlightScheduleEntity schedule, CabinClassTypeEnum type);
 
    public List<FareEntity> retrieveFareBySchedulePlan(FlightSchedulePlanEntity schedule);
+
+    public void setReturnFare(FlightSchedulePlanEntity outboundPlan, FlightSchedulePlanEntity returnPlan);
     
 }

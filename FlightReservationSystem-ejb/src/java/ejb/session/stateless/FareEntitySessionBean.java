@@ -10,6 +10,7 @@ import entity.FareEntity;
 import entity.FlightScheduleEntity;
 import entity.FlightSchedulePlanEntity;
 import entity.SeatsInventoryEntity;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -97,6 +98,7 @@ public class FareEntitySessionBean implements FareEntitySessionBeanRemote, FareE
         return  schedule.getFareEntitys();
     }
     
+    @Override
     public void setReturnFare(FlightSchedulePlanEntity outboundPlan, FlightSchedulePlanEntity returnPlan) {
         outboundPlan = entityManager.find(FlightSchedulePlanEntity.class, outboundPlan.getSchedulePlanId());
         returnPlan = entityManager.find(FlightSchedulePlanEntity.class, returnPlan.getSchedulePlanId());
@@ -104,7 +106,5 @@ public class FareEntitySessionBean implements FareEntitySessionBeanRemote, FareE
         List<FareEntity> fares = outboundPlan.getFareEntitys();
         
         returnPlan.setFareEntitys(fares);
-        
-
     }
 }

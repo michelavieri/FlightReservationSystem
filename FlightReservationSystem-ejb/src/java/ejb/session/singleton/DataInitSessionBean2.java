@@ -79,7 +79,7 @@ public class DataInitSessionBean2 {
 
             airportEntitySessionBeanLocal.createNewAirport(new AirportEntity("NRT", "Narita", "Narita", "Chiba", "Japan", "+0900"));
 
-            airportEntitySessionBeanLocal.createNewAirport(new AirportEntity("SYD", "Sydney", "Taoyuan", "New South Wales", "Australia", "+1100"));
+            airportEntitySessionBeanLocal.createNewAirport(new AirportEntity("SYD", "Sydney", "Sydney", "New South Wales", "Australia", "+1100"));
 
             aircraftTypeEntitySessionBeanLocal.createNewAircraftType(new AircraftTypeEntity("Boeing 737", 200));
 
