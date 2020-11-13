@@ -53,7 +53,7 @@ public class DataInitSessionBean2 {
     @PostConstruct
     public void postConstruct() {
         try {
-            employeeEntitySessionBeanLocal.retrieveEmployeeByUsername("employee");
+            employeeEntitySessionBeanLocal.retrieveEmployeeByUsername("fleetmanager");
         } catch (EmployeeNotFoundException ex) {
             initializeData();
         }
