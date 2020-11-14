@@ -8,6 +8,7 @@ package ejb.session.singleton;
 import ejb.session.stateless.AircraftTypeEntitySessionBeanLocal;
 import ejb.session.stateless.AirportEntitySessionBeanLocal;
 import ejb.session.stateless.EmployeeEntitySessionBeanLocal;
+import ejb.session.stateless.InitializationSessionBeanLocal;
 import ejb.session.stateless.PartnerEntitySessionBeanLocal;
 import entity.AircraftTypeEntity;
 import entity.AirportEntity;
@@ -47,6 +48,9 @@ public class DataInitSessionBean2 {
     @EJB
     private AircraftTypeEntitySessionBeanLocal aircraftTypeEntitySessionBeanLocal;
 
+    @EJB
+    private InitializationSessionBeanLocal initializationSessionBeanLocal;
+
     public DataInitSessionBean2() {
     }
 
@@ -84,6 +88,14 @@ public class DataInitSessionBean2 {
             aircraftTypeEntitySessionBeanLocal.createNewAircraftType(new AircraftTypeEntity("Boeing 737", 200));
 
             aircraftTypeEntitySessionBeanLocal.createNewAircraftType(new AircraftTypeEntity("Boeing 747", 400));
+
+            initializationSessionBeanLocal.initializeAirCraftConfiguration();
+
+            initializationSessionBeanLocal.initializeFlightRoute();
+
+            initializationSessionBeanLocal.initializeFlight();
+
+            initializationSessionBeanLocal.initializeSchedulePlan();
         } catch (EmployeeUsernameExistException | PartnerUsernameExistException | AirportNameExistException | AircraftTypeNameExistException | UnknownPersistenceException ex) {
             ex.printStackTrace();
         }
