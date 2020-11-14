@@ -848,10 +848,10 @@ public class FlightOperationModule {
         List<FlightSchedulePlanEntity> plans = flightSchedulePlanEntitySessionBeanRemote.retrieveAllSchedulePlan();
 
         for (FlightSchedulePlanEntity plan : plans) {
-            System.out.println("Schedule plan id: " + plan.getSchedulePlanId());
+            System.out.println("- Schedule plan id: " + plan.getSchedulePlanId());
 
             FlightEntity flight = flightSchedulePlanEntitySessionBeanRemote.retrieveFlightFromPlan(plan);
-            System.out.println("Flight number: " + flight.getFlightCode());
+            System.out.println("  Flight number: " + flight.getFlightCode());
 
         }
     }

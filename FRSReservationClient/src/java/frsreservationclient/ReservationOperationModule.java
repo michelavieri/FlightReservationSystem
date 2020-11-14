@@ -175,6 +175,9 @@ public class ReservationOperationModule {
         System.out.println("*** SEARCH RESULTS: ***");
         System.out.println("OUTBOUND FLIGHTS: ");
         System.out.println("Departure Date " + departureDate + ":");
+        if (outboundFlightsSameDate.size() == 0) {
+            System.out.println("No Departure Flights on " + returnDate + ": ");
+        }
 
         int pricePerPassenger = 0;
         for (int i = 0; i < outboundFlightsSameDate.size(); i++) {
@@ -254,6 +257,9 @@ public class ReservationOperationModule {
 
         System.out.println("***");
         System.out.println("Departure Date 3/2/1 Days before " + departureDate + ":");
+        if (outboundFlightsBeforeDate.size() == 0) {
+            System.out.println("No Departure Flights for 3/2/1 Days before " + returnDate + ": ");
+        }
 
         pricePerPassenger = 0;
         for (int i = 0; i < outboundFlightsBeforeDate.size(); i++) {
@@ -334,6 +340,9 @@ public class ReservationOperationModule {
         System.out.println("***");
 
         System.out.println("Departure Date 3/2/1 Days after " + departureDate + ":");
+        if (outboundFlightsAfterDate.size() == 0) {
+            System.out.println("No Departure Flights for 3/2/1 Days after " + returnDate + ": ");
+        }
 
         pricePerPassenger = 0;
         for (int i = 0; i < outboundFlightsAfterDate.size(); i++) {
@@ -416,6 +425,9 @@ public class ReservationOperationModule {
             System.out.println("RETURN FLIGHTS: ");
 
             System.out.println("Return Date " + returnDate + ":");
+            if (returnFlightsSameDate.size() == 0) {
+                System.out.println("No Return Flights on " + returnDate + ": ");
+            }
 
             pricePerPassenger = 0;
             for (int i = 0; i < returnFlightsSameDate.size(); i++) {
@@ -495,6 +507,9 @@ public class ReservationOperationModule {
 
             System.out.println("***");
             System.out.println("Return Date 3/2/1 Days before " + returnDate + ":");
+            if (returnFlightsBeforeDate.size() == 0) {
+                System.out.println("No Return Flights for 3/2/1 Days before " + returnDate + ": ");
+            }
 
             pricePerPassenger = 0;
             for (int i = 0; i < returnFlightsBeforeDate.size(); i++) {
@@ -575,6 +590,9 @@ public class ReservationOperationModule {
             System.out.println("***");
 
             System.out.println("Return Date 3/2/1 Days after " + returnDate + ":");
+            if (returnFlightsAfterDate.size() == 0) {
+                System.out.println("No Return Flights for 3/2/1 Days after " + returnDate + ": ");
+            }
 
             pricePerPassenger = 0;
             for (int i = 0; i < returnFlightsAfterDate.size(); i++) {
