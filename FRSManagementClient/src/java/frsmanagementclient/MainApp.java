@@ -253,6 +253,7 @@ public class MainApp {
                         System.out.println("Y: Economy Class");
                         String response2 = "a";
                         CabinClassTypeEnum classType = CabinClassTypeEnum.FIRST_CLASS;
+//                        sc.nextLine();
                         while (!response2.equals("F") && !response2.equals("J") && !response2.equals("W") && !response2.equals("Y")) {
                             System.out.print(i + ". Enter type of cabin class in letter > ");
                             response2 = sc.nextLine();

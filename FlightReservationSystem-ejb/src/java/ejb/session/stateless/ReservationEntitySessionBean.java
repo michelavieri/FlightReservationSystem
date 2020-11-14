@@ -202,7 +202,7 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
     public List<List<FlightScheduleEntity>> recurseTransit(List<FlightScheduleEntity> allSchedules, AirportEntity departureAirport, AirportEntity destinationAirport,
             int stopovers, List<FlightScheduleEntity> availableSchedule,
             List<List<FlightScheduleEntity>> finalSchedule, CabinClassTypeEnum classType, int numOfPassenger) {
-        System.out.println("HEREEEEEEEEEEEEEEEEE" + allSchedules.size());
+//        System.out.println("HEREEEEEEEEEEEEEEEEE" + allSchedules.size());
         if (stopovers <= 0) {
             return finalSchedule;
         }
@@ -216,21 +216,22 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
                             List<SeatsInventoryEntity> seats = allSchedules.get(i).getSeatsInventoryEntitys();
                             for (SeatsInventoryEntity seat : seats) {
                                 if (seat.getCabinClass().getType().equals(classType)) {
-                                    List<FlightScheduleEntity> scheduleTemp = new ArrayList<>();
-                                    Collections.copy(scheduleTemp, availableSchedule);
+                                    List<FlightScheduleEntity> scheduleTemp = new ArrayList<>(availableSchedule);
                                     scheduleTemp.add(allSchedules.get(i));
                                     finalSchedule.add(scheduleTemp);
+//                                    System.out.println("masuk sini");
                                 }
                             }
                         } else {
-                            List<FlightScheduleEntity> scheduleTemp = new ArrayList<>();
-                            Collections.copy(scheduleTemp, availableSchedule);
+                            List<FlightScheduleEntity> scheduleTemp = new ArrayList<>(availableSchedule);
                             scheduleTemp.add(allSchedules.get(i));
                             finalSchedule.add(scheduleTemp);
 //                            System.out.println("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
                         }
                     } else {
-                        departureAirport = route.getDestinationAirport();
+                        List<FlightScheduleEntity> scheduleTemp = new ArrayList<>(availableSchedule);
+                        scheduleTemp.add(allSchedules.get(i));
+                        recurseTransit(allSchedules, route.getDestinationAirport(), destinationAirport, stopovers - 1, scheduleTemp, finalSchedule, classType, numOfPassenger);
                     }
                 }
             } else {
@@ -238,39 +239,32 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
                 ZonedDateTime departureTime = ZonedDateTime.parse(allSchedules.get(i).getDepartureDateTime(), dateFormat);
                 ZonedDateTime arrivalTime = ZonedDateTime.parse(availableSchedule.get(availableSchedule.size() - 1).getArrivalDateTime(), dateFormat);
 
-                if (route.getOriginAirport().equals(departureAirport) && departureTime.isAfter(arrivalTime)) {
-                    if (route.getDestinationAirport().equals(destinationAirport) && departureTime.isAfter(arrivalTime)) {
-                        if (route.getOriginAirport().equals(departureAirport) && departureTime.isAfter(arrivalTime)) {
-                            List<SeatsInventoryEntity> seats = allSchedules.get(i).getSeatsInventoryEntitys();
-                            if (classType != null) {
-                                for (SeatsInventoryEntity seat : seats) {
-                                    if (seat.getCabinClass().getType().equals(classType)) {
-                                        List<FlightScheduleEntity> scheduleTemp = new ArrayList<>();
-                                        Collections.copy(scheduleTemp, availableSchedule);
-                                        scheduleTemp.add(allSchedules.get(i));
-                                        finalSchedule.add(scheduleTemp);
-                                        recurseTransit(allSchedules, departureAirport, destinationAirport, stopovers - 1, availableSchedule, finalSchedule, classType, numOfPassenger);
-                                        System.out.println("ttttt");
-                                        continue;
-                                    }
+                if (route.getOriginAirport().equals(departureAirport) && departureTime.isAfter(arrivalTime) &&
+                        arrivalTime.plusHours(48).isAfter(departureTime)) {
+                    if (route.getDestinationAirport().equals(destinationAirport)) {
+                        List<SeatsInventoryEntity> seats = allSchedules.get(i).getSeatsInventoryEntitys();
+                        if (classType != null) {
+                            for (SeatsInventoryEntity seat : seats) {
+                                if (seat.getCabinClass().getType().equals(classType)) {
+                                    List<FlightScheduleEntity> scheduleTemp = new ArrayList<>(availableSchedule);
+                                    scheduleTemp.add(allSchedules.get(i));
+                                    finalSchedule.add(scheduleTemp);
+//                                    System.out.println("ttttt");
+                                    continue;
                                 }
-                            } else {
-                                List<FlightScheduleEntity> scheduleTemp = new ArrayList<>();
-                                Collections.copy(scheduleTemp, availableSchedule);
-                                scheduleTemp.add(allSchedules.get(i));
-                                finalSchedule.add(scheduleTemp);
-                                recurseTransit(allSchedules, departureAirport, destinationAirport, stopovers - 1, availableSchedule, finalSchedule, classType, numOfPassenger);
-
-                                continue;
                             }
+                        } else {
+                            List<FlightScheduleEntity> scheduleTemp = new ArrayList<>(availableSchedule);
+                            scheduleTemp.add(allSchedules.get(i));
+                            finalSchedule.add(scheduleTemp);
+                            continue;
                         }
                     } else {
                         List<SeatsInventoryEntity> seats = allSchedules.get(i).getSeatsInventoryEntitys();
                         for (SeatsInventoryEntity seat : seats) {
                             if (seat.getCabinClass().getType().equals(classType)) {
                                 if (seat.getBalanceSeatsSize() < numOfPassenger) {
-                                    List<FlightScheduleEntity> scheduleTemp = new ArrayList<>();
-                                    Collections.copy(scheduleTemp, availableSchedule);
+                                    List<FlightScheduleEntity> scheduleTemp = new ArrayList<>(availableSchedule);
                                     scheduleTemp.add(allSchedules.get(i));
                                     recurseTransit(allSchedules, route.getDestinationAirport(), destinationAirport, stopovers - 1, scheduleTemp, finalSchedule, classType, numOfPassenger);
 
@@ -283,7 +277,7 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
         }
         return finalSchedule;
     }
-    
+
     @Override
     public FlightScheduleEntity retrieveFlightScheduleById(Long id) {
         Query query = entityManager.createQuery("SELECT s FROM FlightScheduleEntity s WHERE s.scheduleId = :id");
