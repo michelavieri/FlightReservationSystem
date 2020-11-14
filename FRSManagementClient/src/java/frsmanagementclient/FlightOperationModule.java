@@ -637,7 +637,6 @@ public class FlightOperationModule {
                     }
 
                     flightSchedulePlanEntitySessionBeanRemote.associatePlanWithFlight(returnPlan, flight.getReturnFlight());
-                    createFare(sc, flight.getReturnFlight(), returnPlan);
 
                     flightSchedulePlanEntitySessionBeanRemote.associateReturnSchedulePlan(schedulePlan, returnPlan);
                     flightScheduleEntitySessionBeanRemote.associateNewSeatsInventory(returnPlan);
@@ -759,7 +758,7 @@ public class FlightOperationModule {
 
                     flightScheduleEntitySessionBeanRemote.setLayover(schedulePlan, totalLayoverDuration);
                     String returnTime = this.createRecurrentSchedule(day, schedulePlan, startDate, endDate, 7, departuretime, dateFormat, duration, totalLayoverDuration);
-                    String zone = flightEntitySessionBeanRemote.retrieveTimeZoneByFlight(flight);
+                //    String zone = flightEntitySessionBeanRemote.retrieveTimeZoneByFlight(flight);
 
                     LocalDate localfirstDate = LocalDate.parse(schedulePlan.getStartDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                     ZonedDateTime firstDate = localfirstDate.atStartOfDay(ZoneId.systemDefault());
