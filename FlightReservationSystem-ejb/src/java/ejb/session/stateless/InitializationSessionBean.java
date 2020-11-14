@@ -37,7 +37,7 @@ import util.exception.FlightRouteNotFoundException;
  * @author Chrisya
  */
 @Stateless
-public class InitializationSessionBean implements InitializationSessionBeanRemote, InitializationSessionBeanLocal {
+public class InitializationSessionBean implements InitializationSessionBeanLocal {
 
     @EJB
     private FareEntitySessionBeanLocal fareEntitySessionBeanLocal;
