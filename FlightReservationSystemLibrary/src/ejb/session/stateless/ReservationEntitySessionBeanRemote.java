@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.AirportEntity;
+import entity.BookingTicketEntity;
 import entity.CreditCardEntity;
 import entity.CustomerEntity;
 import entity.FlightScheduleEntity;
@@ -14,6 +15,7 @@ import java.util.List;
 import javax.ejb.Remote;
 import util.enumeration.CabinClassTypeEnum;
 import util.exception.InvalidReservationId;
+import util.exception.NoTicketException;
 import util.exception.NotMyReservationException;
 
 /**
@@ -24,6 +26,8 @@ import util.exception.NotMyReservationException;
 public interface ReservationEntitySessionBeanRemote {
 
     public List<ReservationEntity> retrieveFlightReservationsByCustomer(CustomerEntity cust);
+
+    public List<BookingTicketEntity> retrieveTickets(long reservationId) throws NoTicketException;
 
     public ReservationEntity retrieveReservationByReservationId(long reservationId, CustomerEntity customer) throws InvalidReservationId, NotMyReservationException;
 

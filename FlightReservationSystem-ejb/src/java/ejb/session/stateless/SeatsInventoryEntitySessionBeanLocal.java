@@ -9,7 +9,9 @@ import entity.SeatEntity;
 import entity.SeatsInventoryEntity;
 import java.util.List;
 import javax.ejb.Local;
+import util.enumeration.CabinClassTypeEnum;
 import util.exception.FlightScheduleNotFoundException;
+import util.exception.NoCabinClassException;
 
 /**
  *
@@ -25,5 +27,7 @@ public interface SeatsInventoryEntitySessionBeanLocal {
     public List<SeatEntity> retrieveSeats(SeatsInventoryEntity seatsInventory);
 
     public int createSeatsFromSeatInventory(SeatsInventoryEntity seatsInventory, int startNumber);
+
+    public SeatsInventoryEntity retrieveSeatsInventoryByScheduleIdClass(Long scheduleId, CabinClassTypeEnum cabinClass) throws NoCabinClassException, FlightScheduleNotFoundException;
 
 }

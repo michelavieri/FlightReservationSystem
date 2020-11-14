@@ -635,10 +635,10 @@ public class MainApp {
                     }
 
                     for (FlightSchedulePlanEntity plan : plans) {
-                        plan.getFlightSchedules().size();
-                        List<FlightScheduleEntity> schedules = plan.getFlightSchedules();
+                        List<FlightScheduleEntity> schedules = flightSchedulePlanEntitySessionBeanRemote.retrieveSchedulesByPlan(plan);
                         for (FlightScheduleEntity schedule : schedules) {
-                            System.out.println("Schedule ID: " + schedule.getScheduleId());
+                            System.out.println("- Schedule ID: " + schedule.getScheduleId());
+                            System.out.println("\t Departure Date: " + schedule.getDepartureDateTime());
                         }
                     }
                     System.out.println();
@@ -691,10 +691,10 @@ public class MainApp {
                     }
 
                     for (FlightSchedulePlanEntity plan : plans) {
-                        plan.getFlightSchedules().size();
-                        List<FlightScheduleEntity> schedules = plan.getFlightSchedules();
+                        List<FlightScheduleEntity> schedules = flightSchedulePlanEntitySessionBeanRemote.retrieveSchedulesByPlan(plan);
                         for (FlightScheduleEntity schedule : schedules) {
-                            System.out.println("Schedule ID: " + schedule.getScheduleId());
+                            System.out.println("- Schedule ID: " + schedule.getScheduleId());
+                            System.out.println("\t Departure Date: " + schedule.getDepartureDateTime());
                         }
                     }
                     System.out.println();

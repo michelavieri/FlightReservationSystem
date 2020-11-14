@@ -18,7 +18,6 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -27,6 +26,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.enumeration.CabinClassTypeEnum;
 import util.exception.InvalidReservationId;
+import util.exception.NoTicketException;
 import util.exception.NotMyReservationException;
 
 /**
@@ -45,6 +45,9 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
 
     @Override
     public ReservationEntity createNewReservation(CustomerEntity customer, CreditCardEntity card, ReservationEntity newReservation) {
+        customer = entityManager.find(CustomerEntity.class, customer.getCustomerId());
+        entityManager.persist(newReservation);
+        customer.getReservationsEntitys().size();
         customer.getReservationsEntitys().add(newReservation);
         newReservation.setCustomer(customer);
         entityManager.persist(card);
@@ -52,14 +55,27 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
         newReservation.getTickets().size();
         List<BookingTicketEntity> tickets = newReservation.getTickets();
         for (BookingTicketEntity ticket : tickets) {
+            entityManager.persist(ticket);
+            entityManager.persist(ticket.getPassenger());
             SeatEntity seat = ticket.getSeat();
             seat = entityManager.find(SeatEntity.class, seat.getSeatId());
             seat.setBooked(true);
-            entityManager.persist(ticket);
+            SeatsInventoryEntity seatsInventory = entityManager.find(SeatsInventoryEntity.class, seat.getSeatsInventory().getInventoryId());
+            int reservedSeats = seatsInventory.getReservedSeatsSize();
+            int balanceSeats = seatsInventory.getBalanceSeatsSize();
+            balanceSeats--;
+            reservedSeats++;
+            seatsInventory.setBalanceSeatsSize(balanceSeats);
+            seatsInventory.setReservedSeatsSize(reservedSeats);
+            ticket.setReservationEntity(newReservation);
         }
-        entityManager.persist(newReservation);
+        
         newReservation.setCreditCardEntity(card);
         card.setReservation(newReservation);
+        customer = entityManager.find(CustomerEntity.class, customer.getCustomerId());
+        customer.getReservationsEntitys().size();
+        List<ReservationEntity> reservations = customer.getReservationsEntitys();
+        reservations.add(newReservation);
 
         entityManager.flush();
 
@@ -69,6 +85,7 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
     @Override
     public List<ReservationEntity> retrieveFlightReservationsByCustomer(CustomerEntity cust) {
         cust = entityManager.find(CustomerEntity.class, cust.getCustomerId());
+        cust.getReservationsEntitys().size();
         if (cust.getReservationsEntitys().isEmpty()) {
             return new ArrayList<>();
         }
@@ -89,10 +106,22 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
             throw new InvalidReservationId("The reservation Id is invalid!");
         }
 
-        if (!reservation.getCustomer().equals(reservation)) {
+        if (!reservation.getCustomer().equals(customer)) {
             throw new NotMyReservationException("This reservation is not your reservation!");
         }
         return reservation;
+    }
+    
+    @Override
+    public List<BookingTicketEntity> retrieveTickets(long reservationId) throws NoTicketException {
+        Query query = entityManager.createQuery("SELECT t FROM BookingTicketEntity t WHERE t.reservationEntity.reservationId = :inId");
+        query.setParameter("inId", reservationId);
+        
+        try {
+            return query.getResultList();
+        } catch (NoResultException ex) {
+            throw new NoTicketException("No tickets for this reservation!");
+        }
     }
 
     @Override
@@ -239,8 +268,8 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
                 ZonedDateTime departureTime = ZonedDateTime.parse(allSchedules.get(i).getDepartureDateTime(), dateFormat);
                 ZonedDateTime arrivalTime = ZonedDateTime.parse(availableSchedule.get(availableSchedule.size() - 1).getArrivalDateTime(), dateFormat);
 
-                if (route.getOriginAirport().equals(departureAirport) && departureTime.isAfter(arrivalTime) &&
-                        arrivalTime.plusHours(48).isAfter(departureTime)) {
+                if (route.getOriginAirport().equals(departureAirport) && departureTime.isAfter(arrivalTime)
+                        && arrivalTime.plusDays(7).isAfter(departureTime)) {
                     if (route.getDestinationAirport().equals(destinationAirport)) {
                         List<SeatsInventoryEntity> seats = allSchedules.get(i).getSeatsInventoryEntitys();
                         if (classType != null) {

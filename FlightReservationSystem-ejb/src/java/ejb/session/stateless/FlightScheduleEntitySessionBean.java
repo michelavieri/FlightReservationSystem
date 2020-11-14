@@ -21,10 +21,12 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.enumeration.CabinClassTypeEnum;
 import util.enumeration.FlightSchedulePlanTypeEnum;
+import util.exception.FlightScheduleNotFoundException;
 import util.exception.ScheduleIsUsedException;
 import util.exception.ScheduleOverlapException;
 
@@ -86,7 +88,7 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
 
                 int maxCapacity = cabinClass.getMaxCapacity();
 
-                SeatsInventoryEntity seatsInventory = new SeatsInventoryEntity(maxCapacity, 0, 0);
+                SeatsInventoryEntity seatsInventory = new SeatsInventoryEntity(maxCapacity, 0, maxCapacity);
 
                 seatsInventory = seatsInventoryEntitySessionBean.createSeatsInventoryEntity(seatsInventory);
                 seatsInventory.setFlightSchedule(schedule);
@@ -273,17 +275,22 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
     }
 
     @Override
-    public FlightScheduleEntity retrieveFlightScheduleById(Long id) {
+    public FlightScheduleEntity retrieveFlightScheduleById(Long id) throws FlightScheduleNotFoundException {
         Query query = entityManager.createQuery("SELECT s FROM FlightScheduleEntity s WHERE s.scheduleId = :id");
         query.setParameter("id", id);
-
-        FlightScheduleEntity schedule = (FlightScheduleEntity) query.getSingleResult();
+        FlightScheduleEntity schedule = null;
+        try {
+            schedule = (FlightScheduleEntity) query.getSingleResult();
+        } catch (NoResultException ex) {
+            throw new FlightScheduleNotFoundException("This flight schedule does not exist!");
+        }
 
         return schedule;
     }
 
     @Override
-    public FlightScheduleEntity retrieveReturnSchedule(FlightScheduleEntity schedule) {
+    public FlightScheduleEntity retrieveReturnSchedule(FlightScheduleEntity schedule
+    ) {
         schedule = entityManager.find(FlightScheduleEntity.class, schedule.getScheduleId());
 
         FlightScheduleEntity returnSchedule = schedule.getReturnSchedule();
@@ -293,7 +300,9 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
     }
 
     @Override
-    public List<List<FlightScheduleEntity>> searchDirectFlights(String departureAirport, String destinationAirport, String departureDate, int numOfPassenger, CabinClassTypeEnum classType) {
+    public List<List<FlightScheduleEntity>> searchDirectFlights(String departureAirport, String destinationAirport,
+             String departureDate, int numOfPassenger, CabinClassTypeEnum classType
+    ) {
         List<List<FlightScheduleEntity>> finalSchedule = new ArrayList<>();
 
         Query query = entityManager.createQuery("SELECT a FROM AirportEntity a WHERE a.airportCode = :depAirportCode");
@@ -369,7 +378,9 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
     }
 
     @Override
-    public List<List<FlightScheduleEntity>> searchDirectFlightsBefore(String departureAirport, String destinationAirport, String departureDateTime, int numOfPassenger, CabinClassTypeEnum classType) {
+    public List<List<FlightScheduleEntity>> searchDirectFlightsBefore(String departureAirport, String destinationAirport,
+             String departureDateTime, int numOfPassenger, CabinClassTypeEnum classType
+    ) {
         List<List<FlightScheduleEntity>> finalSchedule = new ArrayList<>();
 
         Query query = entityManager.createQuery("SELECT a FROM AirportEntity a WHERE a.airportCode = :depAirportCode");
@@ -447,7 +458,9 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
     }
 
     @Override
-    public List<List<FlightScheduleEntity>> searchDirectFlightsAfter(String departureAirport, String destinationAirport, String departureDateTime, int numOfPassenger, CabinClassTypeEnum classType) {
+    public List<List<FlightScheduleEntity>> searchDirectFlightsAfter(String departureAirport, String destinationAirport,
+             String departureDateTime, int numOfPassenger, CabinClassTypeEnum classType
+    ) {
         List<List<FlightScheduleEntity>> finalSchedule = new ArrayList<>();
 
         Query query = entityManager.createQuery("SELECT a FROM AirportEntity a WHERE a.airportCode = :depAirportCode");
@@ -457,7 +470,7 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
         query = entityManager.createQuery("SELECT a FROM AirportEntity a WHERE a.airportCode = :destAirportCode");
         query.setParameter("destAirportCode", destinationAirport);
         AirportEntity destination = (AirportEntity) query.getSingleResult();
-        
+
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         query = entityManager.createQuery("SELECT a FROM FlightScheduleEntity a");
         List<FlightScheduleEntity> allSchedules = query.getResultList();
@@ -531,7 +544,6 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
 //        }
 //
 //        finalSchedule.add(availableSchedule);
-
         return finalSchedule;
     }
 
@@ -667,11 +679,11 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
 //            }
 //        }
 //    }
-    
     @Override
-    public void setLayover(FlightSchedulePlanEntity plan, int layover) {
+    public void setLayover(FlightSchedulePlanEntity plan, int layover
+    ) {
         plan = entityManager.find(FlightSchedulePlanEntity.class, plan.getSchedulePlanId());
-        
+
         plan.setLayoverDuration(layover);
     }
 }

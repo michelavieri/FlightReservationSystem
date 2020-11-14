@@ -9,7 +9,9 @@ import entity.SeatEntity;
 import entity.SeatsInventoryEntity;
 import java.util.List;
 import javax.ejb.Remote;
+import util.enumeration.CabinClassTypeEnum;
 import util.exception.FlightScheduleNotFoundException;
+import util.exception.NoCabinClassException;
 
 /**
  *
@@ -23,7 +25,8 @@ public interface SeatsInventoryEntitySessionBeanRemote {
     public List<SeatsInventoryEntity> retrieveSeatsInventoryByScheduleId(Long scheduleId) throws FlightScheduleNotFoundException;
 
     public int createSeatsFromSeatInventory(SeatsInventoryEntity seatsInventory, int startNumber);
-    
-    public List<SeatEntity> retrieveSeats (SeatsInventoryEntity seatsInventory);
 
+    public List<SeatEntity> retrieveSeats(SeatsInventoryEntity seatsInventory);
+
+    public SeatsInventoryEntity retrieveSeatsInventoryByScheduleIdClass(Long scheduleId, CabinClassTypeEnum cabinClass) throws NoCabinClassException, FlightScheduleNotFoundException;
 }

@@ -39,6 +39,7 @@ import util.exception.AirportNotFoundException;
 import util.exception.FlightNotFoundException;
 import util.exception.FlightRouteDisabled;
 import util.exception.FlightRouteNotFoundException;
+import util.exception.FlightScheduleNotFoundException;
 import util.exception.ScheduleIsUsedException;
 import util.exception.ScheduleOverlapException;
 
@@ -119,6 +120,13 @@ public class FlightOperationModule {
         System.out.print("Enter flight number ML> ");
         int flightNumber = sc.nextInt();
         sc.nextLine();
+        String number = "ML" + flightNumber;
+        try {
+            flightEntitySessionBeanRemote.retrieveFlightByCode(number);
+            System.out.println("This flight number has been registered before!");
+            return;
+        } catch (FlightNotFoundException ex) {
+        }
 
         System.out.print("Enter origin airport code> ");
         String origin = sc.nextLine();
@@ -849,7 +857,8 @@ public class FlightOperationModule {
 
             FlightEntity flight = flightSchedulePlanEntitySessionBeanRemote.retrieveFlightFromPlan(plan);
             System.out.println("  Flight number: " + flight.getFlightCode());
-
+            System.out.println("  Disabled: " + plan.isDisabled());
+            System.out.println();
         }
     }
 
@@ -874,7 +883,7 @@ public class FlightOperationModule {
         System.out.println("Flight number: " + flight.getFlightCode());
 
         if (plan.getLayoverDuration() > 0) {
-            System.out.println("Schedule plan layover duration: " + plan.getLayoverDuration());
+            System.out.println("Schedule plan layover duration (in minutes): " + plan.getLayoverDuration());
         }
 
         System.out.println("Do you want to update this schedule? (Y/N)");
@@ -929,7 +938,13 @@ public class FlightOperationModule {
             long scheduleId = sc.nextLong();
             sc.nextLine();
 
-            FlightScheduleEntity schedule = flightScheduleEntitySessionBeanRemote.retrieveFlightScheduleById(scheduleId);
+            FlightScheduleEntity schedule;
+            try {
+                schedule = flightScheduleEntitySessionBeanRemote.retrieveFlightScheduleById(scheduleId);
+            } catch (FlightScheduleNotFoundException ex) {
+                System.out.println(ex.getMessage());
+                return;
+            }
             updateSingleSchedule(sc, dateFormat, flight, plan, schedule);
         } else if (type.equals(FlightSchedulePlanTypeEnum.RECURRENT_DAY)) {
             System.out.println("Enter new starting date (yyyy-mm-dd)>");

@@ -13,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.ejb.Local;
 import util.enumeration.CabinClassTypeEnum;
+import util.exception.FlightScheduleNotFoundException;
 import util.exception.ScheduleIsUsedException;
 import util.exception.ScheduleOverlapException;
 
@@ -45,7 +46,7 @@ public interface FlightScheduleEntitySessionBeanLocal {
 
     public void deleteSchedule(FlightScheduleEntity schedule) throws ScheduleIsUsedException;
 
-    public FlightScheduleEntity retrieveFlightScheduleById(Long id);
+    public FlightScheduleEntity retrieveFlightScheduleById(Long id) throws FlightScheduleNotFoundException;
 
     public FlightScheduleEntity retrieveReturnSchedule(FlightScheduleEntity schedule);
 
@@ -62,6 +63,5 @@ public interface FlightScheduleEntitySessionBeanLocal {
 //    public List<List<FlightScheduleEntity>> searchConnectingFlightsAfter(String departureAirport, String destinationAirport, String departureDateTime, int numOfPassenger, int stopovers, CabinClassTypeEnum classType);
 //
 //    public void recurseTransit(List<FlightScheduleEntity> allSchedules, AirportEntity departureAirport, AirportEntity destinationAirport, int stopovers, List<FlightScheduleEntity> availableSchedule, List<List<FlightScheduleEntity>> finalSchedule, CabinClassTypeEnum classType, int numOfPassenger);
-
     public void setLayover(FlightSchedulePlanEntity plan, int layover);
 }

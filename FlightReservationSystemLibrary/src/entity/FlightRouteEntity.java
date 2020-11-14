@@ -33,10 +33,10 @@ public class FlightRouteEntity implements Serializable {
     @OneToMany(mappedBy = "route")
     private List<FlightEntity> flights;
 
-    @OneToOne(mappedBy = "departureFlightRoute", cascade = CascadeType.REMOVE)
+    @OneToOne(mappedBy = "departureFlightRoute")
     private FlightRouteEntity returnFlightRoute;
     
-    @OneToOne (cascade = CascadeType.REMOVE)
+    @OneToOne
     private FlightRouteEntity departureFlightRoute;
     
     @ManyToOne

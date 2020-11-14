@@ -146,7 +146,7 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
         List<FlightRouteEntity> departureRoutes = originAirport.getDepartureRoutes();
 
         AirportEntity destinationAirport = route.getDestinationAirport();
-        originAirport.getArrivalRoutes().size();
+        destinationAirport.getArrivalRoutes().size();
         List<FlightRouteEntity> arrivalRoutes = destinationAirport.getArrivalRoutes();
 
         departureRoutes.remove(route);
@@ -154,6 +154,14 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
 
         originAirport.setDepartureRoutes(departureRoutes);
         destinationAirport.setArrivalRoutes(arrivalRoutes);
+        
+        if (route.getDepartureFlightRoute() != null) {
+            FlightRouteEntity departureRoute = entityManager.find(FlightRouteEntity.class, route.getDepartureFlightRoute().getRouteId());
+            departureRoute.setReturnFlightRoute(null);
+        } else if (route.getReturnFlightRoute() != null) {
+            FlightRouteEntity returnRoute = entityManager.find(FlightRouteEntity.class, route.getReturnFlightRoute().getRouteId());
+            returnRoute.setDepartureFlightRoute(null);
+        }
         entityManager.remove(route);
     }
 

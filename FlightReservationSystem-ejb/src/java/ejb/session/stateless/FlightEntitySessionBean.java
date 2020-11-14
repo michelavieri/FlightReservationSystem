@@ -45,14 +45,14 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanRemote, F
     @Override
     public FlightEntity createFlightEntity(FlightEntity newFlight) {
         entityManager.persist(newFlight);
-        
+
         AircraftConfigurationEntity config = entityManager.find(AircraftConfigurationEntity.class, newFlight.getAircraftConfigurationEntity().getId());
         FlightRouteEntity route = entityManager.find(FlightRouteEntity.class, newFlight.getRoute().getRouteId());
-        
+
         List<FlightEntity> flights = config.getFlightEntitys();
         flights.add(newFlight);
         config.setFlightEntitys(flights);
-        
+
         flights = route.getFlights();
         flights.add(newFlight);
         route.setFlights(flights);
@@ -73,13 +73,13 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanRemote, F
 
         return flights;
     }
-    
+
     @Override
-    public List<FlightSchedulePlanEntity> retrieveSchedulePlans (FlightEntity flight) {
+    public List<FlightSchedulePlanEntity> retrieveSchedulePlans(FlightEntity flight) {
         flight = entityManager.find(FlightEntity.class, flight.getFlightId());
-        
+
         flight.getFlightSchedulePlans().size();
-        
+
         return flight.getFlightSchedulePlans();
     }
 
@@ -139,6 +139,7 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanRemote, F
     public void deleteFlight(FlightEntity flight) {
         flight = entityManager.find(FlightEntity.class, flight.getFlightId());
         FlightEntity returnFlight = entityManager.find(FlightEntity.class, flight.getReturnFlight().getFlightId());
+        FlightEntity departureFlight = entityManager.find(FlightEntity.class, flight.getDepartureFlight().getFlightId());
 
         if (flight.getFlightSchedulePlans().isEmpty()) {
             AircraftConfigurationEntity aircraftConfig = flight.getAircraftConfigurationEntity();
@@ -151,24 +152,16 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanRemote, F
             flights.remove(flight);
             route.setFlights(flights);
 
-            if (returnFlight != null) {
-                AircraftConfigurationEntity returnAircraftConfig = returnFlight.getAircraftConfigurationEntity();
-                List<FlightEntity> flightsReturn = returnAircraftConfig.getFlightEntitys();
-                flightsReturn.remove(returnFlight);
-                returnAircraftConfig.setFlightEntitys(flightsReturn);
-
-                FlightRouteEntity returnRoute = returnFlight.getRoute();
-                flightsReturn = returnRoute.getFlights();
-                flightsReturn.remove(returnFlight);
-                returnRoute.setFlights(flightsReturn);
+            //return flight
+            if (departureFlight != null) {
+                departureFlight.setReturnFlight(null);
+            } else if (returnFlight != null) { //departureflight with return
+                returnFlight.setDepartureFlight(null);
             }
 
             entityManager.remove(flight);
         } else {
             flight.setDisabled(true);
-            if (returnFlight != null) {
-                returnFlight.setDisabled(true);
-            }
         }
     }
 
@@ -222,7 +215,7 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanRemote, F
                 flights = oldRoute.getFlights();
                 flights.remove(returnFlight);
                 oldRoute.setFlights(flights);
-                
+
                 flights = returnRoute.getFlights();
                 flights.add(returnFlight);
                 returnRoute.setFlights(flights);
@@ -265,7 +258,7 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanRemote, F
 
         entityManager.remove(returnFlight);
     }
-    
+
     public void createRecurrentSchedule(String day, FlightSchedulePlanEntity schedule, String startDate, String endDate, int days, String departureTime, DateTimeFormatter dateFormat, String duration, int layoverDuration) {
 
         ZonedDateTime startingDate = ZonedDateTime.parse((startDate + departureTime), dateFormat);

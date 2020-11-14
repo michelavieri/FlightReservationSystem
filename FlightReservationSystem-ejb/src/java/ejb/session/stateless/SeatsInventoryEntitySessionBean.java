@@ -16,7 +16,9 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.enumeration.CabinClassTypeEnum;
 import util.exception.FlightScheduleNotFoundException;
+import util.exception.NoCabinClassException;
 
 /**
  *
@@ -57,6 +59,35 @@ public class SeatsInventoryEntitySessionBean implements SeatsInventoryEntitySess
         }
         schedule.getSeatsInventoryEntitys().size();
         return schedule.getSeatsInventoryEntitys();
+
+    }
+    
+    @Override
+    public SeatsInventoryEntity retrieveSeatsInventoryByScheduleIdClass(Long scheduleId, CabinClassTypeEnum cabinClass) throws NoCabinClassException, FlightScheduleNotFoundException {
+
+        Query query = entityManager.createQuery("SELECT f FROM FlightScheduleEntity f WHERE f.scheduleId = :inScheduleId");
+        query.setParameter("inScheduleId", scheduleId);
+
+        FlightScheduleEntity schedule = null;
+
+        try {
+            schedule = (FlightScheduleEntity) query.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            throw new FlightScheduleNotFoundException("Flight Schedule id " + scheduleId + " does not exist!");
+        }
+        schedule.getSeatsInventoryEntitys().size();
+        List<SeatsInventoryEntity> seats = schedule.getSeatsInventoryEntitys();
+        
+        SeatsInventoryEntity seatsInventory = null;
+        for (SeatsInventoryEntity seat: seats) {
+            if (seat.getCabinClass().getType().equals(cabinClass)) {
+                seatsInventory = seat;
+            }
+        }
+        if (seatsInventory == null) {
+            throw new NoCabinClassException("This cabin class is not offered in this flight!");
+        }
+        return seatsInventory;
 
     }
 
