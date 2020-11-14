@@ -34,4 +34,6 @@ public interface FareEntitySessionBeanRemote {
 
     public void setReturnFare(FlightSchedulePlanEntity outboundPlan, FlightSchedulePlanEntity returnPlan);
     
+    public void setNewValueFare(String newValue, FareEntity fare);
+    
 }

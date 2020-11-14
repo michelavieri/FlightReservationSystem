@@ -459,11 +459,13 @@ public class FlightOperationModule {
                 fare = fareEntitySessionBeanRemote.createFlightSchedulePlanEntity(fare);
 
                 fareEntitySessionBeanRemote.associateFareWithCabinClass(cabinClass, fare);
+                fareEntitySessionBeanRemote.associateFareWithPlan(plan, fare);
             }
         }
     }
 
     public void updateFare(Scanner sc, FlightSchedulePlanEntity plan) {
+        System.out.println("test2");
         List<FareEntity> fares = fareEntitySessionBeanRemote.retrieveFareBySchedulePlan(plan);
 
         for (FareEntity fare : fares) {
@@ -474,8 +476,10 @@ public class FlightOperationModule {
             System.out.println("Enter updated fare amount>");
             String amount = sc.nextLine();
 
-            fare.setAmount(amount);
+            fareEntitySessionBeanRemote.setNewValueFare(amount, fare);
         }
+        
+        System.out.println("Fare Updated!");
     }
 
     public void createFlightSchedulePlan(Scanner sc) {
@@ -779,7 +783,7 @@ public class FlightOperationModule {
             }
             flightSchedulePlanEntitySessionBeanRemote.associatePlanWithFlight(schedulePlan, flight);
             flightScheduleEntitySessionBeanRemote.associateNewSeatsInventory(schedulePlan);
-            System.out.println("Flight schedule with id " + schedulePlan.getSchedulePlanId() + "is created!");
+            System.out.println("Flight schedule with id " + schedulePlan.getSchedulePlanId() + " is created!");
 
             if (response.equals("Y")) {
                 System.out.println("Return flight schedule plan with id " + returnPlan.getSchedulePlanId() + " is created!");
@@ -881,39 +885,48 @@ public class FlightOperationModule {
         String response1 = sc.nextLine();
 
         if (response1.equals("Y")) {
-            this.updateSchedulePlan(sc);
+            this.updateSchedulePlan(sc, id);
         }
 
         System.out.println("Do you want to delete this schedule? (Y/N)");
         String response2 = sc.nextLine();
 
         if (response2.equals("Y")) {
-            this.deleteSchedulePlan(sc);
+            long returnId = 0L;
+            
+            if(plan.getReturnSchedulePlan() != null) {
+                returnId = plan.getReturnSchedulePlan().getSchedulePlanId();
+            }
+            
+            this.deleteSchedulePlan(sc, id);
+            System.out.println("Schedule plan with id " + id + " has been deleted!");
+            
+            if(plan.getReturnSchedulePlan() != null) {
+                System.out.println("Return schedule plan with id " + returnId + " has been deleted!");
+            }
         }
     }
 
-    public void deleteSchedulePlan(Scanner sc) {
+    public void deleteSchedulePlan(Scanner sc, long planId) {
         System.out.println("*** FRS Schedule Manager :: Delete Schedule Plan ***");
-        sc.nextLine();
 
-        System.out.println("Enter schedule plan ID>");
-        long planId = sc.nextLong();
+//        System.out.println("Enter schedule plan ID>");
+//        long planId = sc.nextLong();
 
         try {
             flightSchedulePlanEntitySessionBeanRemote.deleteSchedulePlan(planId);
         } catch (ScheduleIsUsedException ex) {
-            System.out.println("Schedule plan is in use!");
+            System.out.println("Schedule plan is in use! Schedule plan is disabled!");
             return;
         }
     }
 
-    public void updateSchedulePlan(Scanner sc) {
+    public void updateSchedulePlan(Scanner sc, long planId) {
         System.out.println("*** FRS Schedule Manager :: Update Schedule Plan ***");
-        sc.nextLine();
 
-        System.out.println("Enter schedule plan id>");
-        long planId = sc.nextLong();
-        sc.nextLine();
+//        System.out.println("Enter schedule plan id>");
+//        long planId = sc.nextLong();
+//        sc.nextLine();
 
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm Z");
         FlightSchedulePlanEntity plan = flightSchedulePlanEntitySessionBeanRemote.retrieveSchedulePlanById(planId);
@@ -991,7 +1004,8 @@ public class FlightOperationModule {
             int layoverDurationHourInt = Integer.parseInt(layoverDurationHour);
             int layoverDurationMinInt = Integer.parseInt(layoverDurationMin);
             layoverDurationMinInt += (60 * layoverDurationHourInt);
-
+                    System.out.println("test");
+            updateFare(sc, plan);
             //FlightSchedulePlanEntity newPlan = new FlightSchedulePlanEntity(FlightSchedulePlanTypeEnum.RECURRENT_WEEK, startDate, endDate, layoverDurationMinInt, flight);
 //           try {              
 //             flightSchedulePlanEntitySessionBeanRemote.replaceRecurrentSchedulePlan(plan, newPlan, dateFormat, departuretime, duration, 7, layoverDurationMinInt);
@@ -1003,7 +1017,9 @@ public class FlightOperationModule {
 //              System.out.println("Failed in updating schedule plan! Updated scheduled overlapped with existing schedule!");
 //              return;
 //          }
-            this.updateFare(sc, plan);
+
+            System.out.println("Schedule Plan updated!");
+
         }
     }
 
