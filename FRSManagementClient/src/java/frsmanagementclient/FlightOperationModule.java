@@ -210,10 +210,19 @@ public class FlightOperationModule {
         for (int i = 1; i <= flights.size(); i++) {
             if (flights.get(i - 1).getDepartureFlight() == null) {
                 System.out.print(i + ". ");
+                if (flights.get(i - 1).isDisabled()) {
+                    System.out.println("FLIGHT: " + flights.get(i - 1).getFlightCode() + " with route " + flights.get(i - 1).getRoute().getOriginAirport().getAirportCode() + " to " + flights.get(i - 1).getRoute().getDestinationAirport().getAirportCode() + "(DISABLED)");
+                }
+
                 System.out.println("FLIGHT: " + flights.get(i - 1).getFlightCode() + " with route " + flights.get(i - 1).getRoute().getOriginAirport().getAirportCode() + " to " + flights.get(i - 1).getRoute().getDestinationAirport().getAirportCode());
 
                 if (flights.get(i - 1).getReturnFlight() != null) {
                     FlightEntity returnFlight = flights.get(i - 1).getReturnFlight();
+
+                    if (returnFlight.isDisabled()) {
+                        System.out.println("   RETURN FLIGHT: " + returnFlight.getFlightCode() + " with route " + returnFlight.getRoute().getOriginAirport().getAirportCode() + " to " + returnFlight.getRoute().getDestinationAirport().getAirportCode() + "(DISABLED)");
+                    }
+
                     System.out.println("   RETURN FLIGHT: " + returnFlight.getFlightCode() + " with route " + returnFlight.getRoute().getOriginAirport().getAirportCode() + " to " + returnFlight.getRoute().getDestinationAirport().getAirportCode());
                 }
             }
@@ -236,11 +245,10 @@ public class FlightOperationModule {
             return;
         }
 
-        if (flightEntitySessionBeanRemote.isReturnFlight(flight)) {
-            System.out.println("Please select the departure flight, not the return flight!");
-            return;
-        }
-
+//        if (flightEntitySessionBeanRemote.isReturnFlight(flight)) {
+//            System.out.println("Please select the departure flight, not the return flight!");
+//            return;
+//        }
         AircraftConfigurationEntity aircraftConfiguration = flight.getAircraftConfigurationEntity();
         FlightRouteEntity route = flight.getRoute();
         String origin = route.getOriginAirport().getAirportCode();
@@ -478,7 +486,7 @@ public class FlightOperationModule {
 
             fareEntitySessionBeanRemote.setNewValueFare(amount, fare);
         }
-        
+
         System.out.println("Fare Updated!");
     }
 
@@ -893,15 +901,15 @@ public class FlightOperationModule {
 
         if (response2.equals("Y")) {
             long returnId = 0L;
-            
-            if(plan.getReturnSchedulePlan() != null) {
+
+            if (plan.getReturnSchedulePlan() != null) {
                 returnId = plan.getReturnSchedulePlan().getSchedulePlanId();
             }
-            
+
             this.deleteSchedulePlan(sc, id);
             System.out.println("Schedule plan with id " + id + " has been deleted!");
-            
-            if(plan.getReturnSchedulePlan() != null) {
+
+            if (plan.getReturnSchedulePlan() != null) {
                 System.out.println("Return schedule plan with id " + returnId + " has been deleted!");
             }
         }
@@ -909,9 +917,6 @@ public class FlightOperationModule {
 
     public void deleteSchedulePlan(Scanner sc, long planId) {
         System.out.println("*** FRS Schedule Manager :: Delete Schedule Plan ***");
-
-//        System.out.println("Enter schedule plan ID>");
-//        long planId = sc.nextLong();
 
         try {
             flightSchedulePlanEntitySessionBeanRemote.deleteSchedulePlan(planId);
@@ -927,7 +932,6 @@ public class FlightOperationModule {
 //        System.out.println("Enter schedule plan id>");
 //        long planId = sc.nextLong();
 //        sc.nextLine();
-
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm Z");
         FlightSchedulePlanEntity plan = flightSchedulePlanEntitySessionBeanRemote.retrieveSchedulePlanById(planId);
         FlightSchedulePlanTypeEnum type = plan.getType();
@@ -1004,7 +1008,7 @@ public class FlightOperationModule {
             int layoverDurationHourInt = Integer.parseInt(layoverDurationHour);
             int layoverDurationMinInt = Integer.parseInt(layoverDurationMin);
             layoverDurationMinInt += (60 * layoverDurationHourInt);
-                    System.out.println("test");
+            System.out.println("test");
             updateFare(sc, plan);
             //FlightSchedulePlanEntity newPlan = new FlightSchedulePlanEntity(FlightSchedulePlanTypeEnum.RECURRENT_WEEK, startDate, endDate, layoverDurationMinInt, flight);
 //           try {              
