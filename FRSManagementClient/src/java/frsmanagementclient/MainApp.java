@@ -430,6 +430,13 @@ public class MainApp {
                         System.out.println(ex.getMessage());
                         break;
                     }
+                    
+                    try {
+                        flightRouteEntitySessionBeanRemote.retrieveRouteByAirport(originAirport, destinationAirport);
+                        System.out.println("This Route is already available!");
+                        break;
+                    } catch (FlightRouteNotFoundException ex) {
+                    }
 
                     FlightRouteEntity departureRoute = flightRouteEntitySessionBeanRemote.createFlightRouteEntity(new FlightRouteEntity(originAirport, destinationAirport));
                     airportEntitySessionBeanRemote.addDepartureRoute(originAirport, departureRoute);

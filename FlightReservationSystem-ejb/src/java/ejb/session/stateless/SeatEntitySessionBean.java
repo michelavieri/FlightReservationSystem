@@ -71,7 +71,12 @@ public class SeatEntitySessionBean implements SeatEntitySessionBeanRemote, SeatE
         currentInventory.getSeats().size();
         List<SeatEntity> seats = currentInventory.getSeats();
         for (SeatEntity seat : seats) {
-            if (!seat.isBooked() && !bookedSeats.contains(seat)) {
+            if (!seat.isBooked()) {
+                for (SeatEntity s: bookedSeats) {
+                    if (s.equals(seat)) {
+                        continue;
+                    }
+                }
                 SeatEntity pickedSeat = entityManager.find(SeatEntity.class, seat.getSeatId());
                 return pickedSeat;
             }

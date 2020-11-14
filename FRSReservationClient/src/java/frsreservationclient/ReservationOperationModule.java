@@ -442,13 +442,17 @@ public class ReservationOperationModule {
 
             pricePerPassenger = 0;
             for (int i = 0; i < returnFlightsSameDate.size(); i++) {
-                System.out.println((i + 1) + ". FLIGHT(s) : ");
+
                 List<FlightScheduleEntity> schedules = returnFlightsSameDate.get(i);
                 long priceFirstClass = 0;
                 long priceBusinessClass = 0;
                 long pricePremiumEconomyClass = 0;
                 long priceEconomyClass = 0;
-
+                if (schedules.size() == 1) {
+                    System.out.println((i + 1) + ". DIRECT FLIGHT : ");
+                } else {
+                    System.out.println((i + 1) + ". CONNECTING FLIGHTS: ");
+                }
                 List<CabinClassConfigurationEntity> classes = new ArrayList<>();
                 for (int j = 0; j < schedules.size(); j++) {
                     System.out.println("\t -SCHEDULE ID: " + schedules.get(j).getScheduleId());
@@ -703,7 +707,7 @@ public class ReservationOperationModule {
             System.out.println("2: Round/Return Trip");
             tripType = sc.nextInt();
             sc.nextLine();
-            
+
             System.out.println("Are you reserving a connecting flight? (Y/N)");
             String connectingFlightQuery = sc.nextLine();
 

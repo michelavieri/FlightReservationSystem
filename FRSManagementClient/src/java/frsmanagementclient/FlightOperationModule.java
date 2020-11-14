@@ -261,7 +261,7 @@ public class FlightOperationModule {
         FlightRouteEntity route = flight.getRoute();
         String origin = route.getOriginAirport().getAirportCode();
         String destination = route.getDestinationAirport().getAirportCode();
-        int maxCapacity = aircraftConfiguration.getType().getMaxCapacity();
+        int maxCapacity = aircraftConfiguration.getMaxCapacity();
         List<CabinClassConfigurationEntity> cabinClasses = flightEntitySessionBeanRemote.retrieveCabinClassByFlight(flight);
 
         System.out.println("DEPARTURE FLIGHT " + flight.getFlightCode() + ": ");
@@ -896,6 +896,14 @@ public class FlightOperationModule {
         if (plan.getLayoverDuration() > 0) {
             System.out.println("Schedule plan layover duration (in minutes): " + plan.getLayoverDuration());
         }
+        
+        List<FareEntity> fares = plan.getFareEntitys();
+        
+        for(FareEntity fare:fares) {
+            System.out.println("Cabin class type: " + searchCabinType(fare.getCabinClass().getType()));
+            System.out.println("Fare code: " + fare.getFareBasisCode());
+            System.out.println("Fare amount: " + fare.getAmount());
+        }
 
         System.out.println("Do you want to update this schedule? (Y/N)");
         String response1 = sc.nextLine();
@@ -963,21 +971,37 @@ public class FlightOperationModule {
             }
             updateSingleSchedule(sc, dateFormat, flight, plan, schedule);
         } else if (type.equals(FlightSchedulePlanTypeEnum.RECURRENT_DAY)) {
-            System.out.println("Enter new starting date (yyyy-mm-dd)>");
+            System.out.println("Do you want to update starting date? (Y/N)>");
             String startDate = sc.nextLine();
 
-            System.out.println("Enter new ending date (yyyy-mm-dd)>");
+            System.out.println("Do you want to update ending date? (Y/N)>");
             String endDate = sc.nextLine();
 
-            System.out.println("Enter new departure hour (HH:mm)>");
+            System.out.println("Do you want to update departure hour? (Y/N)>");
             String departuretime = sc.nextLine();
 
-            System.out.println("Enter new duration of flight (HH:MM)>");
+            System.out.println("Do you want to update duration of flight? (Y/N)>");
             String duration = sc.nextLine();
 
-            System.out.println("Enter new number of recurring days>");
-            int recurringDays = sc.nextInt();
-            sc.nextLine();
+            System.out.println("Do you want to update of recurring days? (Y/N)>");
+            String response2 = sc.nextLine();
+            
+            int recurringDays = 0;
+//            System.out.println("Enter new starting date (yyyy-mm-dd)>");
+//            String startDate = sc.nextLine();
+//
+//            System.out.println("Enter new ending date (yyyy-mm-dd)>");
+//            String endDate = sc.nextLine();
+//
+//            System.out.println("Enter new departure hour (HH:mm)>");
+//            String departuretime = sc.nextLine();
+//
+//            System.out.println("Enter new duration of flight (HH:MM)>");
+//            String duration = sc.nextLine();
+//
+//            System.out.println("Enter new number of recurring days>");
+//            int recurringDays = sc.nextInt();
+  //          sc.nextLine();
 
             System.out.println("Enter layover duration if needed (HH:MM)>");
             String layoverDuration = sc.nextLine();
