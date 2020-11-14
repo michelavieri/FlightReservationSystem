@@ -634,7 +634,7 @@ public class FlightOperationModule {
             flightSchedulePlanEntitySessionBeanRemote.associatePlanWithFlight(schedulePlan, flight);
             flightScheduleEntitySessionBeanRemote.associateNewSeatsInventory(schedulePlan);
             createFare(sc, flight, schedulePlan);
-             
+
             if (returnPlan != null) {
                 fareEntitySessionBeanRemote.setReturnFare(schedulePlan, returnPlan);
             }
@@ -646,7 +646,7 @@ public class FlightOperationModule {
             }
 
         } else if (typeResponse == 3) {
-            FlightSchedulePlanTypeEnum type = FlightSchedulePlanTypeEnum.RECURRENT_WEEK;
+            FlightSchedulePlanTypeEnum type = FlightSchedulePlanTypeEnum.RECURRENT_DAY;
 
             System.out.println("Enter number of recurring days>");
             int day = sc.nextInt();
@@ -675,7 +675,7 @@ public class FlightOperationModule {
                 if (response.equals("Y")) {
                     int totalLayoverDuration = this.scanLayoverTime(sc);
 
-                    flightScheduleEntitySessionBeanRemote.setLayover(returnPlan, totalLayoverDuration);
+                    flightScheduleEntitySessionBeanRemote.setLayover(schedulePlan, totalLayoverDuration);
 
                     String returnTime = this.createRecurrentSchedule("", schedulePlan, startDate, endDate, day, departuretime, dateFormat, duration, totalLayoverDuration);
                     String zone = flightEntitySessionBeanRemote.retrieveTimeZoneByFlight(flight);
@@ -744,7 +744,7 @@ public class FlightOperationModule {
 
                 if (response.equals("Y")) {
                     int totalLayoverDuration = this.scanLayoverTime(sc);
-                    
+
                     flightScheduleEntitySessionBeanRemote.setLayover(schedulePlan, totalLayoverDuration);
                     String returnTime = this.createRecurrentSchedule(day, schedulePlan, startDate, endDate, 7, departuretime, dateFormat, duration, totalLayoverDuration);
                     String zone = flightEntitySessionBeanRemote.retrieveTimeZoneByFlight(flight);
@@ -813,9 +813,6 @@ public class FlightOperationModule {
 
         ZonedDateTime arrivalDateTime = startingDate.plusMinutes(totalDuration);
         String arrDateTime = arrivalDateTime.format(dateFormat);
-
-        startingDate = ZonedDateTime.parse((startDate + " " + departureTime + " " + timeZone), dateFormat);
-        startingDateTime = startingDate.format(dateFormat);
 
         arrivalDateTime = startingDate.plusMinutes(totalDuration);
         arrDateTime = arrivalDateTime.format(dateFormat);
