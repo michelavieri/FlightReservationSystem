@@ -169,23 +169,23 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanRemote, F
     public void updateAircraftConfiguration(AircraftConfigurationEntity newConfig, FlightEntity flight) {
         flight = entityManager.find(FlightEntity.class, flight.getFlightId());
         newConfig = entityManager.find(AircraftConfigurationEntity.class, newConfig.getId());
-        FlightEntity returnFlight = entityManager.find(FlightEntity.class, flight.getReturnFlight());
+       // FlightEntity returnFlight = entityManager.find(FlightEntity.class, flight.getReturnFlight());
 
         AircraftConfigurationEntity oldConfig = flight.getAircraftConfigurationEntity();
         oldConfig = entityManager.find(AircraftConfigurationEntity.class, oldConfig.getId());
         oldConfig.getFlightEntitys().size();
         List<FlightEntity> flights = oldConfig.getFlightEntitys();
         flights.remove(flight);
-        flights.remove(returnFlight);
+       // flights.remove(returnFlight);
         oldConfig.setFlightEntitys(flights);
 
         flights = newConfig.getFlightEntitys();
         flights.add(flight);
-        flights.add(flight);
+       // flights.add(flight);
         newConfig.setFlightEntitys(flights);
 
         flight.setAircraftConfigurationEntity(newConfig);
-        returnFlight.setAircraftConfigurationEntity(newConfig);
+       // returnFlight.setAircraftConfigurationEntity(newConfig);
     }
 
     @Override

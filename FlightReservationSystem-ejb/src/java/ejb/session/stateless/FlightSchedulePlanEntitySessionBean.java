@@ -5,9 +5,11 @@
  */
 package ejb.session.stateless;
 
+import entity.FareEntity;
 import entity.FlightEntity;
 import entity.FlightScheduleEntity;
 import entity.FlightSchedulePlanEntity;
+import entity.SeatEntity;
 import entity.SeatsInventoryEntity;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -50,7 +52,7 @@ public class FlightSchedulePlanEntitySessionBean implements FlightSchedulePlanEn
     @Override
     public List<FlightSchedulePlanEntity> retrieveAllSchedulePlan() {
         Query query = entityManager.createQuery("SELECT p FROM FlightSchedulePlanEntity p ORDER BY p.schedulePlanId ASC, p.startDate DESC");
-        
+
         List<FlightSchedulePlanEntity> plans = new ArrayList<>();
         try {
             plans = query.getResultList();
@@ -59,7 +61,7 @@ public class FlightSchedulePlanEntitySessionBean implements FlightSchedulePlanEn
         }
         return plans;
     }
-      
+
     @Override
     public void associatePlanWithFlight(FlightSchedulePlanEntity plan, FlightEntity flight) {
         plan = entityManager.find(FlightSchedulePlanEntity.class, plan.getSchedulePlanId());
@@ -80,24 +82,53 @@ public class FlightSchedulePlanEntitySessionBean implements FlightSchedulePlanEn
 
         List<FlightScheduleEntity> flightSchedules = plan.getFlightSchedules();
         flightSchedules.size();
+        List<FareEntity> fares = plan.getFareEntitys();
+        fares.size();
+
+        if (plan.getReturnSchedulePlan() != null) {
+            FlightSchedulePlanEntity returnPlan = plan.getReturnSchedulePlan();
+
+            try {
+                deleteSchedulePlan(returnPlan.getSchedulePlanId());
+            } catch (ScheduleIsUsedException ex) {
+                throw new ScheduleIsUsedException();
+            }
+        }
 
         for (FlightScheduleEntity schedule : flightSchedules) {
-            if (schedule.getBookingTicketEntitys().size() == 0) {
+            if (schedule.getBookingTicketEntitys().size() > 0) {
+                plan.setDisabled(true);
                 throw new ScheduleIsUsedException();
             }
 
             List<SeatsInventoryEntity> seats = schedule.getSeatsInventoryEntitys();
             seats.size();
             for (SeatsInventoryEntity seat : seats) {
+                List<SeatEntity> individualSeats = seat.getSeats();
+
+                for (SeatEntity individualSeat : individualSeats) {
+                    individualSeat.setSeatsInventory(null);
+                    entityManager.remove(individualSeat);
+                }
+
+                seat.getSeats().clear();
                 seat.setFlightSchedule(null);
-                schedule.getSeatsInventoryEntitys().remove(seat);
                 entityManager.remove(seat);
             }
 
+            schedule.getSeatsInventoryEntitys().clear();
             schedule.setPlan(null);
-            plan.getFlightSchedules().remove(schedule);
             entityManager.remove(schedule);
         }
+
+        for (FareEntity fare : fares) {
+            fare.setFlightSchedulePlan(null);
+            entityManager.remove(fare);
+        }
+
+        plan.getFareEntitys().clear();
+        plan.getFlightSchedules().clear();
+        entityManager.remove(plan);
     }
 
     @Override
@@ -193,7 +224,7 @@ public class FlightSchedulePlanEntitySessionBean implements FlightSchedulePlanEn
 
             for (FlightScheduleEntity schedule : schedules) {
                 tempStartString = tempStart.format(dateFormat);
-                
+
                 tempArrival = tempStart.plusMinutes(totalDuration);
                 tempArrString = tempArrival.format(dateFormat);
 
@@ -236,7 +267,7 @@ public class FlightSchedulePlanEntitySessionBean implements FlightSchedulePlanEn
 
         }
     }
-    
+
     @Override
     public void associateReturnSchedulePlan(FlightSchedulePlanEntity departure, FlightSchedulePlanEntity returning) {
         departure = entityManager.find(FlightSchedulePlanEntity.class, departure.getSchedulePlanId());
@@ -245,36 +276,36 @@ public class FlightSchedulePlanEntitySessionBean implements FlightSchedulePlanEn
         departure.setReturnSchedulePlan(returning);
         returning.setDepartureSchedulePlan(departure);
     }
-    
+
     @Override
     public String retrieveDepartureDateTime(FlightSchedulePlanEntity plan) {
         plan = entityManager.find(FlightSchedulePlanEntity.class, plan.getSchedulePlanId());
-        
+
         plan.getFlightSchedules().size();
-        
+
         return plan.getFlightSchedules().get(0).getDepartureDateTime();
     }
-    
+
     @Override
     public List<FlightSchedulePlanEntity> retrievePlanByFlight(FlightEntity flight) {
         flight = entityManager.find(FlightEntity.class, flight.getFlightId());
-        
+
         List<FlightSchedulePlanEntity> plans = flight.getFlightSchedulePlans();
         plans.size();
-        
+
         return plans;
     }
-    
+
     @Override
     public List<FlightScheduleEntity> retrieveSchedulesByPlan(FlightSchedulePlanEntity plan) {
         plan = entityManager.find(FlightSchedulePlanEntity.class, plan.getSchedulePlanId());
-        
+
         List<FlightScheduleEntity> schedules = plan.getFlightSchedules();
         schedules.size();
-        
+
         return schedules;
     }
-    
+
     @Override
     public void createRecurrentSchedule(String day, FlightSchedulePlanEntity schedule, String startDate, String endDate, int days, String departureTime, DateTimeFormatter dateFormat, String duration, int layoverDuration) {
 

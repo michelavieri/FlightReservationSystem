@@ -37,6 +37,9 @@ import util.exception.UnknownPersistenceException;
 public class DataInitSessionBean2 {
 
     @EJB
+    private InitializationSessionBeanLocal initializationSessionBeanLocal;
+
+    @EJB
     private EmployeeEntitySessionBeanLocal employeeEntitySessionBeanLocal;
 
     @EJB
@@ -47,9 +50,6 @@ public class DataInitSessionBean2 {
 
     @EJB
     private AircraftTypeEntitySessionBeanLocal aircraftTypeEntitySessionBeanLocal;
-
-    @EJB
-    private InitializationSessionBeanLocal initializationSessionBeanLocal;
 
     public DataInitSessionBean2() {
     }
@@ -88,13 +88,13 @@ public class DataInitSessionBean2 {
             aircraftTypeEntitySessionBeanLocal.createNewAircraftType(new AircraftTypeEntity("Boeing 737", 200));
 
             aircraftTypeEntitySessionBeanLocal.createNewAircraftType(new AircraftTypeEntity("Boeing 747", 400));
-
+            
             initializationSessionBeanLocal.initializeAirCraftConfiguration();
-
+            
             initializationSessionBeanLocal.initializeFlightRoute();
-
+            
             initializationSessionBeanLocal.initializeFlight();
-
+            
             initializationSessionBeanLocal.initializeSchedulePlan();
         } catch (EmployeeUsernameExistException | PartnerUsernameExistException | AirportNameExistException | AircraftTypeNameExistException | UnknownPersistenceException ex) {
             ex.printStackTrace();

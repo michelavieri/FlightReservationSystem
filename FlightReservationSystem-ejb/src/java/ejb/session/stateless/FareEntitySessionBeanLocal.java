@@ -33,5 +33,7 @@ public interface FareEntitySessionBeanLocal {
    public List<FareEntity> retrieveFareBySchedulePlan(FlightSchedulePlanEntity schedule);
 
     public void setReturnFare(FlightSchedulePlanEntity outboundPlan, FlightSchedulePlanEntity returnPlan);
+
+    public void setNewValueFare(String newValue, FareEntity fare);
     
 }

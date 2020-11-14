@@ -107,4 +107,11 @@ public class FareEntitySessionBean implements FareEntitySessionBeanRemote, FareE
         
         returnPlan.setFareEntitys(fares);
     }
+    
+    @Override
+    public void setNewValueFare(String newValue, FareEntity fare) {
+        fare = entityManager.find(FareEntity.class, fare.getFareId());
+        
+        fare.setAmount(newValue);
+    }
 }

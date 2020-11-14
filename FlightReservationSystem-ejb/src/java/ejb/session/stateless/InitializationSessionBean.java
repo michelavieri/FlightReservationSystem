@@ -37,7 +37,7 @@ import util.exception.FlightRouteNotFoundException;
  * @author Chrisya
  */
 @Stateless
-public class InitializationSessionBean implements InitializationSessionBeanLocal, InitializationSessionBeanRemote {
+public class InitializationSessionBean implements InitializationSessionBeanLocal {
 
     @EJB
     private FareEntitySessionBeanLocal fareEntitySessionBeanLocal;
@@ -675,7 +675,7 @@ public class InitializationSessionBean implements InitializationSessionBeanLocal
         }
 
         fareEntitySessionBeanLocal.setReturnFare(plan, plan.getReturnSchedulePlan());
-
+        
         //testdata3
         plan = this.initializeRecurringSchedulePlan(FlightSchedulePlanTypeEnum.RECURRENT_WEEK, 7, "ML621", "TUESDAY", "2020-12-01", "2020-12-31", "10:00", "08:00", 120);
         flight = plan.getFlight();
@@ -698,7 +698,7 @@ public class InitializationSessionBean implements InitializationSessionBeanLocal
         }
 
         fareEntitySessionBeanLocal.setReturnFare(plan, plan.getReturnSchedulePlan());
-
+        
         //testdata4
         plan = this.initializeRecurringSchedulePlan(FlightSchedulePlanTypeEnum.RECURRENT_WEEK, 7, "ML311", "MONDAY", "2020-12-01", "2020-12-31", "10:00", "06:30", 180);
         flight = plan.getFlight();
@@ -741,7 +741,7 @@ public class InitializationSessionBean implements InitializationSessionBeanLocal
         }
 
         fareEntitySessionBeanLocal.setReturnFare(plan, plan.getReturnSchedulePlan());
-
+        
         //testdata5
         plan = this.initializeRecurringSchedulePlan(FlightSchedulePlanTypeEnum.RECURRENT_DAY, 2, "ML411", "", "2020-12-01", "2020-12-31", "13:00", "04:00", 240);
         flight = plan.getFlight();
@@ -782,13 +782,13 @@ public class InitializationSessionBean implements InitializationSessionBeanLocal
 
             }
         }
-
+        
         fareEntitySessionBeanLocal.setReturnFare(plan, plan.getReturnSchedulePlan());
 
         //testdata6
         plan = this.initializeMultipleSchedulePlan();
         flight = plan.getFlight();
-
+        
         classes = flight.getAircraftConfigurationEntity().getCabinClassConfigurationEntitys();
         classes.size();
 
@@ -825,7 +825,7 @@ public class InitializationSessionBean implements InitializationSessionBeanLocal
 
             }
         }
-
+        
         fareEntitySessionBeanLocal.setReturnFare(plan, plan.getReturnSchedulePlan());
     }
 
@@ -957,9 +957,9 @@ public class InitializationSessionBean implements InitializationSessionBeanLocal
 
         List<FlightScheduleEntity> schedules = schedulePlan.getFlightSchedules();
         schedules.size();
-
+        
         FlightScheduleEntity returnFlightSchedule = null;
-
+        
         for (FlightScheduleEntity schedule : schedules) {
 
             ZonedDateTime returnDepartureDateTime = ZonedDateTime.parse(schedule.getArrivalDateTime(), dateFormat).plusMinutes(120);
