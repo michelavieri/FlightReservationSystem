@@ -6,10 +6,17 @@
 package ejb.session.stateless;
 
 import entity.AircraftConfigurationEntity;
+import entity.AirportEntity;
+import entity.BookingTicketEntity;
 import entity.CabinClassConfigurationEntity;
+import entity.FareEntity;
 import entity.FlightEntity;
 import entity.FlightRouteEntity;
+import entity.FlightScheduleEntity;
 import entity.FlightSchedulePlanEntity;
+import entity.PassengerEntity;
+import entity.SeatEntity;
+import entity.SeatsInventoryEntity;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.ejb.Local;
@@ -26,8 +33,8 @@ public interface FlightEntitySessionBeanLocal {
     public FlightEntity createFlightEntity(FlightEntity newFlight);
 
     public List<FlightEntity> retrieveAllFlights();
-    
-    public List<FlightSchedulePlanEntity> retrieveSchedulePlans (FlightEntity flight);
+
+    public List<FlightSchedulePlanEntity> retrieveSchedulePlans(FlightEntity flight);
 
     public void setReturnFlight(FlightEntity departureFlight, FlightEntity returnFlight);
 
@@ -52,4 +59,26 @@ public interface FlightEntitySessionBeanLocal {
     public void removeReturnFlight(FlightEntity flight);
 
     public void createRecurrentSchedule(String day, FlightSchedulePlanEntity schedule, String startDate, String endDate, int days, String departureTime, DateTimeFormatter dateFormat, String duration, int layoverDuration);
+
+    public FlightScheduleEntity getFlightScheduleByTicketUnmanaged(BookingTicketEntity inTicket);
+
+    public FlightSchedulePlanEntity getPlanByScheduleUnmanaged(FlightScheduleEntity schedule);
+
+    public FlightEntity getFlightByPlanUnmanaged(FlightSchedulePlanEntity plan);
+
+    public FlightRouteEntity getRouteByFlightUnmanaged(FlightEntity flight);
+
+    public AirportEntity getOriginAirportByRouteUnmanaged(FlightRouteEntity route);
+
+    public AirportEntity getDestinationAirportByRouteUnmanaged(FlightRouteEntity route);
+
+    public PassengerEntity getPassengerByTicketUnmanaged(BookingTicketEntity ticket);
+
+    public SeatEntity getSeatByTicketUnmanaged(BookingTicketEntity ticket);
+
+    public SeatsInventoryEntity getSeatsInventoryBySeatUnmanaged(SeatEntity seat);
+
+    public CabinClassConfigurationEntity getCabinClassBySeatsInventoryUnmanaged(SeatsInventoryEntity seatsInventoryEntity);
+
+    public FareEntity getFareByTicketUnmanaged(BookingTicketEntity ticket);
 }
