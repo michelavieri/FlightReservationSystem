@@ -65,9 +65,9 @@ public interface FlightScheduleEntitySessionBeanLocal {
 //    public void recurseTransit(List<FlightScheduleEntity> allSchedules, AirportEntity departureAirport, AirportEntity destinationAirport, int stopovers, List<FlightScheduleEntity> availableSchedule, List<List<FlightScheduleEntity>> finalSchedule, CabinClassTypeEnum classType, int numOfPassenger);
     public void setLayover(FlightSchedulePlanEntity plan, int layover);
 
-    public List<List<FlightScheduleEntity>> searchDirectFlightsAfterUnmanaged(String departureAirport, String destinationAirport, String departureDateTime, int numOfPassenger, CabinClassTypeEnum classType);
+    public List<NestedList> searchDirectFlightsAfterUnmanaged(String departureAirport, String destinationAirport, String departureDateTime, int numOfPassenger, CabinClassTypeEnum classType);
 
-    public List<List<FlightScheduleEntity>> searchDirectFlightsBeforeUnmanaged(String departureAirport, String destinationAirport, String departureDateTime, int numOfPassenger, CabinClassTypeEnum classType);
+    public List<NestedList> searchDirectFlightsBeforeUnmanaged(String departureAirport, String destinationAirport, String departureDateTime, int numOfPassenger, CabinClassTypeEnum classType);
 
-    public List<List<FlightScheduleEntity>> searchDirectFlightsUnmanaged(String departureAirport, String destinationAirport, String departureDate, int numOfPassenger, CabinClassTypeEnum classType);
+    public List<NestedList> searchDirectFlightsUnmanaged(String departureAirport, String destinationAirport, String departureDate, int numOfPassenger, CabinClassTypeEnum classType);
 }

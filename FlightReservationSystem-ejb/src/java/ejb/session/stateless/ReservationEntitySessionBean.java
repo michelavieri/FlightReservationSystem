@@ -204,7 +204,7 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
         }
         return reservation;
     }
-    
+
     @Override
     public ReservationEntity retrieveReservationByReservationIdPartner(long reservationId, PartnerEntity partner) throws InvalidReservationId, NotMyReservationException {
         Query query = entityManager.createQuery("SELECT r FROM ReservationEntity r WHERE r.reservationId = :id");
@@ -223,7 +223,7 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
     }
 
     @Override
-    public ReservationEntity retrieveReservationByReservationIdPartnerUnmanaged(long reservationId, PartnerEntity partner) 
+    public ReservationEntity retrieveReservationByReservationIdPartnerUnmanaged(long reservationId, PartnerEntity partner)
             throws InvalidReservationId, NotMyReservationException {
         ReservationEntity reservation = retrieveReservationByReservationIdPartner(reservationId, partner);
 
@@ -239,7 +239,7 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
 
         CreditCardEntity card = reservation.getCreditCardEntity();
         entityManager.detach(card);
-        
+
         return reservation;
     }
 
@@ -300,7 +300,7 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
     }
 
     @Override
-    public List<List<FlightScheduleEntity>> searchConnectingFlightsUnmanaged(String departureAirport,
+    public List<NestedList> searchConnectingFlightsUnmanaged(String departureAirport,
             String destinationAirport, String departureDateTime, int numOfPassenger, int stopovers, CabinClassTypeEnum classType) {
         List<List<FlightScheduleEntity>> finalSchedule
                 = searchConnectingFlights(departureAirport, destinationAirport, departureDateTime, numOfPassenger, stopovers, classType);
@@ -333,7 +333,11 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
                 }
             }
         }
-        return finalSchedule;
+        List<NestedList> result = new ArrayList<>();
+        for (List<FlightScheduleEntity> schedule : finalSchedule) {
+            result.add(new NestedList(schedule));
+        }
+        return result;
     }
 
     @Override
@@ -374,7 +378,7 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
     }
 
     @Override
-    public List<List<FlightScheduleEntity>> searchConnectingFlightsBeforeUnmanaged(String departureAirport,
+    public List<NestedList> searchConnectingFlightsBeforeUnmanaged(String departureAirport,
             String destinationAirport, String departureDateTime, int numOfPassenger, int stopovers, CabinClassTypeEnum classType) {
         List<List<FlightScheduleEntity>> finalSchedule
                 = searchConnectingFlightsBefore(departureAirport, destinationAirport, departureDateTime, numOfPassenger, stopovers, classType);
@@ -406,7 +410,11 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
                 }
             }
         }
-        return finalSchedule;
+        List<NestedList> result = new ArrayList<>();
+        for (List<FlightScheduleEntity> schedule : finalSchedule) {
+            result.add(new NestedList(schedule));
+        }
+        return result;
     }
 
     @Override
@@ -447,7 +455,7 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
     }
 
     @Override
-    public List<List<FlightScheduleEntity>> searchConnectingFlightsAfterUnmanaged(String departureAirport,
+    public List<NestedList> searchConnectingFlightsAfterUnmanaged(String departureAirport,
             String destinationAirport, String departureDateTime, int numOfPassenger, int stopovers, CabinClassTypeEnum classType) {
         List<List<FlightScheduleEntity>> finalSchedule
                 = searchConnectingFlightsAfter(departureAirport, destinationAirport, departureDateTime, numOfPassenger, stopovers, classType);
@@ -479,7 +487,11 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
                 }
             }
         }
-        return finalSchedule;
+        List<NestedList> result = new ArrayList<>();
+        for (List<FlightScheduleEntity> schedule : finalSchedule) {
+            result.add(new NestedList(schedule));
+        }
+        return result;
     }
 
     @Override

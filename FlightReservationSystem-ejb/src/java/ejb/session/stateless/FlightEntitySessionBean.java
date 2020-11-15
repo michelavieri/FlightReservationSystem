@@ -7,11 +7,16 @@ package ejb.session.stateless;
 
 import entity.AircraftConfigurationEntity;
 import entity.AirportEntity;
+import entity.BookingTicketEntity;
 import entity.CabinClassConfigurationEntity;
+import entity.FareEntity;
 import entity.FlightEntity;
 import entity.FlightRouteEntity;
 import entity.FlightScheduleEntity;
 import entity.FlightSchedulePlanEntity;
+import entity.PassengerEntity;
+import entity.SeatEntity;
+import entity.SeatsInventoryEntity;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -23,7 +28,6 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.enumeration.FlightSchedulePlanTypeEnum;
-import util.exception.FlightDisabledException;
 import util.exception.FlightNotFoundException;
 
 /**
@@ -169,24 +173,23 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanRemote, F
     public void updateAircraftConfiguration(AircraftConfigurationEntity newConfig, FlightEntity flight) {
         flight = entityManager.find(FlightEntity.class, flight.getFlightId());
         newConfig = entityManager.find(AircraftConfigurationEntity.class, newConfig.getId());
-       // FlightEntity returnFlight = entityManager.find(FlightEntity.class, flight.getReturnFlight());
-       
+        // FlightEntity returnFlight = entityManager.find(FlightEntity.class, flight.getReturnFlight());
 
         AircraftConfigurationEntity oldConfig = flight.getAircraftConfigurationEntity();
         oldConfig = entityManager.find(AircraftConfigurationEntity.class, oldConfig.getId());
         oldConfig.getFlightEntitys().size();
         List<FlightEntity> flights = oldConfig.getFlightEntitys();
         flights.remove(flight);
-       // flights.remove(returnFlight);
+        // flights.remove(returnFlight);
         oldConfig.setFlightEntitys(flights);
 
         flights = newConfig.getFlightEntitys();
         flights.add(flight);
-       // flights.add(flight);
+        // flights.add(flight);
         newConfig.setFlightEntitys(flights);
 
         flight.setAircraftConfigurationEntity(newConfig);
-       // returnFlight.setAircraftConfigurationEntity(newConfig);
+        // returnFlight.setAircraftConfigurationEntity(newConfig);
     }
 
     @Override
@@ -297,4 +300,229 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanRemote, F
             arrivalDateTime = arrivalDateTime.plusDays(days);
         }
     }
+
+    @Override
+    public FlightScheduleEntity getFlightScheduleByTicketUnmanaged(BookingTicketEntity inTicket) {
+        inTicket = entityManager.find(BookingTicketEntity.class, inTicket.getBookingTicketId());
+        FlightScheduleEntity schedule = inTicket.getFlightSchedule();
+
+        entityManager.detach(schedule);
+
+        entityManager.detach(schedule.getPlan());
+
+        if (schedule.getDepartureSchedule() != null) {
+            entityManager.detach(schedule.getDepartureSchedule());
+        }
+
+        if (schedule.getReturnSchedule() != null) {
+            entityManager.detach(schedule.getReturnSchedule());
+        }
+
+        schedule.getBookingTicketEntitys().size();
+        schedule.getSeatsInventoryEntitys().size();
+
+        for (BookingTicketEntity ticket : schedule.getBookingTicketEntitys()) {
+            entityManager.detach(ticket);
+        }
+
+        for (SeatsInventoryEntity seat : schedule.getSeatsInventoryEntitys()) {
+            entityManager.detach(seat);
+        }
+
+        return schedule;
+    }
+
+    @Override
+    public FlightSchedulePlanEntity getPlanByScheduleUnmanaged(FlightScheduleEntity schedule) {
+        schedule = entityManager.find(FlightScheduleEntity.class, schedule.getScheduleId());
+        FlightSchedulePlanEntity plan = schedule.getPlan();
+
+        entityManager.detach(plan);
+        entityManager.detach(plan.getReturnSchedulePlan());
+        entityManager.detach(plan.getFlight());
+
+        plan.getFareEntitys().size();
+        plan.getFlightSchedules().size();
+
+        List<FareEntity> fares = plan.getFareEntitys();
+        List<FlightScheduleEntity> schedules = plan.getFlightSchedules();
+        for (FareEntity f : fares) {
+            entityManager.detach(f);
+        }
+
+        for (FlightScheduleEntity s : schedules) {
+            entityManager.detach(s);
+        }
+
+        return plan;
+    }
+
+    @Override
+    public FlightEntity getFlightByPlanUnmanaged(FlightSchedulePlanEntity plan) {
+        plan = entityManager.find(FlightSchedulePlanEntity.class, plan);
+        FlightEntity flight = plan.getFlight();
+
+        entityManager.detach(flight);
+        entityManager.detach(flight.getDepartureFlight());
+        entityManager.detach(flight.getReturnFlight());
+        entityManager.detach(flight.getAircraftConfigurationEntity());
+        entityManager.detach(flight.getRoute());
+        flight.getFlightSchedulePlans().size();
+        List<FlightSchedulePlanEntity> plans = flight.getFlightSchedulePlans();
+        for (FlightSchedulePlanEntity p : plans) {
+            entityManager.detach(p);
+        }
+        return flight;
+    }
+
+    @Override
+    public FlightRouteEntity getRouteByFlightUnmanaged(FlightEntity flight) {
+        flight = entityManager.find(FlightEntity.class, flight.getFlightId());
+
+        FlightRouteEntity route = flight.getRoute();
+
+        entityManager.detach(route);
+        entityManager.detach(route.getDepartureFlightRoute());
+        entityManager.detach(route.getDestinationAirport());
+        entityManager.detach(route.getOriginAirport());
+        entityManager.detach(route.getReturnFlightRoute());
+
+        route.getFlights().size();
+        List<FlightEntity> flights = route.getFlights();
+        for (FlightEntity f : flights) {
+            entityManager.detach(f);
+        }
+
+        return route;
+    }
+
+    @Override
+    public AirportEntity getOriginAirportByRouteUnmanaged(FlightRouteEntity route) {
+        route = entityManager.find(FlightRouteEntity.class, route.getRouteId());
+
+        AirportEntity origin = route.getOriginAirport();
+
+        entityManager.detach(origin);
+        List<FlightRouteEntity> originRoutes = origin.getArrivalRoutes();
+        List<FlightRouteEntity> destinationRoutes = origin.getDepartureRoutes();
+        for (FlightRouteEntity o : originRoutes) {
+            entityManager.detach(o);
+        }
+
+        for (FlightRouteEntity d : destinationRoutes) {
+            entityManager.detach(d);
+        }
+
+        return origin;
+    }
+
+    @Override
+    public AirportEntity getDestinationAirportByRouteUnmanaged(FlightRouteEntity route) {
+        route = entityManager.find(FlightRouteEntity.class, route.getRouteId());
+
+        AirportEntity origin = route.getDestinationAirport();
+
+        entityManager.detach(origin);
+        List<FlightRouteEntity> originRoutes = origin.getArrivalRoutes();
+        List<FlightRouteEntity> destinationRoutes = origin.getDepartureRoutes();
+        for (FlightRouteEntity o : originRoutes) {
+            entityManager.detach(o);
+        }
+
+        for (FlightRouteEntity d : destinationRoutes) {
+            entityManager.detach(d);
+        }
+
+        return origin;
+    }
+
+    @Override
+    public PassengerEntity getPassengerByTicketUnmanaged(BookingTicketEntity ticket) {
+        ticket = entityManager.find(BookingTicketEntity.class, ticket.getBookingTicketId());
+        PassengerEntity passenger = ticket.getPassenger();
+        entityManager.detach(passenger);
+
+        passenger.getBookingTicketEntitys().size();
+
+        List<BookingTicketEntity> tickets = passenger.getBookingTicketEntitys();
+
+        for (BookingTicketEntity t : tickets) {
+            entityManager.detach(t);
+        }
+
+        return passenger;
+    }
+
+    @Override
+    public SeatEntity getSeatByTicketUnmanaged(BookingTicketEntity ticket) {
+        ticket = entityManager.find(BookingTicketEntity.class, ticket.getBookingTicketId());
+        SeatEntity seat = ticket.getSeat();
+
+        entityManager.detach(seat);
+        entityManager.detach(seat.getSeatsInventory());
+        entityManager.detach(seat.getBookingTicketEntity());
+
+        return seat;
+    }
+
+    @Override
+    public SeatsInventoryEntity getSeatsInventoryBySeatUnmanaged(SeatEntity seat) {
+        seat = entityManager.find(SeatEntity.class, seat.getSeatId());
+        SeatsInventoryEntity seatsInventoryEntity = seat.getSeatsInventory();
+
+        entityManager.detach(seatsInventoryEntity);
+        entityManager.detach(seatsInventoryEntity.getCabinClass());
+        entityManager.detach(seatsInventoryEntity.getFlightSchedule());
+        seatsInventoryEntity.getSeats().size();
+        List<SeatEntity> seats = seatsInventoryEntity.getSeats();
+        for (SeatEntity s : seats) {
+            entityManager.detach(s);
+        }
+
+        return seatsInventoryEntity;
+    }
+
+    @Override
+    public CabinClassConfigurationEntity getCabinClassBySeatsInventoryUnmanaged(SeatsInventoryEntity seatsInventoryEntity) {
+        seatsInventoryEntity = entityManager.find(SeatsInventoryEntity.class, seatsInventoryEntity.getInventoryId());
+        CabinClassConfigurationEntity cabin = seatsInventoryEntity.getCabinClass();
+
+        entityManager.detach(cabin);
+        entityManager.detach(cabin.getAircraftConfig());
+        cabin.getSeatsInventoryEntities().size();
+        cabin.getFareEntitys().size();
+
+        List<SeatsInventoryEntity> seatsInventories = cabin.getSeatsInventoryEntities();
+        List<FareEntity> fareEntities = cabin.getFareEntitys();
+
+        for (SeatsInventoryEntity s : seatsInventories) {
+            entityManager.detach(s);
+        }
+
+        for (FareEntity f : fareEntities) {
+            entityManager.detach(f);
+        }
+
+        return cabin;
+    }
+
+    @Override
+    public FareEntity getFareByTicketUnmanaged(BookingTicketEntity ticket) {
+        ticket = entityManager.find(BookingTicketEntity.class, ticket.getBookingTicketId());
+        FareEntity fare = ticket.getFare();
+
+        entityManager.detach(fare);
+        entityManager.detach(fare.getCabinClass());
+        entityManager.detach(fare.getFlightSchedulePlan());
+
+        fare.getBookingTicketEntitys().size();
+        List<BookingTicketEntity> tickets = fare.getBookingTicketEntitys();
+
+        for (BookingTicketEntity t : tickets) {
+            entityManager.detach(t);
+        }
+
+        return fare;
+    }
+
 }

@@ -45,28 +45,30 @@ public interface ReservationEntitySessionBeanLocal {
             List<List<FlightScheduleEntity>> finalSchedule, CabinClassTypeEnum classType, int numOfPassenger);
 
     public FlightScheduleEntity retrieveFlightScheduleById(Long id);
-    
-    public List<List<FlightScheduleEntity>> searchConnectingFlightsAfterUnmanaged(String departureAirport,
+
+    public List<NestedList> searchConnectingFlightsAfterUnmanaged(String departureAirport,
             String destinationAirport, String departureDateTime, int numOfPassenger, int stopovers, CabinClassTypeEnum classType);
-    
-    public List<List<FlightScheduleEntity>> searchConnectingFlightsBeforeUnmanaged(String departureAirport,
+
+    public List<NestedList> searchConnectingFlightsBeforeUnmanaged(String departureAirport,
             String destinationAirport, String departureDateTime, int numOfPassenger, int stopovers, CabinClassTypeEnum classType);
-    
-    public List<List<FlightScheduleEntity>> searchConnectingFlightsUnmanaged(String departureAirport,
+
+    public List<NestedList> searchConnectingFlightsUnmanaged(String departureAirport,
             String destinationAirport, String departureDateTime, int numOfPassenger, int stopovers, CabinClassTypeEnum classType);
-    
+
     public ReservationEntity createNewReservationPartnerUnmanaged(PartnerEntity partner, CreditCardEntity card, ReservationEntity newReservation);
 
     public ReservationEntity createNewReservationPartner(PartnerEntity partner, CreditCardEntity card, ReservationEntity newReservation);
-    
+
     public List<BookingTicketEntity> retrieveTicketsUnmanaged(long reservationId) throws NoTicketException;
-    
+
     public List<ReservationEntity> retrieveFlightReservationsByPartnerUnmanaged(PartnerEntity partner);
-    
-    public ReservationEntity retrieveReservationByReservationIdPartner(long reservationId, PartnerEntity partner) 
+
+    public ReservationEntity retrieveReservationByReservationIdPartner(long reservationId, PartnerEntity partner)
             throws InvalidReservationId, NotMyReservationException;
-    
-    public List<ReservationEntity> retrieveFlightReservationsByPartner(PartnerEntity partner) throws InvalidReservationId, NotMyReservationException ;
-    
+
+    public List<ReservationEntity> retrieveFlightReservationsByPartner(PartnerEntity partner) throws InvalidReservationId, NotMyReservationException;
+
     public ReservationEntity retrieveReservationByReservationIdPartnerUnmanaged(long reservationId, PartnerEntity partner) throws InvalidReservationId, NotMyReservationException;
+
+   
 }
