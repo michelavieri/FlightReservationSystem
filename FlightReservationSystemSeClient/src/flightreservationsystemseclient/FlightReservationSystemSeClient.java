@@ -1126,4 +1126,40 @@ public class FlightReservationSystemSeClient {
         ws.client.holidayReservation.HolidayReservationService port = service.getHolidayReservationServicePort();
         return port.retrieveTickets(arg0);
     }
+
+    private static java.util.List<ws.client.holidayReservation.NestedList> searchConnectingFlights(java.lang.String arg0, java.lang.String arg1, java.lang.String arg2, int arg3, int arg4, ws.client.holidayReservation.CabinClassTypeEnum arg5) {
+        ws.client.holidayReservation.HolidayReservationService_Service service = new ws.client.holidayReservation.HolidayReservationService_Service();
+        ws.client.holidayReservation.HolidayReservationService port = service.getHolidayReservationServicePort();
+        return port.searchConnectingFlights(arg0, arg1, arg2, arg3, arg4, arg5);
+    }
+
+    private static java.util.List<ws.client.holidayReservation.NestedList> searchConnectingFlightsAfter(java.lang.String arg0, java.lang.String arg1, java.lang.String arg2, int arg3, int arg4, ws.client.holidayReservation.CabinClassTypeEnum arg5) {
+        ws.client.holidayReservation.HolidayReservationService_Service service = new ws.client.holidayReservation.HolidayReservationService_Service();
+        ws.client.holidayReservation.HolidayReservationService port = service.getHolidayReservationServicePort();
+        return port.searchConnectingFlightsAfter(arg0, arg1, arg2, arg3, arg4, arg5);
+    }
+
+    private static java.util.List<ws.client.holidayReservation.NestedList> searchConnectingFlightsBefore(java.lang.String arg0, java.lang.String arg1, java.lang.String arg2, int arg3, int arg4, ws.client.holidayReservation.CabinClassTypeEnum arg5) {
+        ws.client.holidayReservation.HolidayReservationService_Service service = new ws.client.holidayReservation.HolidayReservationService_Service();
+        ws.client.holidayReservation.HolidayReservationService port = service.getHolidayReservationServicePort();
+        return port.searchConnectingFlightsBefore(arg0, arg1, arg2, arg3, arg4, arg5);
+    }
+
+    private static java.util.List<ws.client.holidayReservation.NestedList> searchDirectFlights(java.lang.String arg0, java.lang.String arg1, java.lang.String arg2, int arg3, ws.client.holidayReservation.CabinClassTypeEnum arg4) {
+        ws.client.holidayReservation.HolidayReservationService_Service service = new ws.client.holidayReservation.HolidayReservationService_Service();
+        ws.client.holidayReservation.HolidayReservationService port = service.getHolidayReservationServicePort();
+        return port.searchDirectFlights(arg0, arg1, arg2, arg3, arg4);
+    }
+
+    private static java.util.List<ws.client.holidayReservation.NestedList> searchDirectFlightsAfter(java.lang.String arg0, java.lang.String arg1, java.lang.String arg2, int arg3, int arg4, ws.client.holidayReservation.CabinClassTypeEnum arg5) {
+        ws.client.holidayReservation.HolidayReservationService_Service service = new ws.client.holidayReservation.HolidayReservationService_Service();
+        ws.client.holidayReservation.HolidayReservationService port = service.getHolidayReservationServicePort();
+        return port.searchDirectFlightsAfter(arg0, arg1, arg2, arg3, arg4, arg5);
+    }
+
+    private static java.util.List<ws.client.holidayReservation.NestedList> searchDirectFlightsBefore(java.lang.String arg0, java.lang.String arg1, java.lang.String arg2, int arg3, int arg4, ws.client.holidayReservation.CabinClassTypeEnum arg5) {
+        ws.client.holidayReservation.HolidayReservationService_Service service = new ws.client.holidayReservation.HolidayReservationService_Service();
+        ws.client.holidayReservation.HolidayReservationService port = service.getHolidayReservationServicePort();
+        return port.searchDirectFlightsBefore(arg0, arg1, arg2, arg3, arg4, arg5);
+    }
 }
