@@ -13,10 +13,6 @@ import java.util.Scanner;
 import ws.client.holidayReservation.BookingTicketEntity;
 import ws.client.holidayReservation.CabinClassConfigurationEntity;
 import ws.client.holidayReservation.CabinClassTypeEnum;
-import static ws.client.holidayReservation.CabinClassTypeEnum.BUSINESS_CLASS;
-import static ws.client.holidayReservation.CabinClassTypeEnum.ECONOMY_CLASS;
-import static ws.client.holidayReservation.CabinClassTypeEnum.FIRST_CLASS;
-import static ws.client.holidayReservation.CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS;
 import ws.client.holidayReservation.CreditCardEntity;
 import ws.client.holidayReservation.CustomerEntity;
 import ws.client.holidayReservation.FareEntity;
@@ -28,6 +24,8 @@ import ws.client.holidayReservation.PassengerEntity;
 import ws.client.holidayReservation.ReservationEntity;
 import ws.client.holidayReservation.SeatEntity;
 import ws.client.holidayReservation.SeatsInventoryEntity;
+import ws.client.holidayReservation.NestedList;
+
 
 /**
  *
@@ -273,9 +271,9 @@ public class FlightReservationSystemSeClient {
                 break;
         }
 
-        List<List<FlightScheduleEntity>> outboundFlightsSameDate;
-        List<List<FlightScheduleEntity>> outboundFlightsBeforeDate;
-        List<List<FlightScheduleEntity>> outboundFlightsAfterDate;
+        List<NestedList> outboundFlightsSameDate;
+        List<NestedList> outboundFlightsBeforeDate;
+        List<NestedList> outboundFlightsAfterDate;
         if (preferenceFlight == 1) {
             outboundFlightsSameDate = searchDirectFlights(departureAirportCode, destinationAirportCode, departureDate, numOfPassengers, preferenceClassEnum);
             outboundFlightsBeforeDate = searchDirectFlightsBefore(departureAirportCode, destinationAirportCode, departureDate, numOfPassengers, preferenceClassEnum);
@@ -285,9 +283,9 @@ public class FlightReservationSystemSeClient {
             outboundFlightsBeforeDate = searchConnectingFlightsBefore(departureAirportCode, destinationAirportCode, departureDate, numOfPassengers, stopovers, preferenceClassEnum);
             outboundFlightsAfterDate = searchConnectingFlightsAfter(departureAirportCode, destinationAirportCode, departureDate, numOfPassengers, stopovers, preferenceClassEnum);
         }
-        List<List<FlightScheduleEntity>> returnFlightsSameDate = new ArrayList<>();
-        List<List<FlightScheduleEntity>> returnFlightsBeforeDate = new ArrayList<>();
-        List<List<FlightScheduleEntity>> returnFlightsAfterDate = new ArrayList<>();
+        List<NestedList> returnFlightsSameDate = new ArrayList<>();
+        List<NestedList> returnFlightsBeforeDate = new ArrayList<>();
+        List<NestedList> returnFlightsAfterDate = new ArrayList<>();
         if (tripType == 2) {
             if (preferenceFlight == 1) {
                 returnFlightsSameDate = searchDirectFlights(destinationAirportCode, departureAirportCode, returnDate, numOfPassengers, preferenceClassEnum);
@@ -333,16 +331,16 @@ public class FlightReservationSystemSeClient {
                 for (CabinClassConfigurationEntity c : classes) {
                     System.out.println("\t\t " + searchCabinType(c.getType()));
                     switch (c.getType()) {
-                        case FIRST_CLASS:
+                        case CabinClassTypeEnum.FIRST_CLASS:
                             priceFirstClass += Long.parseLong(retrieveHighestFareUnmanaged(schedules.get(j), CabinClassTypeEnum.FIRST_CLASS).getAmount());
                             break;
-                        case BUSINESS_CLASS:
+                        case CabinClassTypeEnum.BUSINESS_CLASS:
                             priceBusinessClass += Long.parseLong(retrieveHighestFareUnmanaged(schedules.get(j), CabinClassTypeEnum.BUSINESS_CLASS).getAmount());
                             break;
-                        case PREMIUM_ECONOMY_CLASS:
+                        case CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS:
                             pricePremiumEconomyClass += Long.parseLong(retrieveHighestFareUnmanaged(schedules.get(j), CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS).getAmount());
                             break;
-                        case ECONOMY_CLASS:
+                        case CabinClassTypeEnum.ECONOMY_CLASS:
                             priceEconomyClass += Long.parseLong(retrieveHighestFareUnmanaged(schedules.get(j), CabinClassTypeEnum.ECONOMY_CLASS).getAmount());
                             break;
                         default:
@@ -364,19 +362,19 @@ public class FlightReservationSystemSeClient {
                     System.out.println("\t " + searchCabinType(c.getType()) + ":");
                     System.out.print("\t\t Price per passenger: ");
                     switch (c.getType()) {
-                        case FIRST_CLASS:
+                        case CabinClassTypeEnum.FIRST_CLASS:
                             System.out.println(priceFirstClass);
                             System.out.println("\t\t Total Price: " + priceFirstClass * numOfPassengers);
                             break;
-                        case BUSINESS_CLASS:
+                        case CabinClassTypeEnum.BUSINESS_CLASS:
                             System.out.println(priceBusinessClass);
                             System.out.println("\t\t Total Price: " + priceBusinessClass * numOfPassengers);
                             break;
-                        case PREMIUM_ECONOMY_CLASS:
+                        case CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS:
                             System.out.println(pricePremiumEconomyClass);
                             System.out.println("\t\t Total Price: " + pricePremiumEconomyClass * numOfPassengers);
                             break;
-                        case ECONOMY_CLASS:
+                        case CabinClassTypeEnum.ECONOMY_CLASS:
                             System.out.println(priceEconomyClass);
                             System.out.println("\t\t Total Price: " + priceEconomyClass * numOfPassengers);
                             break;
@@ -418,16 +416,16 @@ public class FlightReservationSystemSeClient {
                 for (CabinClassConfigurationEntity c : classes) {
                     System.out.println("\t\t " + searchCabinType(c.getType()));
                     switch (c.getType()) {
-                        case FIRST_CLASS:
+                        case CabinClassTypeEnum.FIRST_CLASS:
                             priceFirstClass += Long.parseLong(retrieveHighestFareUnmanaged(schedules.get(j), CabinClassTypeEnum.FIRST_CLASS).getAmount());
                             break;
-                        case BUSINESS_CLASS:
+                        case CabinClassTypeEnum.BUSINESS_CLASS:
                             priceBusinessClass += Long.parseLong(retrieveHighestFareUnmanaged(schedules.get(j), CabinClassTypeEnum.BUSINESS_CLASS).getAmount());
                             break;
-                        case PREMIUM_ECONOMY_CLASS:
+                        case CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS:
                             pricePremiumEconomyClass += Long.parseLong(retrieveHighestFareUnmanaged(schedules.get(j), CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS).getAmount());
                             break;
-                        case ECONOMY_CLASS:
+                        case CabinClassTypeEnum.ECONOMY_CLASS:
                             priceEconomyClass += Long.parseLong(retrieveHighestFareUnmanaged(schedules.get(j), CabinClassTypeEnum.ECONOMY_CLASS).getAmount());
                             break;
                         default:
@@ -449,19 +447,19 @@ public class FlightReservationSystemSeClient {
                     System.out.println("\t " + searchCabinType(c.getType()) + ":");
                     System.out.print("\t\t Price per passenger: ");
                     switch (c.getType()) {
-                        case FIRST_CLASS:
+                        case CabinClassTypeEnum.FIRST_CLASS:
                             System.out.println(priceFirstClass);
                             System.out.println("\t\t Total Price: " + priceFirstClass * numOfPassengers);
                             break;
-                        case BUSINESS_CLASS:
+                        case CabinClassTypeEnum.BUSINESS_CLASS:
                             System.out.println(priceBusinessClass);
                             System.out.println("\t\t Total Price: " + priceBusinessClass * numOfPassengers);
                             break;
-                        case PREMIUM_ECONOMY_CLASS:
+                        case CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS:
                             System.out.println(pricePremiumEconomyClass);
                             System.out.println("\t\t Total Price: " + pricePremiumEconomyClass * numOfPassengers);
                             break;
-                        case ECONOMY_CLASS:
+                        case CabinClassTypeEnum.ECONOMY_CLASS:
                             System.out.println(priceEconomyClass);
                             System.out.println("\t\t Total Price: " + priceEconomyClass * numOfPassengers);
                             break;
@@ -504,16 +502,16 @@ public class FlightReservationSystemSeClient {
                 for (CabinClassConfigurationEntity c : classes) {
                     System.out.println("\t\t " + searchCabinType(c.getType()));
                     switch (c.getType()) {
-                        case FIRST_CLASS:
+                        case CabinClassTypeEnum.FIRST_CLASS:
                             priceFirstClass += Long.parseLong(retrieveHighestFareUnmanaged(schedules.get(j), CabinClassTypeEnum.FIRST_CLASS).getAmount());
                             break;
-                        case BUSINESS_CLASS:
+                        case CabinClassTypeEnum.BUSINESS_CLASS:
                             priceBusinessClass += Long.parseLong(retrieveHighestFareUnmanaged(schedules.get(j), CabinClassTypeEnum.BUSINESS_CLASS).getAmount());
                             break;
-                        case PREMIUM_ECONOMY_CLASS:
+                        case CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS:
                             pricePremiumEconomyClass += Long.parseLong(retrieveHighestFareUnmanaged(schedules.get(j), CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS).getAmount());
                             break;
-                        case ECONOMY_CLASS:
+                        case CabinClassTypeEnum.ECONOMY_CLASS:
                             priceEconomyClass += Long.parseLong(retrieveHighestFareUnmanaged(schedules.get(j), CabinClassTypeEnum.ECONOMY_CLASS).getAmount());
                             break;
                         default:
@@ -535,19 +533,19 @@ public class FlightReservationSystemSeClient {
                     System.out.println("\t " + searchCabinType(c.getType()) + ":");
                     System.out.print("\t\t Price per passenger: ");
                     switch (c.getType()) {
-                        case FIRST_CLASS:
+                        case CabinClassTypeEnum.FIRST_CLASS:
                             System.out.println(priceFirstClass);
                             System.out.println("\t\t Total Price: " + priceFirstClass * numOfPassengers);
                             break;
-                        case BUSINESS_CLASS:
+                        case CabinClassTypeEnum.BUSINESS_CLASS:
                             System.out.println(priceBusinessClass);
                             System.out.println("\t\t Total Price: " + priceBusinessClass * numOfPassengers);
                             break;
-                        case PREMIUM_ECONOMY_CLASS:
+                        case CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS:
                             System.out.println(pricePremiumEconomyClass);
                             System.out.println("\t\t Total Price: " + pricePremiumEconomyClass * numOfPassengers);
                             break;
-                        case ECONOMY_CLASS:
+                        case CabinClassTypeEnum.ECONOMY_CLASS:
                             System.out.println(priceEconomyClass);
                             System.out.println("\t\t Total Price: " + priceEconomyClass * numOfPassengers);
                             break;
@@ -593,16 +591,16 @@ public class FlightReservationSystemSeClient {
                     for (CabinClassConfigurationEntity c : classes) {
                         System.out.println("\t\t " + searchCabinType(c.getType()));
                         switch (c.getType()) {
-                            case FIRST_CLASS:
+                            case CabinClassTypeEnum.FIRST_CLASS:
                                 priceFirstClass += Long.parseLong(retrieveHighestFareUnmanaged(schedules.get(j), CabinClassTypeEnum.FIRST_CLASS).getAmount());
                                 break;
-                            case BUSINESS_CLASS:
+                            case CabinClassTypeEnum.BUSINESS_CLASS:
                                 priceBusinessClass += Long.parseLong(retrieveHighestFareUnmanaged(schedules.get(j), CabinClassTypeEnum.BUSINESS_CLASS).getAmount());
                                 break;
-                            case PREMIUM_ECONOMY_CLASS:
+                            case CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS:
                                 pricePremiumEconomyClass += Long.parseLong(retrieveHighestFareUnmanaged(schedules.get(j), CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS).getAmount());
                                 break;
-                            case ECONOMY_CLASS:
+                            case CabinClassTypeEnum.ECONOMY_CLASS:
                                 priceEconomyClass += Long.parseLong(retrieveHighestFareUnmanaged(schedules.get(j), CabinClassTypeEnum.ECONOMY_CLASS).getAmount());
                                 break;
                             default:
@@ -624,19 +622,19 @@ public class FlightReservationSystemSeClient {
                         System.out.println("\t " + searchCabinType(c.getType()));
                         System.out.print("\t\t Price per passenger: ");
                         switch (c.getType()) {
-                            case FIRST_CLASS:
+                            case CabinClassTypeEnum.FIRST_CLASS:
                                 System.out.println(priceFirstClass);
                                 System.out.println("\t\t Total Price: " + priceFirstClass * numOfPassengers);
                                 break;
-                            case BUSINESS_CLASS:
+                            case CabinClassTypeEnum.BUSINESS_CLASS:
                                 System.out.println(priceBusinessClass);
                                 System.out.println("\t\t Total Price: " + priceBusinessClass * numOfPassengers);
                                 break;
-                            case PREMIUM_ECONOMY_CLASS:
+                            case CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS:
                                 System.out.println(pricePremiumEconomyClass);
                                 System.out.println("\t\t Total Price: " + pricePremiumEconomyClass * numOfPassengers);
                                 break;
-                            case ECONOMY_CLASS:
+                            case CabinClassTypeEnum.ECONOMY_CLASS:
                                 System.out.println(priceEconomyClass);
                                 System.out.println("\t\t Total Price: " + priceEconomyClass * numOfPassengers);
                                 break;
@@ -678,16 +676,16 @@ public class FlightReservationSystemSeClient {
                     for (CabinClassConfigurationEntity c : classes) {
                         System.out.println("\t\t " + searchCabinType(c.getType()));
                         switch (c.getType()) {
-                            case FIRST_CLASS:
+                            case CabinClassTypeEnum.FIRST_CLASS:
                                 priceFirstClass += Long.parseLong(retrieveHighestFareUnmanaged(schedules.get(j), CabinClassTypeEnum.FIRST_CLASS).getAmount());
                                 break;
-                            case BUSINESS_CLASS:
+                            case CabinClassTypeEnum.BUSINESS_CLASS:
                                 priceBusinessClass += Long.parseLong(retrieveHighestFareUnmanaged(schedules.get(j), CabinClassTypeEnum.BUSINESS_CLASS).getAmount());
                                 break;
-                            case PREMIUM_ECONOMY_CLASS:
+                            case CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS:
                                 pricePremiumEconomyClass += Long.parseLong(retrieveHighestFareUnmanaged(schedules.get(j), CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS).getAmount());
                                 break;
-                            case ECONOMY_CLASS:
+                            case CabinClassTypeEnum.ECONOMY_CLASS:
                                 priceEconomyClass += Long.parseLong(retrieveHighestFareUnmanaged(schedules.get(j), CabinClassTypeEnum.ECONOMY_CLASS).getAmount());
                                 break;
                             default:
@@ -709,19 +707,19 @@ public class FlightReservationSystemSeClient {
                         System.out.println("\t " + searchCabinType(c.getType()) + ":");
                         System.out.print("\t\t Price per passenger: ");
                         switch (c.getType()) {
-                            case FIRST_CLASS:
+                            case CabinClassTypeEnum.FIRST_CLASS:
                                 System.out.println(priceFirstClass);
                                 System.out.println("\t\t Total Price: " + priceFirstClass * numOfPassengers);
                                 break;
-                            case BUSINESS_CLASS:
+                            case CabinClassTypeEnum.BUSINESS_CLASS:
                                 System.out.println(priceBusinessClass);
                                 System.out.println("\t\t Total Price: " + priceBusinessClass * numOfPassengers);
                                 break;
-                            case PREMIUM_ECONOMY_CLASS:
+                            case CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS:
                                 System.out.println(pricePremiumEconomyClass);
                                 System.out.println("\t\t Total Price: " + pricePremiumEconomyClass * numOfPassengers);
                                 break;
-                            case ECONOMY_CLASS:
+                            case CabinClassTypeEnum.ECONOMY_CLASS:
                                 System.out.println(priceEconomyClass);
                                 System.out.println("\t\t Total Price: " + priceEconomyClass * numOfPassengers);
                                 break;
@@ -764,16 +762,16 @@ public class FlightReservationSystemSeClient {
                     for (CabinClassConfigurationEntity c : classes) {
                         System.out.println("\t\t " + searchCabinType(c.getType()));
                         switch (c.getType()) {
-                            case FIRST_CLASS:
+                            case CabinClassTypeEnum.FIRST_CLASS:
                                 priceFirstClass += Long.parseLong(retrieveHighestFareUnmanaged(schedules.get(j), CabinClassTypeEnum.FIRST_CLASS).getAmount());
                                 break;
-                            case BUSINESS_CLASS:
+                            case CabinClassTypeEnum.BUSINESS_CLASS:
                                 priceBusinessClass += Long.parseLong(retrieveHighestFareUnmanaged(schedules.get(j), CabinClassTypeEnum.BUSINESS_CLASS).getAmount());
                                 break;
-                            case PREMIUM_ECONOMY_CLASS:
+                            case CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS:
                                 pricePremiumEconomyClass += Long.parseLong(retrieveHighestFareUnmanaged(schedules.get(j), CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS).getAmount());
                                 break;
-                            case ECONOMY_CLASS:
+                            case CabinClassTypeEnum.ECONOMY_CLASS:
                                 priceEconomyClass += Long.parseLong(retrieveHighestFareUnmanaged(schedules.get(j), CabinClassTypeEnum.ECONOMY_CLASS).getAmount());
                                 break;
                             default:
@@ -795,19 +793,19 @@ public class FlightReservationSystemSeClient {
                         System.out.println("\t " + searchCabinType(c.getType()) + ":");
                         System.out.print("\t\t Price per passenger: ");
                         switch (c.getType()) {
-                            case FIRST_CLASS:
+                            case CabinClassTypeEnum.FIRST_CLASS:
                                 System.out.println(priceFirstClass);
                                 System.out.println("\t\t Total Price: " + priceFirstClass * numOfPassengers);
                                 break;
-                            case BUSINESS_CLASS:
+                            case CabinClassTypeEnum.BUSINESS_CLASS:
                                 System.out.println(priceBusinessClass);
                                 System.out.println("\t\t Total Price: " + priceBusinessClass * numOfPassengers);
                                 break;
-                            case PREMIUM_ECONOMY_CLASS:
+                            case CabinClassTypeEnum.PREMIUM_ECONOMY_CLASS:
                                 System.out.println(pricePremiumEconomyClass);
                                 System.out.println("\t\t Total Price: " + pricePremiumEconomyClass * numOfPassengers);
                                 break;
-                            case ECONOMY_CLASS:
+                            case CabinClassTypeEnum.ECONOMY_CLASS:
                                 System.out.println(priceEconomyClass);
                                 System.out.println("\t\t Total Price: " + priceEconomyClass * numOfPassengers);
                                 break;
