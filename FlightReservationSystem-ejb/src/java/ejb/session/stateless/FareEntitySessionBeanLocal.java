@@ -35,5 +35,7 @@ public interface FareEntitySessionBeanLocal {
     public void setReturnFare(FlightSchedulePlanEntity outboundPlan, FlightSchedulePlanEntity returnPlan);
 
     public void setNewValueFare(String newValue, FareEntity fare);
+
+    public FareEntity retrieveHighestFare(FlightScheduleEntity schedule, CabinClassTypeEnum type);
     
 }
