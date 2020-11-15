@@ -28,4 +28,6 @@ public interface CustomerEntitySessionBeanLocal {
     public CustomerEntity retrieveCustomerByEmail(String email) throws CustomerNotFoundException;
 
     public CustomerEntity customerLogin(String email, String password) throws InvalidEmailException, WrongPasswordException;
+
+    public CustomerEntity customerLoginUnmanaged(String email, String password) throws InvalidEmailException, WrongPasswordException;
 }

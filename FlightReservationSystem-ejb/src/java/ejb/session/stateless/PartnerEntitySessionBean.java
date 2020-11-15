@@ -6,6 +6,8 @@
 package ejb.session.stateless;
 
 import entity.PartnerEntity;
+import entity.ReservationEntity;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -13,9 +15,11 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import util.exception.InvalidUsernameException;
 import util.exception.PartnerNotFoundException;
 import util.exception.PartnerUsernameExistException;
 import util.exception.UnknownPersistenceException;
+import util.exception.WrongPasswordException;
 
 /**
  *
@@ -75,4 +79,43 @@ public class PartnerEntitySessionBean implements PartnerEntitySessionBeanRemote,
             throw new PartnerNotFoundException("Partner Username " + username + " does not exist!");
         }
     }
+    
+    @Override
+    public PartnerEntity partnerLogin(String username, String password) throws InvalidUsernameException, WrongPasswordException {
+        try {
+            PartnerEntity partner = this.retrievePartnerByUsername(username);
+            partner = entityManager.find(PartnerEntity.class, partner.getPartnerId());
+
+            if (partner.getPassword().equals(password)) {
+                return partner;
+            } else {
+                throw new WrongPasswordException("Invalid password!");
+            }
+        } catch (PartnerNotFoundException ex) {
+            throw new InvalidUsernameException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public PartnerEntity partnerLoginUnmanaged(String email, String password) throws InvalidUsernameException, WrongPasswordException {
+
+        try {
+            PartnerEntity partner = partnerLogin(email, password);
+            entityManager.detach(partner);
+            
+            partner.getReservationsEntitys().size();
+            List<ReservationEntity> reservations = partner.getReservationsEntitys();
+            
+            for(ReservationEntity reservation:reservations) {
+                entityManager.detach(reservation);
+            }
+
+            return partner;
+        } catch (InvalidUsernameException ex) {
+            throw new InvalidUsernameException(ex.getMessage());
+        } catch (WrongPasswordException ex) {
+            throw new WrongPasswordException(ex.getMessage());
+        }
+    }
+
 }

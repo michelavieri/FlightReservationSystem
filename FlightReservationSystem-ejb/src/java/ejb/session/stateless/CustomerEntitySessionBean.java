@@ -7,6 +7,8 @@ package ejb.session.stateless;
 
 import entity.CustomerEntity;
 import entity.EmployeeEntity;
+import entity.ReservationEntity;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -67,7 +69,29 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanRemot
             throw new InvalidEmailException(ex.getMessage());
         }
     }
-    
+
+    @Override
+    public CustomerEntity customerLoginUnmanaged(String email, String password) throws InvalidEmailException, WrongPasswordException {
+
+        try {
+            CustomerEntity customer = customerLogin(email, password);
+            entityManager.detach(customer);
+            
+            customer.getReservationsEntitys().size();
+            List<ReservationEntity> reservations = customer.getReservationsEntitys();
+            
+            for(ReservationEntity reservation:reservations) {
+                entityManager.detach(reservation);
+            }
+
+            return customer;
+        } catch (InvalidEmailException ex) {
+            throw new InvalidEmailException(ex.getMessage());
+        } catch (WrongPasswordException ex) {
+            throw new WrongPasswordException(ex.getMessage());
+        }
+    }
+
     @Override
     public CustomerEntity retrieveCustomerByEmail(String email) throws CustomerNotFoundException {
         Query query = entityManager.createQuery("SELECT e FROM CustomerEntity e WHERE e.email = :inEmail");
@@ -78,7 +102,7 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanRemot
         } catch (NoResultException ex) {
             throw new CustomerNotFoundException("Email has not been registered yet!");
         }
-        
+
         return customer;
     }
 
