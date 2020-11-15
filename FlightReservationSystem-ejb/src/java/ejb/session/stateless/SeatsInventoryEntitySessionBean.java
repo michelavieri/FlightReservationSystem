@@ -5,7 +5,9 @@
  */
 package ejb.session.stateless;
 
+import entity.BookingTicketEntity;
 import entity.FlightScheduleEntity;
+import entity.PassengerEntity;
 import entity.SeatEntity;
 import entity.SeatsInventoryEntity;
 import java.util.List;

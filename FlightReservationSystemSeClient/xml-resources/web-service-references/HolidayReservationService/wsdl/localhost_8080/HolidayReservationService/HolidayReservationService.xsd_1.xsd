@@ -4,26 +4,27 @@
 
 <xs:element name="partnerLoginResponse" type="tns:partnerLoginResponse"/>
 
-<xs:complexType name="partnerLogin">
+<xs:element name="retrieveFlightReservationsByPartner" type="tns:retrieveFlightReservationsByPartner"/>
+
+<xs:element name="retrieveFlightReservationsByPartnerResponse" type="tns:retrieveFlightReservationsByPartnerResponse"/>
+
+<xs:element name="retrieveReservationByReservationIdPartner" type="tns:retrieveReservationByReservationIdPartner"/>
+
+<xs:element name="retrieveReservationByReservationIdPartnerResponse" type="tns:retrieveReservationByReservationIdPartnerResponse"/>
+
+<xs:element name="retrieveTickets" type="tns:retrieveTickets"/>
+
+<xs:element name="retrieveTicketsResponse" type="tns:retrieveTicketsResponse"/>
+
+<xs:complexType name="retrieveFlightReservationsByPartner">
 <xs:sequence>
 <xs:element name="arg0" type="xs:string" minOccurs="0"/>
-<xs:element name="arg1" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="partnerLoginResponse">
+<xs:complexType name="retrieveFlightReservationsByPartnerResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:partnerEntity" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="partnerEntity">
-<xs:sequence>
-<xs:element name="name" type="xs:string" minOccurs="0"/>
-<xs:element name="partnerId" type="xs:long" minOccurs="0"/>
-<xs:element name="password" type="xs:string" minOccurs="0"/>
-<xs:element name="reservationsEntitys" type="tns:reservationEntity" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="username" type="xs:string" minOccurs="0"/>
+<xs:element name="return" type="tns:reservationEntity" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -60,6 +61,16 @@
 <xs:element name="password" type="xs:string" minOccurs="0"/>
 <xs:element name="phoneNum" type="xs:string" minOccurs="0"/>
 <xs:element name="reservationsEntitys" type="tns:reservationEntity" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="partnerEntity">
+<xs:sequence>
+<xs:element name="name" type="xs:string" minOccurs="0"/>
+<xs:element name="partnerId" type="xs:long" minOccurs="0"/>
+<xs:element name="password" type="xs:string" minOccurs="0"/>
+<xs:element name="reservationsEntitys" type="tns:reservationEntity" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="username" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -220,6 +231,44 @@
 <xs:element name="passengerId" type="xs:long" minOccurs="0"/>
 <xs:element name="passengerName" type="xs:string" minOccurs="0"/>
 <xs:element name="passportNumber" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveReservationByReservationIdPartner">
+<xs:sequence>
+<xs:element name="arg0" type="xs:long"/>
+<xs:element name="arg1" type="tns:partnerEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveReservationByReservationIdPartnerResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:reservationEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="partnerLogin">
+<xs:sequence>
+<xs:element name="arg0" type="xs:string" minOccurs="0"/>
+<xs:element name="arg1" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="partnerLoginResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:partnerEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveTickets">
+<xs:sequence>
+<xs:element name="arg0" type="xs:long"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveTicketsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:bookingTicketEntity" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
