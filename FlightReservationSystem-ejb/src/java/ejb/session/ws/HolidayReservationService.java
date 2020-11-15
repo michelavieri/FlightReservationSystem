@@ -17,6 +17,7 @@ import entity.FlightScheduleEntity;
 import entity.PartnerEntity;
 import entity.ReservationEntity;
 import entity.SeatsInventoryEntity;
+import ejb.session.stateless.NestedList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -140,7 +141,12 @@ public class HolidayReservationService {
         List<BookingTicketEntity> bookings = new ArrayList<>();
 
         try {
-            bookings = reservationEntitySessionBeanLocal.retrieveTicketsUnmanaged(reservationId);
+            List<BookingTicketEntity> temp = reservationEntitySessionBeanLocal.retrieveTicketsUnmanaged(reservationId);
+            
+            for(BookingTicketEntity ticket:temp) {
+                bookings.add(ticket);
+            }
+            
         } catch (NoTicketException ex) {
             System.out.println(ex.getMessage());
         }
@@ -156,20 +162,20 @@ public class HolidayReservationService {
 
         return bookings;
     }
-    
+
     @WebMethod(operationName = "retrieveHighestFareUnmanaged")
     public FareEntity retrieveHighestFareUnmanaged(FlightScheduleEntity schedule, CabinClassTypeEnum type) {
 
         FareEntity fare = fareEntitySessionBeanLocal.retrieveHighestFareUnmanaged(schedule, type);
-        
+
         List<BookingTicketEntity> tickets = fare.getBookingTicketEntitys();
         fare.getCabinClass().getFareEntitys().remove(fare);
         fare.getFlightSchedulePlan().getFareEntitys().remove(fare);
-        
-        for(BookingTicketEntity ticket:tickets) {
+
+        for (BookingTicketEntity ticket : tickets) {
             ticket.setFare(null);
         }
-        
+
         return fare;
     }
 
@@ -177,177 +183,188 @@ public class HolidayReservationService {
     public List<NestedList> searchConnectingFlights(String departureAirport,
             String destinationAirport, String departureDateTime, int numOfPassenger, int stopovers, CabinClassTypeEnum classType) {
 
-        List<NestedList> result = new ArrayList<>();
-        result = reservationEntitySessionBeanLocal.searchConnectingFlightsUnmanaged(departureAirport, destinationAirport, departureDateTime, numOfPassenger, stopovers, classType);
+        List<NestedList> results = new ArrayList<>();
+        results = reservationEntitySessionBeanLocal.searchConnectingFlightsUnmanaged(departureAirport, destinationAirport, departureDateTime, numOfPassenger, stopovers, classType);
 
-        List<FlightScheduleEntity> innerList = result.getInnerList();
+        for (NestedList result : results) {
+            List<FlightScheduleEntity> innerList = result.getInnerList();
 
-        for (FlightScheduleEntity schedule : innerList) {
-            schedule.getPlan().getFlightSchedules().remove(schedule);
+            for (FlightScheduleEntity schedule : innerList) {
+                schedule.getPlan().getFlightSchedules().remove(schedule);
 
-            List<BookingTicketEntity> tickets = schedule.getBookingTicketEntitys();
+                List<BookingTicketEntity> tickets = schedule.getBookingTicketEntitys();
 
-            for (BookingTicketEntity ticket : tickets) {
-                ticket.setFlightSchedule(null);
-            }
+                for (BookingTicketEntity ticket : tickets) {
+                    ticket.setFlightSchedule(null);
+                }
 
-            if (schedule.getDepartureSchedule() != null) {
-                schedule.getDepartureSchedule().setReturnSchedule(null);
-            }
+                if (schedule.getDepartureSchedule() != null) {
+                    schedule.getDepartureSchedule().setReturnSchedule(null);
+                }
 
-            if (schedule.getDepartureSchedule() != null) {
-                schedule.getReturnSchedule().setDepartureSchedule(null);
+                if (schedule.getDepartureSchedule() != null) {
+                    schedule.getReturnSchedule().setDepartureSchedule(null);
+                }
             }
         }
-        return result;
+        return results;
     }
 
     @WebMethod(operationName = "searchConnectingFlightsBefore")
     public List<NestedList> searchConnectingFlightsBefore(String departureAirport,
             String destinationAirport, String departureDateTime, int numOfPassenger, int stopovers, CabinClassTypeEnum classType) {
 
-        List<NestedList> result = new ArrayList<>();
-        result = reservationEntitySessionBeanLocal.searchConnectingFlightsBeforeUnmanaged(departureAirport, destinationAirport, departureDateTime, numOfPassenger, stopovers, classType);
+        List<NestedList> results = new ArrayList<>();
+        results = reservationEntitySessionBeanLocal.searchConnectingFlightsBeforeUnmanaged(departureAirport, destinationAirport, departureDateTime, numOfPassenger, stopovers, classType);
 
-        List<FlightScheduleEntity> innerList = result.getInnerList();
+        for (NestedList result : results) {
+            List<FlightScheduleEntity> innerList = result.getInnerList();
 
-        for (FlightScheduleEntity schedule : innerList) {
-            schedule.getPlan().getFlightSchedules().remove(schedule);
+            for (FlightScheduleEntity schedule : innerList) {
+                schedule.getPlan().getFlightSchedules().remove(schedule);
 
-            List<BookingTicketEntity> tickets = schedule.getBookingTicketEntitys();
+                List<BookingTicketEntity> tickets = schedule.getBookingTicketEntitys();
 
-            for (BookingTicketEntity ticket : tickets) {
-                ticket.setFlightSchedule(null);
-            }
+                for (BookingTicketEntity ticket : tickets) {
+                    ticket.setFlightSchedule(null);
+                }
 
-            if (schedule.getDepartureSchedule() != null) {
-                schedule.getDepartureSchedule().setReturnSchedule(null);
-            }
+                if (schedule.getDepartureSchedule() != null) {
+                    schedule.getDepartureSchedule().setReturnSchedule(null);
+                }
 
-            if (schedule.getDepartureSchedule() != null) {
-                schedule.getReturnSchedule().setDepartureSchedule(null);
+                if (schedule.getDepartureSchedule() != null) {
+                    schedule.getReturnSchedule().setDepartureSchedule(null);
+                }
             }
         }
 
-        return result;
+        return results;
     }
 
     @WebMethod(operationName = "searchConnectingFlightsAfter")
     public List<NestedList> searchConnectingFlightsAfter(String departureAirport,
             String destinationAirport, String departureDateTime, int numOfPassenger, int stopovers, CabinClassTypeEnum classType) {
 
-        List<NestedList> result = new ArrayList<>();
-        result = reservationEntitySessionBeanLocal.searchConnectingFlightsAfterUnmanaged(departureAirport, destinationAirport, departureDateTime, numOfPassenger, stopovers, classType);
+        List<NestedList> results = new ArrayList<>();
+        results = reservationEntitySessionBeanLocal.searchConnectingFlightsAfterUnmanaged(departureAirport, destinationAirport, departureDateTime, numOfPassenger, stopovers, classType);
 
-        List<FlightScheduleEntity> innerList = result.getInnerList();
+        for (NestedList result : results) {
+            List<FlightScheduleEntity> innerList = result.getInnerList();
 
-        for (FlightScheduleEntity schedule : innerList) {
-            schedule.getPlan().getFlightSchedules().remove(schedule);
+            for (FlightScheduleEntity schedule : innerList) {
+                schedule.getPlan().getFlightSchedules().remove(schedule);
 
-            List<BookingTicketEntity> tickets = schedule.getBookingTicketEntitys();
+                List<BookingTicketEntity> tickets = schedule.getBookingTicketEntitys();
 
-            for (BookingTicketEntity ticket : tickets) {
-                ticket.setFlightSchedule(null);
-            }
+                for (BookingTicketEntity ticket : tickets) {
+                    ticket.setFlightSchedule(null);
+                }
 
-            if (schedule.getDepartureSchedule() != null) {
-                schedule.getDepartureSchedule().setReturnSchedule(null);
-            }
+                if (schedule.getDepartureSchedule() != null) {
+                    schedule.getDepartureSchedule().setReturnSchedule(null);
+                }
 
-            if (schedule.getDepartureSchedule() != null) {
-                schedule.getReturnSchedule().setDepartureSchedule(null);
+                if (schedule.getDepartureSchedule() != null) {
+                    schedule.getReturnSchedule().setDepartureSchedule(null);
+                }
             }
         }
 
-        return result;
+        return results;
     }
 
     @WebMethod(operationName = "searchDirectFlights")
     public List<NestedList> searchDirectFlights(String departureAirport, String destinationAirport, String departureDate, int numOfPassenger, CabinClassTypeEnum classType) {
 
-        List<NestedList> result = new ArrayList<>();
-        result = flightScheduleEntitySessionBeanLocal.searchDirectFlightsUnmanaged(departureAirport, destinationAirport, departureDate, numOfPassenger, classType);
+        List<NestedList> results = new ArrayList<>();
+        results = flightScheduleEntitySessionBeanLocal.searchDirectFlightsUnmanaged(departureAirport, destinationAirport, departureDate, numOfPassenger, classType);
 
-        List<FlightScheduleEntity> innerList = result.getInnerList();
+        for (NestedList result : results) {
+            List<FlightScheduleEntity> innerList = result.getInnerList();
 
-        for (FlightScheduleEntity schedule : innerList) {
-            schedule.getPlan().getFlightSchedules().remove(schedule);
+            for (FlightScheduleEntity schedule : innerList) {
+                schedule.getPlan().getFlightSchedules().remove(schedule);
 
-            List<BookingTicketEntity> tickets = schedule.getBookingTicketEntitys();
+                List<BookingTicketEntity> tickets = schedule.getBookingTicketEntitys();
 
-            for (BookingTicketEntity ticket : tickets) {
-                ticket.setFlightSchedule(null);
-            }
+                for (BookingTicketEntity ticket : tickets) {
+                    ticket.setFlightSchedule(null);
+                }
 
-            if (schedule.getDepartureSchedule() != null) {
-                schedule.getDepartureSchedule().setReturnSchedule(null);
-            }
+                if (schedule.getDepartureSchedule() != null) {
+                    schedule.getDepartureSchedule().setReturnSchedule(null);
+                }
 
-            if (schedule.getDepartureSchedule() != null) {
-                schedule.getReturnSchedule().setDepartureSchedule(null);
+                if (schedule.getDepartureSchedule() != null) {
+                    schedule.getReturnSchedule().setDepartureSchedule(null);
+                }
             }
         }
 
-        return result;
+        return results;
     }
-    
+
     @WebMethod(operationName = "searchDirectFlightsBefore")
     public List<NestedList> searchDirectFlightsBefore(String departureAirport,
             String destinationAirport, String departureDateTime, int numOfPassenger, int stopovers, CabinClassTypeEnum classType) {
 
-        List<NestedList> result = new ArrayList<>();
-        result = flightScheduleEntitySessionBeanLocal.searchDirectFlightsBeforeUnmanaged(departureAirport, destinationAirport, departureDateTime, numOfPassenger, classType);
+        List<NestedList> results = new ArrayList<>();
+        results = flightScheduleEntitySessionBeanLocal.searchDirectFlightsBeforeUnmanaged(departureAirport, destinationAirport, departureDateTime, numOfPassenger, classType);
 
-        List<FlightScheduleEntity> innerList = result.getInnerList();
+        for (NestedList result : results) {
+            List<FlightScheduleEntity> innerList = result.getInnerList();
 
-        for (FlightScheduleEntity schedule : innerList) {
-            schedule.getPlan().getFlightSchedules().remove(schedule);
+            for (FlightScheduleEntity schedule : innerList) {
+                schedule.getPlan().getFlightSchedules().remove(schedule);
 
-            List<BookingTicketEntity> tickets = schedule.getBookingTicketEntitys();
+                List<BookingTicketEntity> tickets = schedule.getBookingTicketEntitys();
 
-            for (BookingTicketEntity ticket : tickets) {
-                ticket.setFlightSchedule(null);
-            }
+                for (BookingTicketEntity ticket : tickets) {
+                    ticket.setFlightSchedule(null);
+                }
 
-            if (schedule.getDepartureSchedule() != null) {
-                schedule.getDepartureSchedule().setReturnSchedule(null);
-            }
+                if (schedule.getDepartureSchedule() != null) {
+                    schedule.getDepartureSchedule().setReturnSchedule(null);
+                }
 
-            if (schedule.getDepartureSchedule() != null) {
-                schedule.getReturnSchedule().setDepartureSchedule(null);
+                if (schedule.getDepartureSchedule() != null) {
+                    schedule.getReturnSchedule().setDepartureSchedule(null);
+                }
             }
         }
-
-        return result;
+        return results;
     }
-    
+
     @WebMethod(operationName = "searchDirectFlightsAfter")
     public List<NestedList> searchDirectFlightsAfter(String departureAirport,
             String destinationAirport, String departureDateTime, int numOfPassenger, int stopovers, CabinClassTypeEnum classType) {
 
-        List<NestedList> result = new ArrayList<>();
-        result = flightScheduleEntitySessionBeanLocal.searchDirectFlightsAfterUnmanaged(departureAirport, destinationAirport, departureDateTime, numOfPassenger, classType);
+        List<NestedList> results = new ArrayList<>();
+        results = flightScheduleEntitySessionBeanLocal.searchDirectFlightsAfterUnmanaged(departureAirport, destinationAirport, departureDateTime, numOfPassenger, classType);
 
-        List<FlightScheduleEntity> innerList = result.getInnerList();
+        for (NestedList result : results) {
+            List<FlightScheduleEntity> innerList = result.getInnerList();
 
-        for (FlightScheduleEntity schedule : innerList) {
-            schedule.getPlan().getFlightSchedules().remove(schedule);
+            for (FlightScheduleEntity schedule : innerList) {
+                schedule.getPlan().getFlightSchedules().remove(schedule);
 
-            List<BookingTicketEntity> tickets = schedule.getBookingTicketEntitys();
+                List<BookingTicketEntity> tickets = schedule.getBookingTicketEntitys();
 
-            for (BookingTicketEntity ticket : tickets) {
-                ticket.setFlightSchedule(null);
-            }
+                for (BookingTicketEntity ticket : tickets) {
+                    ticket.setFlightSchedule(null);
+                }
 
-            if (schedule.getDepartureSchedule() != null) {
-                schedule.getDepartureSchedule().setReturnSchedule(null);
-            }
+                if (schedule.getDepartureSchedule() != null) {
+                    schedule.getDepartureSchedule().setReturnSchedule(null);
+                }
 
-            if (schedule.getDepartureSchedule() != null) {
-                schedule.getReturnSchedule().setDepartureSchedule(null);
+                if (schedule.getDepartureSchedule() != null) {
+                    schedule.getReturnSchedule().setDepartureSchedule(null);
+                }
             }
         }
 
-        return result;
+        return results;
     }
 }

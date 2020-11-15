@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author miche
  */
-class NestedList {
+public class NestedList {
 
     private List<FlightScheduleEntity> innerList;
 

@@ -4,6 +4,48 @@
 <xsd:import namespace="http://ws.session.ejb/" schemaLocation="http://localhost:8080/HolidayReservationService/HolidayReservationService?xsd=1"/>
 </xsd:schema>
 </types>
+<message name="searchDirectFlights">
+<part name="parameters" element="tns:searchDirectFlights"/>
+</message>
+<message name="searchDirectFlightsResponse">
+<part name="parameters" element="tns:searchDirectFlightsResponse"/>
+</message>
+<message name="searchDirectFlightsBefore">
+<part name="parameters" element="tns:searchDirectFlightsBefore"/>
+</message>
+<message name="searchDirectFlightsBeforeResponse">
+<part name="parameters" element="tns:searchDirectFlightsBeforeResponse"/>
+</message>
+<message name="searchDirectFlightsAfter">
+<part name="parameters" element="tns:searchDirectFlightsAfter"/>
+</message>
+<message name="searchDirectFlightsAfterResponse">
+<part name="parameters" element="tns:searchDirectFlightsAfterResponse"/>
+</message>
+<message name="searchConnectingFlightsBefore">
+<part name="parameters" element="tns:searchConnectingFlightsBefore"/>
+</message>
+<message name="searchConnectingFlightsBeforeResponse">
+<part name="parameters" element="tns:searchConnectingFlightsBeforeResponse"/>
+</message>
+<message name="searchConnectingFlights">
+<part name="parameters" element="tns:searchConnectingFlights"/>
+</message>
+<message name="searchConnectingFlightsResponse">
+<part name="parameters" element="tns:searchConnectingFlightsResponse"/>
+</message>
+<message name="retrieveHighestFareUnmanaged">
+<part name="parameters" element="tns:retrieveHighestFareUnmanaged"/>
+</message>
+<message name="retrieveHighestFareUnmanagedResponse">
+<part name="parameters" element="tns:retrieveHighestFareUnmanagedResponse"/>
+</message>
+<message name="searchConnectingFlightsAfter">
+<part name="parameters" element="tns:searchConnectingFlightsAfter"/>
+</message>
+<message name="searchConnectingFlightsAfterResponse">
+<part name="parameters" element="tns:searchConnectingFlightsAfterResponse"/>
+</message>
 <message name="retrieveFlightReservationsByPartner">
 <part name="parameters" element="tns:retrieveFlightReservationsByPartner"/>
 </message>
@@ -16,19 +58,47 @@
 <message name="retrieveReservationByReservationIdPartnerResponse">
 <part name="parameters" element="tns:retrieveReservationByReservationIdPartnerResponse"/>
 </message>
-<message name="retrieveTickets">
-<part name="parameters" element="tns:retrieveTickets"/>
-</message>
-<message name="retrieveTicketsResponse">
-<part name="parameters" element="tns:retrieveTicketsResponse"/>
-</message>
 <message name="partnerLogin">
 <part name="parameters" element="tns:partnerLogin"/>
 </message>
 <message name="partnerLoginResponse">
 <part name="parameters" element="tns:partnerLoginResponse"/>
 </message>
+<message name="retrieveTickets">
+<part name="parameters" element="tns:retrieveTickets"/>
+</message>
+<message name="retrieveTicketsResponse">
+<part name="parameters" element="tns:retrieveTicketsResponse"/>
+</message>
 <portType name="HolidayReservationService">
+<operation name="searchDirectFlights">
+<input wsam:Action="http://ws.session.ejb/HolidayReservationService/searchDirectFlightsRequest" message="tns:searchDirectFlights"/>
+<output wsam:Action="http://ws.session.ejb/HolidayReservationService/searchDirectFlightsResponse" message="tns:searchDirectFlightsResponse"/>
+</operation>
+<operation name="searchDirectFlightsBefore">
+<input wsam:Action="http://ws.session.ejb/HolidayReservationService/searchDirectFlightsBeforeRequest" message="tns:searchDirectFlightsBefore"/>
+<output wsam:Action="http://ws.session.ejb/HolidayReservationService/searchDirectFlightsBeforeResponse" message="tns:searchDirectFlightsBeforeResponse"/>
+</operation>
+<operation name="searchDirectFlightsAfter">
+<input wsam:Action="http://ws.session.ejb/HolidayReservationService/searchDirectFlightsAfterRequest" message="tns:searchDirectFlightsAfter"/>
+<output wsam:Action="http://ws.session.ejb/HolidayReservationService/searchDirectFlightsAfterResponse" message="tns:searchDirectFlightsAfterResponse"/>
+</operation>
+<operation name="searchConnectingFlightsBefore">
+<input wsam:Action="http://ws.session.ejb/HolidayReservationService/searchConnectingFlightsBeforeRequest" message="tns:searchConnectingFlightsBefore"/>
+<output wsam:Action="http://ws.session.ejb/HolidayReservationService/searchConnectingFlightsBeforeResponse" message="tns:searchConnectingFlightsBeforeResponse"/>
+</operation>
+<operation name="searchConnectingFlights">
+<input wsam:Action="http://ws.session.ejb/HolidayReservationService/searchConnectingFlightsRequest" message="tns:searchConnectingFlights"/>
+<output wsam:Action="http://ws.session.ejb/HolidayReservationService/searchConnectingFlightsResponse" message="tns:searchConnectingFlightsResponse"/>
+</operation>
+<operation name="retrieveHighestFareUnmanaged">
+<input wsam:Action="http://ws.session.ejb/HolidayReservationService/retrieveHighestFareUnmanagedRequest" message="tns:retrieveHighestFareUnmanaged"/>
+<output wsam:Action="http://ws.session.ejb/HolidayReservationService/retrieveHighestFareUnmanagedResponse" message="tns:retrieveHighestFareUnmanagedResponse"/>
+</operation>
+<operation name="searchConnectingFlightsAfter">
+<input wsam:Action="http://ws.session.ejb/HolidayReservationService/searchConnectingFlightsAfterRequest" message="tns:searchConnectingFlightsAfter"/>
+<output wsam:Action="http://ws.session.ejb/HolidayReservationService/searchConnectingFlightsAfterResponse" message="tns:searchConnectingFlightsAfterResponse"/>
+</operation>
 <operation name="retrieveFlightReservationsByPartner">
 <input wsam:Action="http://ws.session.ejb/HolidayReservationService/retrieveFlightReservationsByPartnerRequest" message="tns:retrieveFlightReservationsByPartner"/>
 <output wsam:Action="http://ws.session.ejb/HolidayReservationService/retrieveFlightReservationsByPartnerResponse" message="tns:retrieveFlightReservationsByPartnerResponse"/>
@@ -37,17 +107,80 @@
 <input wsam:Action="http://ws.session.ejb/HolidayReservationService/retrieveReservationByReservationIdPartnerRequest" message="tns:retrieveReservationByReservationIdPartner"/>
 <output wsam:Action="http://ws.session.ejb/HolidayReservationService/retrieveReservationByReservationIdPartnerResponse" message="tns:retrieveReservationByReservationIdPartnerResponse"/>
 </operation>
-<operation name="retrieveTickets">
-<input wsam:Action="http://ws.session.ejb/HolidayReservationService/retrieveTicketsRequest" message="tns:retrieveTickets"/>
-<output wsam:Action="http://ws.session.ejb/HolidayReservationService/retrieveTicketsResponse" message="tns:retrieveTicketsResponse"/>
-</operation>
 <operation name="partnerLogin">
 <input wsam:Action="http://ws.session.ejb/HolidayReservationService/partnerLoginRequest" message="tns:partnerLogin"/>
 <output wsam:Action="http://ws.session.ejb/HolidayReservationService/partnerLoginResponse" message="tns:partnerLoginResponse"/>
 </operation>
+<operation name="retrieveTickets">
+<input wsam:Action="http://ws.session.ejb/HolidayReservationService/retrieveTicketsRequest" message="tns:retrieveTickets"/>
+<output wsam:Action="http://ws.session.ejb/HolidayReservationService/retrieveTicketsResponse" message="tns:retrieveTicketsResponse"/>
+</operation>
 </portType>
 <binding name="HolidayReservationServicePortBinding" type="tns:HolidayReservationService">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+<operation name="searchDirectFlights">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="searchDirectFlightsBefore">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="searchDirectFlightsAfter">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="searchConnectingFlightsBefore">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="searchConnectingFlights">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="retrieveHighestFareUnmanaged">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="searchConnectingFlightsAfter">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
 <operation name="retrieveFlightReservationsByPartner">
 <soap:operation soapAction=""/>
 <input>
@@ -66,7 +199,7 @@
 <soap:body use="literal"/>
 </output>
 </operation>
-<operation name="retrieveTickets">
+<operation name="partnerLogin">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -75,7 +208,7 @@
 <soap:body use="literal"/>
 </output>
 </operation>
-<operation name="partnerLogin">
+<operation name="retrieveTickets">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

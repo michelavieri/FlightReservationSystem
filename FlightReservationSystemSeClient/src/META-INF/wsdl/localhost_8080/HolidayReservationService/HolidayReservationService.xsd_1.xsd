@@ -8,6 +8,10 @@
 
 <xs:element name="retrieveFlightReservationsByPartnerResponse" type="tns:retrieveFlightReservationsByPartnerResponse"/>
 
+<xs:element name="retrieveHighestFareUnmanaged" type="tns:retrieveHighestFareUnmanaged"/>
+
+<xs:element name="retrieveHighestFareUnmanagedResponse" type="tns:retrieveHighestFareUnmanagedResponse"/>
+
 <xs:element name="retrieveReservationByReservationIdPartner" type="tns:retrieveReservationByReservationIdPartner"/>
 
 <xs:element name="retrieveReservationByReservationIdPartnerResponse" type="tns:retrieveReservationByReservationIdPartnerResponse"/>
@@ -15,6 +19,50 @@
 <xs:element name="retrieveTickets" type="tns:retrieveTickets"/>
 
 <xs:element name="retrieveTicketsResponse" type="tns:retrieveTicketsResponse"/>
+
+<xs:element name="searchConnectingFlights" type="tns:searchConnectingFlights"/>
+
+<xs:element name="searchConnectingFlightsAfter" type="tns:searchConnectingFlightsAfter"/>
+
+<xs:element name="searchConnectingFlightsAfterResponse" type="tns:searchConnectingFlightsAfterResponse"/>
+
+<xs:element name="searchConnectingFlightsBefore" type="tns:searchConnectingFlightsBefore"/>
+
+<xs:element name="searchConnectingFlightsBeforeResponse" type="tns:searchConnectingFlightsBeforeResponse"/>
+
+<xs:element name="searchConnectingFlightsResponse" type="tns:searchConnectingFlightsResponse"/>
+
+<xs:element name="searchDirectFlights" type="tns:searchDirectFlights"/>
+
+<xs:element name="searchDirectFlightsAfter" type="tns:searchDirectFlightsAfter"/>
+
+<xs:element name="searchDirectFlightsAfterResponse" type="tns:searchDirectFlightsAfterResponse"/>
+
+<xs:element name="searchDirectFlightsBefore" type="tns:searchDirectFlightsBefore"/>
+
+<xs:element name="searchDirectFlightsBeforeResponse" type="tns:searchDirectFlightsBeforeResponse"/>
+
+<xs:element name="searchDirectFlightsResponse" type="tns:searchDirectFlightsResponse"/>
+
+<xs:complexType name="searchDirectFlights">
+<xs:sequence>
+<xs:element name="arg0" type="xs:string" minOccurs="0"/>
+<xs:element name="arg1" type="xs:string" minOccurs="0"/>
+<xs:element name="arg2" type="xs:string" minOccurs="0"/>
+<xs:element name="arg3" type="xs:int"/>
+<xs:element name="arg4" type="tns:cabinClassTypeEnum" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="searchDirectFlightsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:nestedList" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="nestedList">
+<xs:sequence/>
+</xs:complexType>
 
 <xs:complexType name="retrieveFlightReservationsByPartner">
 <xs:sequence>
@@ -247,6 +295,57 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="searchDirectFlightsBefore">
+<xs:sequence>
+<xs:element name="arg0" type="xs:string" minOccurs="0"/>
+<xs:element name="arg1" type="xs:string" minOccurs="0"/>
+<xs:element name="arg2" type="xs:string" minOccurs="0"/>
+<xs:element name="arg3" type="xs:int"/>
+<xs:element name="arg4" type="xs:int"/>
+<xs:element name="arg5" type="tns:cabinClassTypeEnum" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="searchDirectFlightsBeforeResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:nestedList" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="searchConnectingFlightsAfter">
+<xs:sequence>
+<xs:element name="arg0" type="xs:string" minOccurs="0"/>
+<xs:element name="arg1" type="xs:string" minOccurs="0"/>
+<xs:element name="arg2" type="xs:string" minOccurs="0"/>
+<xs:element name="arg3" type="xs:int"/>
+<xs:element name="arg4" type="xs:int"/>
+<xs:element name="arg5" type="tns:cabinClassTypeEnum" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="searchConnectingFlightsAfterResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:nestedList" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="searchConnectingFlightsBefore">
+<xs:sequence>
+<xs:element name="arg0" type="xs:string" minOccurs="0"/>
+<xs:element name="arg1" type="xs:string" minOccurs="0"/>
+<xs:element name="arg2" type="xs:string" minOccurs="0"/>
+<xs:element name="arg3" type="xs:int"/>
+<xs:element name="arg4" type="xs:int"/>
+<xs:element name="arg5" type="tns:cabinClassTypeEnum" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="searchConnectingFlightsBeforeResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:nestedList" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="partnerLogin">
 <xs:sequence>
 <xs:element name="arg0" type="xs:string" minOccurs="0"/>
@@ -257,6 +356,53 @@
 <xs:complexType name="partnerLoginResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:partnerEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="searchDirectFlightsAfter">
+<xs:sequence>
+<xs:element name="arg0" type="xs:string" minOccurs="0"/>
+<xs:element name="arg1" type="xs:string" minOccurs="0"/>
+<xs:element name="arg2" type="xs:string" minOccurs="0"/>
+<xs:element name="arg3" type="xs:int"/>
+<xs:element name="arg4" type="xs:int"/>
+<xs:element name="arg5" type="tns:cabinClassTypeEnum" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="searchDirectFlightsAfterResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:nestedList" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="searchConnectingFlights">
+<xs:sequence>
+<xs:element name="arg0" type="xs:string" minOccurs="0"/>
+<xs:element name="arg1" type="xs:string" minOccurs="0"/>
+<xs:element name="arg2" type="xs:string" minOccurs="0"/>
+<xs:element name="arg3" type="xs:int"/>
+<xs:element name="arg4" type="xs:int"/>
+<xs:element name="arg5" type="tns:cabinClassTypeEnum" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="searchConnectingFlightsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:nestedList" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveHighestFareUnmanaged">
+<xs:sequence>
+<xs:element name="arg0" type="tns:flightScheduleEntity" minOccurs="0"/>
+<xs:element name="arg1" type="tns:cabinClassTypeEnum" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveHighestFareUnmanagedResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:fareEntity" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -272,21 +418,21 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:simpleType name="flightSchedulePlanTypeEnum">
-<xs:restriction base="xs:string">
-<xs:enumeration value="SINGLE"/>
-<xs:enumeration value="MULTIPLE"/>
-<xs:enumeration value="RECURRENT_DAY"/>
-<xs:enumeration value="RECURRENT_WEEK"/>
-</xs:restriction>
-</xs:simpleType>
-
 <xs:simpleType name="cabinClassTypeEnum">
 <xs:restriction base="xs:string">
 <xs:enumeration value="FIRST_CLASS"/>
 <xs:enumeration value="BUSINESS_CLASS"/>
 <xs:enumeration value="PREMIUM_ECONOMY_CLASS"/>
 <xs:enumeration value="ECONOMY_CLASS"/>
+</xs:restriction>
+</xs:simpleType>
+
+<xs:simpleType name="flightSchedulePlanTypeEnum">
+<xs:restriction base="xs:string">
+<xs:enumeration value="SINGLE"/>
+<xs:enumeration value="MULTIPLE"/>
+<xs:enumeration value="RECURRENT_DAY"/>
+<xs:enumeration value="RECURRENT_WEEK"/>
 </xs:restriction>
 </xs:simpleType>
 
