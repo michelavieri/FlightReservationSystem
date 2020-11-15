@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,19 +27,19 @@ public class BookingTicketEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookingTicketId;
 
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.DETACH)
     private ReservationEntity reservationEntity;
 
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.DETACH)
     private PassengerEntity passenger;
 
-    @OneToOne
+    @OneToOne(cascade=CascadeType.DETACH)
     private SeatEntity seat;
 
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.DETACH)
     private FareEntity fare;
 
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.DETACH)
     private FlightScheduleEntity flightSchedule;
 
     private FlightTypeEnum flightType;

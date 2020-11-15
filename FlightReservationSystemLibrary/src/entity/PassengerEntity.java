@@ -7,6 +7,7 @@ package entity;
 
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,7 +28,7 @@ public class PassengerEntity implements Serializable {
     private String passengerName;
     private String passportNumber;
 
-    @OneToMany(mappedBy = "passenger")
+    @OneToMany(mappedBy = "passenger", cascade=CascadeType.DETACH)
     private List<BookingTicketEntity> bookingTicketEntitys;
 
     public PassengerEntity() {

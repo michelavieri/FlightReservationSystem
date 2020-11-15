@@ -8,6 +8,7 @@ package entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -32,19 +33,19 @@ public class FlightScheduleEntity implements Serializable {
     private int duration;
     private String arrivalDateTime;
 
-    @OneToMany(mappedBy = "flightSchedule")
+    @OneToMany(mappedBy = "flightSchedule", cascade=CascadeType.DETACH)
     private List<SeatsInventoryEntity> seatsInventoryEntitys = new ArrayList<>();
 
-    @OneToOne(mappedBy = "departureSchedule")
+    @OneToOne(mappedBy = "departureSchedule", cascade=CascadeType.DETACH)
     private FlightScheduleEntity returnSchedule;
 
-    @OneToOne
+    @OneToOne(cascade=CascadeType.DETACH)
     private FlightScheduleEntity departureSchedule;
 
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.DETACH)
     private FlightSchedulePlanEntity plan;
     
-    @OneToMany(mappedBy = "flightSchedule")
+    @OneToMany(mappedBy = "flightSchedule", cascade=CascadeType.DETACH)
     private List<BookingTicketEntity> bookingTicketEntitys = new ArrayList<>();
 
     public FlightScheduleEntity() {

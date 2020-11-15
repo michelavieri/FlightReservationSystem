@@ -7,6 +7,7 @@ package entity;
 
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,7 +23,7 @@ import javax.persistence.OneToOne;
 @Entity
 public class ReservationEntity implements Serializable {
 
-    @OneToOne(mappedBy = "reservation")
+    @OneToOne(mappedBy = "reservation", cascade=CascadeType.DETACH)
     private CreditCardEntity creditCardEntity;
 
     private static final long serialVersionUID = 1L;
@@ -41,13 +42,13 @@ public class ReservationEntity implements Serializable {
     public ReservationEntity() {
     }
 
-    @OneToMany(mappedBy = "reservationEntity")
+    @OneToMany(mappedBy = "reservationEntity", cascade=CascadeType.DETACH)
     private List<BookingTicketEntity> tickets;
     
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.DETACH)
     private CustomerEntity customer;
     
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.DETACH)
     private PartnerEntity partner;
 
     public Long getReservationId() {

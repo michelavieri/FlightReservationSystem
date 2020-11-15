@@ -46,6 +46,21 @@
 <message name="searchConnectingFlightsAfterResponse">
 <part name="parameters" element="tns:searchConnectingFlightsAfterResponse"/>
 </message>
+<message name="getCabinClassConfig">
+<part name="parameters" element="tns:getCabinClassConfig"/>
+</message>
+<message name="getCabinClassConfigResponse">
+<part name="parameters" element="tns:getCabinClassConfigResponse"/>
+</message>
+<message name="retrieveFlightScheduleByIdUnmanaged">
+<part name="parameters" element="tns:retrieveFlightScheduleByIdUnmanaged"/>
+</message>
+<message name="retrieveFlightScheduleByIdUnmanagedResponse">
+<part name="parameters" element="tns:retrieveFlightScheduleByIdUnmanagedResponse"/>
+</message>
+<message name="FlightScheduleNotFoundException">
+<part name="fault" element="tns:FlightScheduleNotFoundException"/>
+</message>
 <message name="retrieveFlightReservationsByPartner">
 <part name="parameters" element="tns:retrieveFlightReservationsByPartner"/>
 </message>
@@ -98,6 +113,15 @@
 <operation name="searchConnectingFlightsAfter">
 <input wsam:Action="http://ws.session.ejb/HolidayReservationService/searchConnectingFlightsAfterRequest" message="tns:searchConnectingFlightsAfter"/>
 <output wsam:Action="http://ws.session.ejb/HolidayReservationService/searchConnectingFlightsAfterResponse" message="tns:searchConnectingFlightsAfterResponse"/>
+</operation>
+<operation name="getCabinClassConfig">
+<input wsam:Action="http://ws.session.ejb/HolidayReservationService/getCabinClassConfigRequest" message="tns:getCabinClassConfig"/>
+<output wsam:Action="http://ws.session.ejb/HolidayReservationService/getCabinClassConfigResponse" message="tns:getCabinClassConfigResponse"/>
+</operation>
+<operation name="retrieveFlightScheduleByIdUnmanaged">
+<input wsam:Action="http://ws.session.ejb/HolidayReservationService/retrieveFlightScheduleByIdUnmanagedRequest" message="tns:retrieveFlightScheduleByIdUnmanaged"/>
+<output wsam:Action="http://ws.session.ejb/HolidayReservationService/retrieveFlightScheduleByIdUnmanagedResponse" message="tns:retrieveFlightScheduleByIdUnmanagedResponse"/>
+<fault message="tns:FlightScheduleNotFoundException" name="FlightScheduleNotFoundException" wsam:Action="http://ws.session.ejb/HolidayReservationService/retrieveFlightScheduleByIdUnmanaged/Fault/FlightScheduleNotFoundException"/>
 </operation>
 <operation name="retrieveFlightReservationsByPartner">
 <input wsam:Action="http://ws.session.ejb/HolidayReservationService/retrieveFlightReservationsByPartnerRequest" message="tns:retrieveFlightReservationsByPartner"/>
@@ -180,6 +204,27 @@
 <output>
 <soap:body use="literal"/>
 </output>
+</operation>
+<operation name="getCabinClassConfig">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="retrieveFlightScheduleByIdUnmanaged">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="FlightScheduleNotFoundException">
+<soap:fault name="FlightScheduleNotFoundException" use="literal"/>
+</fault>
 </operation>
 <operation name="retrieveFlightReservationsByPartner">
 <soap:operation soapAction=""/>

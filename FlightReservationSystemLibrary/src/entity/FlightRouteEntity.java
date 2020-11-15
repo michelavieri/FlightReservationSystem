@@ -30,19 +30,19 @@ public class FlightRouteEntity implements Serializable {
     private Long routeId;
     private boolean disabled;
     
-    @OneToMany(mappedBy = "route")
+    @OneToMany(mappedBy = "route", cascade=CascadeType.DETACH)
     private List<FlightEntity> flights;
 
-    @OneToOne(mappedBy = "departureFlightRoute")
+    @OneToOne(mappedBy = "departureFlightRoute", cascade=CascadeType.DETACH)
     private FlightRouteEntity returnFlightRoute;
     
-    @OneToOne
+    @OneToOne(cascade=CascadeType.DETACH)
     private FlightRouteEntity departureFlightRoute;
     
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.DETACH)
     private AirportEntity originAirport;
     
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.DETACH)
     private AirportEntity destinationAirport;
 
     

@@ -1,5 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI (http://jax-ws.java.net). RI's version is Metro/2.4.3 (RELEASE-2.4.3-ad3323c; 2019-01-21T17:46:06+0000) JAXWS-RI/2.3.2 JAXWS-API/2.3.2 JAXB-RI/2.3.2 JAXB-API/2.3.2 git-revision#unknown. --><xs:schema xmlns:tns="http://ws.session.ejb/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://ws.session.ejb/">
 
+<xs:element name="FlightScheduleNotFoundException" type="tns:FlightScheduleNotFoundException"/>
+
+<xs:element name="getCabinClassConfig" type="tns:getCabinClassConfig"/>
+
+<xs:element name="getCabinClassConfigResponse" type="tns:getCabinClassConfigResponse"/>
+
 <xs:element name="partnerLogin" type="tns:partnerLogin"/>
 
 <xs:element name="partnerLoginResponse" type="tns:partnerLoginResponse"/>
@@ -7,6 +13,10 @@
 <xs:element name="retrieveFlightReservationsByPartner" type="tns:retrieveFlightReservationsByPartner"/>
 
 <xs:element name="retrieveFlightReservationsByPartnerResponse" type="tns:retrieveFlightReservationsByPartnerResponse"/>
+
+<xs:element name="retrieveFlightScheduleByIdUnmanaged" type="tns:retrieveFlightScheduleByIdUnmanaged"/>
+
+<xs:element name="retrieveFlightScheduleByIdUnmanagedResponse" type="tns:retrieveFlightScheduleByIdUnmanagedResponse"/>
 
 <xs:element name="retrieveHighestFareUnmanaged" type="tns:retrieveHighestFareUnmanaged"/>
 
@@ -282,19 +292,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="retrieveReservationByReservationIdPartner">
-<xs:sequence>
-<xs:element name="arg0" type="xs:long"/>
-<xs:element name="arg1" type="tns:partnerEntity" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="retrieveReservationByReservationIdPartnerResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:reservationEntity" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="searchDirectFlightsBefore">
 <xs:sequence>
 <xs:element name="arg0" type="xs:string" minOccurs="0"/>
@@ -309,6 +306,31 @@
 <xs:complexType name="searchDirectFlightsBeforeResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:nestedList" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getCabinClassConfig">
+<xs:sequence>
+<xs:element name="arg0" type="tns:aircraftConfigurationEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getCabinClassConfigResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:cabinClassConfigurationEntity" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveReservationByReservationIdPartner">
+<xs:sequence>
+<xs:element name="arg0" type="xs:long"/>
+<xs:element name="arg1" type="tns:partnerEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveReservationByReservationIdPartnerResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:reservationEntity" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -403,6 +425,24 @@
 <xs:complexType name="retrieveHighestFareUnmanagedResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:fareEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveFlightScheduleByIdUnmanaged">
+<xs:sequence>
+<xs:element name="arg0" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveFlightScheduleByIdUnmanagedResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:flightScheduleEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="FlightScheduleNotFoundException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 

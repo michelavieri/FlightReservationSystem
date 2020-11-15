@@ -3,6 +3,7 @@ package entity;
 
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,12 +22,12 @@ public class FareEntity implements Serializable {
     private String fareBasisCode;
     private String amount;
     
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.DETACH)
     private FlightSchedulePlanEntity flightSchedulePlan;
     
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.DETACH)
     private CabinClassConfigurationEntity cabinClass;
-    @OneToMany(mappedBy = "fare")
+    @OneToMany(mappedBy = "fare", cascade=CascadeType.DETACH)
     private List<BookingTicketEntity> bookingTicketEntitys;
 
     

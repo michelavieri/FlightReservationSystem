@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,7 +28,7 @@ public class CreditCardEntity implements Serializable {
     private String cardName;
     private String expiryDate;
     private String cvv;
-    @OneToOne
+    @OneToOne(cascade=CascadeType.DETACH)
     private ReservationEntity reservation;
 
     public CreditCardEntity() {

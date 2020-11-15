@@ -48,19 +48,19 @@ public class FlightSchedulePlanEntity implements Serializable {
     private boolean disabled;
     private int layoverDuration;
     
-    @OneToOne(mappedBy = "departureSchedulePlan", cascade = CascadeType.REMOVE)
+    @OneToOne(mappedBy = "departureSchedulePlan", cascade = {CascadeType.REMOVE, CascadeType.DETACH})
     private FlightSchedulePlanEntity returnSchedulePlan;
     
-    @OneToOne (cascade = CascadeType.REMOVE)
+    @OneToOne (cascade = {CascadeType.REMOVE, CascadeType.DETACH})
     private FlightSchedulePlanEntity departureSchedulePlan;
 
-    @OneToMany(mappedBy = "flightSchedulePlan")
+    @OneToMany(mappedBy = "flightSchedulePlan", cascade=CascadeType.DETACH)
     private List<FareEntity> fareEntitys;
 
-    @OneToMany(mappedBy = "plan")
+    @OneToMany(mappedBy = "plan", cascade=CascadeType.DETACH)
     private List<FlightScheduleEntity> flightSchedules;
 
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.DETACH)
     private FlightEntity flight;
 
     public FlightSchedulePlanEntity() {

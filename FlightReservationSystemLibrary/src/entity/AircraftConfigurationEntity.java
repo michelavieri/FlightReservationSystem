@@ -4,6 +4,7 @@ package entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,13 +26,13 @@ public class AircraftConfigurationEntity implements Serializable {
     private int maxCapacity;
     
     
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.DETACH)
     private AircraftTypeEntity type;
     
-    @OneToMany(mappedBy = "aircraftConfig")
+    @OneToMany(mappedBy = "aircraftConfig", cascade=CascadeType.DETACH)
     private List<CabinClassConfigurationEntity> cabinClassConfigurationEntitys;
     
-    @OneToMany(mappedBy = "aircraftConfigurationEntity")
+    @OneToMany(mappedBy = "aircraftConfigurationEntity", cascade=CascadeType.DETACH)
     private List<FlightEntity> flightEntitys;
 
     

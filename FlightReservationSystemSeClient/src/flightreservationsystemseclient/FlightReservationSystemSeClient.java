@@ -81,7 +81,7 @@ public class FlightReservationSystemSeClient {
                 } else if (response == 4) {
 
                     viewFlightReservationDetails(partner, sc);
-                    
+
                 } else if (response == 5) {
                     break;
                 }
@@ -101,11 +101,11 @@ public class FlightReservationSystemSeClient {
 
     public static void viewMyFlightReservations(PartnerEntity partner) {
         List<ReservationEntity> reservations = retrieveFlightReservationsByPartner(partner.getUsername());
-        
-        if(reservations.isEmpty()) {
+
+        if (reservations.isEmpty()) {
             System.out.println("No reservations made!");
         }
-        
+
         for (ReservationEntity reservation : reservations) {
             System.out.println("RESERVATION ID: " + reservation.getReservationId());
             System.out.println("\t Number of Passengers: " + reservation.getNumOfPassengers());
@@ -121,9 +121,9 @@ public class FlightReservationSystemSeClient {
         reservation = retrieveReservationByReservationIdPartner(reservationId, partner);
 
         List<BookingTicketEntity> tickets = null;
-        
+
         tickets = retrieveTickets(reservationId);
-        
+
         List<FlightScheduleEntity> outboundSchedules = new ArrayList<>();
         List<FlightScheduleEntity> returnSchedules = new ArrayList<>();
 
@@ -328,7 +328,7 @@ public class FlightReservationSystemSeClient {
                         + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
                 System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
                 System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
-                classes = aircraftConfigurationEntitySessionBeanRemote.getCabinClassConfig(schedules.get(j).getPlan().getFlight().getAircraftConfigurationEntity());
+                classes = getCabinClassConfig(schedules.get(j).getPlan().getFlight().getAircraftConfigurationEntity());
                 System.out.println("\t  Available Classes: ");
                 for (CabinClassConfigurationEntity c : classes) {
                     System.out.println("\t\t " + searchCabinType(c.getType()));
@@ -413,7 +413,7 @@ public class FlightReservationSystemSeClient {
                         + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
                 System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
                 System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
-                classes = aircraftConfigurationEntitySessionBeanRemote.getCabinClassConfig(schedules.get(j).getPlan().getFlight().getAircraftConfigurationEntity());
+                classes = getCabinClassConfig(schedules.get(j).getPlan().getFlight().getAircraftConfigurationEntity());
                 System.out.println("\t  Available Classes: ");
                 for (CabinClassConfigurationEntity c : classes) {
                     System.out.println("\t\t " + searchCabinType(c.getType()));
@@ -499,7 +499,7 @@ public class FlightReservationSystemSeClient {
                         + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
                 System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
                 System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
-                classes = aircraftConfigurationEntitySessionBeanRemote.getCabinClassConfig(schedules.get(j).getPlan().getFlight().getAircraftConfigurationEntity());
+                classes = getCabinClassConfig(schedules.get(j).getPlan().getFlight().getAircraftConfigurationEntity());
                 System.out.println("\t  Available Classes: ");
                 for (CabinClassConfigurationEntity c : classes) {
                     System.out.println("\t\t " + searchCabinType(c.getType()));
@@ -588,7 +588,7 @@ public class FlightReservationSystemSeClient {
                             + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
                     System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
                     System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
-                    classes = aircraftConfigurationEntitySessionBeanRemote.getCabinClassConfig(schedules.get(j).getPlan().getFlight().getAircraftConfigurationEntity());
+                    classes = getCabinClassConfig(schedules.get(j).getPlan().getFlight().getAircraftConfigurationEntity());
                     System.out.println("\t  Available Classes: ");
                     for (CabinClassConfigurationEntity c : classes) {
                         System.out.println("\t\t " + searchCabinType(c.getType()));
@@ -673,7 +673,7 @@ public class FlightReservationSystemSeClient {
                             + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
                     System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
                     System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
-                    classes = aircraftConfigurationEntitySessionBeanRemote.getCabinClassConfig(schedules.get(j).getPlan().getFlight().getAircraftConfigurationEntity());
+                    classes = getCabinClassConfig(schedules.get(j).getPlan().getFlight().getAircraftConfigurationEntity());
                     System.out.println("\t  Available Classes: ");
                     for (CabinClassConfigurationEntity c : classes) {
                         System.out.println("\t\t " + searchCabinType(c.getType()));
@@ -759,7 +759,7 @@ public class FlightReservationSystemSeClient {
                             + schedules.get(j).getPlan().getFlight().getFlightCode() + ")");
                     System.out.println("\t  Departure Time: " + schedules.get(j).getDepartureDateTime());
                     System.out.println("\t  Arrival Time: " + schedules.get(j).getArrivalDateTime());
-                    classes = aircraftConfigurationEntitySessionBeanRemote.getCabinClassConfig(schedules.get(j).getPlan().getFlight().getAircraftConfigurationEntity());
+                    classes = getCabinClassConfig(schedules.get(j).getPlan().getFlight().getAircraftConfigurationEntity());
                     System.out.println("\t  Available Classes: ");
                     for (CabinClassConfigurationEntity c : classes) {
                         System.out.println("\t\t " + searchCabinType(c.getType()));
@@ -1066,13 +1066,10 @@ public class FlightReservationSystemSeClient {
                     sc.nextLine();
                     for (FlightScheduleEntity schedule : outboundSchedules) {
                         SeatEntity seat;
-                        try {
+
                             seat = seatEntitySessionBeanRemote.randomAvailableSeat(schedule.getScheduleId(), preferenceClassEnum, seatOutbound);
                             seatOutbound.add(seat);
-                        } catch (InvalidClassException ex) {
-                            System.out.println(ex.getMessage());
-                            return;
-                        }
+
                         fare = retrieveHighestFareUnmanaged(schedule, preferenceClassEnum);
                         ticket = new BookingTicketEntity(passenger, seat, fare, schedule, FlightTypeEnum.OUTBOUND_FLIGHT);
                         tickets.add(ticket);
@@ -1080,13 +1077,10 @@ public class FlightReservationSystemSeClient {
                     }
                     for (FlightScheduleEntity schedule : returnSchedules) {
                         SeatEntity seat;
-                        try {
+
                             seat = seatEntitySessionBeanRemote.randomAvailableSeat(schedule.getScheduleId(), preferenceClassEnum, seatReturn);
                             seatReturn.add(seat);
-                        } catch (InvalidClassException ex) {
-                            System.out.println(ex.getMessage());
-                            return;
-                        }
+
                         fare = retrieveHighestFareUnmanaged(schedule, preferenceClassEnum);
                         ticket = new BookingTicketEntity(passenger, seat, fare, schedule, FlightTypeEnum.RETURN_FLIGHT);
                         tickets.add(ticket);
@@ -1108,7 +1102,7 @@ public class FlightReservationSystemSeClient {
             }
         }
     }
-    
+
     private static java.util.List<ws.client.holidayReservation.ReservationEntity> retrieveFlightReservationsByPartner(java.lang.String arg0) {
         ws.client.holidayReservation.HolidayReservationService_Service service = new ws.client.holidayReservation.HolidayReservationService_Service();
         ws.client.holidayReservation.HolidayReservationService port = service.getHolidayReservationServicePort();
@@ -1161,5 +1155,35 @@ public class FlightReservationSystemSeClient {
         ws.client.holidayReservation.HolidayReservationService_Service service = new ws.client.holidayReservation.HolidayReservationService_Service();
         ws.client.holidayReservation.HolidayReservationService port = service.getHolidayReservationServicePort();
         return port.searchDirectFlightsBefore(arg0, arg1, arg2, arg3, arg4, arg5);
+    }
+
+    private static FareEntity retrieveHighestFareUnmanaged(ws.client.holidayReservation.FlightScheduleEntity arg0, ws.client.holidayReservation.CabinClassTypeEnum arg1) {
+        ws.client.holidayReservation.HolidayReservationService_Service service = new ws.client.holidayReservation.HolidayReservationService_Service();
+        ws.client.holidayReservation.HolidayReservationService port = service.getHolidayReservationServicePort();
+        return port.retrieveHighestFareUnmanaged(arg0, arg1);
+    }
+
+    private static java.util.List<ws.client.holidayReservation.CabinClassConfigurationEntity> getCabinClassConfig(ws.client.holidayReservation.AircraftConfigurationEntity arg0) {
+        ws.client.holidayReservation.HolidayReservationService_Service service = new ws.client.holidayReservation.HolidayReservationService_Service();
+        ws.client.holidayReservation.HolidayReservationService port = service.getHolidayReservationServicePort();
+        return port.getCabinClassConfig(arg0);
+    }
+
+    private void printAirplaneSeats(FlightScheduleEntity outboundFlightSchedule, CabinClassTypeEnum preferenceClassEnum) {
+        System.out.println("AVAILABILITY OF SEATS:");
+        List<SeatsInventoryEntity> seatInventories = new ArrayList<>();
+
+        seatInventories = seatsInventoryEntitySessionBeanRemote.retrieveSeatsInventoryByScheduleId(outboundFlightSchedule.getScheduleId());
+        for (SeatsInventoryEntity seatInventory : seatInventories) {
+            if (seatInventory.getCabinClass().getType().equals(preferenceClassEnum)) {
+                List<SeatEntity> seats = seatsInventoryEntitySessionBeanRemote.retrieveSeats(seatInventory);
+                for (SeatEntity seat : seats) {
+                    if (!seat.isBooked()) {
+                        System.out.print(seat.getSeatNumber() + seat.getSeatLetter() + ", ");
+                    }
+                }
+            }
+        }
+        System.out.println();
     }
 }

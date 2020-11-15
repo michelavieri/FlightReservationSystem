@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -31,7 +32,7 @@ public class SeatEntity implements Serializable {
     @ManyToOne
     private SeatsInventoryEntity seatsInventory;
 
-    @OneToOne(mappedBy = "seat")
+    @OneToOne(mappedBy = "seat", cascade=CascadeType.DETACH)
     private BookingTicketEntity bookingTicketEntity;
 
     public SeatEntity(int seatNumber, String seatLetter, boolean booked) {

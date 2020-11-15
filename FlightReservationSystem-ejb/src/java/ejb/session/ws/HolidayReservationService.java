@@ -18,7 +18,12 @@ import entity.PartnerEntity;
 import entity.ReservationEntity;
 import entity.SeatsInventoryEntity;
 import ejb.session.stateless.NestedList;
+import ejb.session.stateless.SeatEntitySessionBeanLocal;
+import entity.AircraftConfigurationEntity;
+import entity.CabinClassConfigurationEntity;
+import entity.SeatEntity;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,6 +33,8 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.ejb.Stateless;
 import util.enumeration.CabinClassTypeEnum;
+import util.exception.FlightScheduleNotFoundException;
+import util.exception.InvalidClassException;
 import util.exception.InvalidEmailException;
 import util.exception.InvalidReservationId;
 import util.exception.InvalidUsernameException;
@@ -43,6 +50,9 @@ import util.exception.WrongPasswordException;
 @WebService(serviceName = "HolidayReservationService")
 @Stateless
 public class HolidayReservationService {
+
+    @EJB
+    private SeatEntitySessionBeanLocal seatEntitySessionBeanLocal;
 
     @EJB
     private FareEntitySessionBeanLocal fareEntitySessionBeanLocal;
@@ -72,7 +82,7 @@ public class HolidayReservationService {
             List<ReservationEntity> reservations = partner.getReservationsEntitys();
 
             for (ReservationEntity reservation : reservations) {
-                reservation.setCustomer(null);
+                reservation.setPartner(null);
             }
 
         } catch (InvalidUsernameException ex) {
@@ -366,5 +376,78 @@ public class HolidayReservationService {
         }
 
         return results;
+    }
+    
+    @WebMethod(operationName = "getCabinClassConfig")
+    public List<CabinClassConfigurationEntity> getCabinClassConfigUnmanaged(AircraftConfigurationEntity aircraftConfig) {
+        List<CabinClassConfigurationEntity> classes = aircraftConfig.getCabinClassConfigurationEntitys();
+        
+        for(CabinClassConfigurationEntity cabinClass:classes) {
+            cabinClass.getAircraftConfig().setCabinClassConfigurationEntitys(null);
+            List<FareEntity> fares = cabinClass.getFareEntitys();
+            
+            for(FareEntity fare:fares) {
+                fare.setCabinClass(null);
+            }
+            
+            List<SeatsInventoryEntity> seats = cabinClass.getSeatsInventoryEntities();
+            
+            for(SeatsInventoryEntity seat:seats) {
+                seat.setCabinClass(null);
+            }
+        }
+        
+        return classes;
+    }
+    
+    @WebMethod(operationName = "retrieveFlightScheduleByIdUnmanaged")
+    public FlightScheduleEntity retrieveFlightScheduleByIdUnmanaged(Long id) throws FlightScheduleNotFoundException {
+        FlightScheduleEntity schedule = null;
+        
+        schedule = flightScheduleEntitySessionBeanLocal.retrieveFlightScheduleByIdUnmanaged(id);
+        
+        List<BookingTicketEntity> tickets = schedule.getBookingTicketEntitys();
+        for(BookingTicketEntity ticket:tickets) {
+            ticket.setFlightSchedule(null);
+        }
+        
+        schedule.getPlan().setFlightSchedules(null);
+        
+        List<SeatsInventoryEntity> seats = schedule.getSeatsInventoryEntitys();
+        for(SeatsInventoryEntity seat:seats) {
+//            seat.getCabinClass().setAircraftConfig(null);
+//            seat.setCabinClass(null);
+            seat.setFlightSchedule(null);
+        }
+        
+        if(schedule.getDepartureSchedule() != null) {
+            schedule.getDepartureSchedule().setReturnSchedule(null);
+        }
+        
+        if(schedule.getReturnSchedule() != null) {
+            schedule.getReturnSchedule().setDepartureSchedule(null);
+        }
+        
+        return schedule;
+    }
+    
+    @WebMethod(operationName = "retrieveSeat")
+    public SeatEntity retrieveSeat(int seatNumber, String seatLetter, long seatsInventoryId) {
+        SeatEntity seat = seatEntitySessionBeanLocal.retrieveSeatUnmanaged(seatNumber, seatLetter, seatsInventoryId);
+        
+        seat.getBookingTicketEntity().setSeat(null);
+        seat.getSeatsInventory().setSeats(null);
+        
+        return seat;
+    }
+    
+    @WebMethod(operationName = "randomAvailableSeat")
+    public SeatEntity randomAvailableSeat(long scheduleId, CabinClassTypeEnum classType, HashSet<SeatEntity> bookedSeats) throws InvalidClassException {
+        SeatEntity seat = seatEntitySessionBeanLocal.randomAvailableSeatUnmanaged(scheduleId, CabinClassTypeEnum.FIRST_CLASS, bookedSeats);
+        
+        seat.getBookingTicketEntity().setSeat(null);
+        seat.getSeatsInventory().setSeats(null);
+        
+        return seat;
     }
 }
