@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.BookingTicketEntity;
 import entity.CabinClassConfigurationEntity;
 import entity.FareEntity;
 import entity.FlightScheduleEntity;
@@ -37,107 +38,116 @@ public class FareEntitySessionBean implements FareEntitySessionBeanRemote, FareE
 
         return newFare;
     }
-    
+
     @Override
     public void associateFareWithCabinClass(CabinClassConfigurationEntity cabinClass, FareEntity fare) {
         cabinClass = entityManager.find(CabinClassConfigurationEntity.class, cabinClass.getId());
         fare = entityManager.find(FareEntity.class, fare.getFareId());
-        
+
         cabinClass.getFareEntitys().add(fare);
         fare.setCabinClass(cabinClass);
     }
-    
+
     @Override
     public void associateFareWithPlan(FlightSchedulePlanEntity plan, FareEntity fare) {
         plan = entityManager.find(FlightSchedulePlanEntity.class, plan.getSchedulePlanId());
         fare = entityManager.find(FareEntity.class, fare.getFareId());
-        
+
         plan.getFareEntitys().add(fare);
         fare.setFlightSchedulePlan(plan);
     }
-    
+
     @Override
     public String retrieveFareAmount(FareEntity fare) {
         fare = entityManager.find(FareEntity.class, fare.getFareId());
-        
+
         return fare.getAmount();
     }
-    
+
     @Override
     public FareEntity retrieveLowestFare(FlightScheduleEntity schedule, CabinClassTypeEnum type) {
         schedule = entityManager.find(FlightScheduleEntity.class, schedule.getScheduleId());
         schedule.getSeatsInventoryEntitys().size();
         List<SeatsInventoryEntity> seats = schedule.getSeatsInventoryEntitys();
         FareEntity lowestFare = null;
-        
-        for(SeatsInventoryEntity seat:seats) {
-            if(seat.getCabinClass().getType().equals(type)) {
+
+        for (SeatsInventoryEntity seat : seats) {
+            if (seat.getCabinClass().getType().equals(type)) {
                 seat.getCabinClass().getFareEntitys().size();
                 List<FareEntity> fares = seat.getCabinClass().getFareEntitys();
-                
-                for(int i = 0; i < fares.size() - 1; i++) {
-                    
-                    if(Long.parseLong(fares.get(i).getAmount()) <= Long.parseLong(fares.get(i + 1).getAmount())) {
+
+                for (int i = 0; i < fares.size() - 1; i++) {
+
+                    if (Long.parseLong(fares.get(i).getAmount()) <= Long.parseLong(fares.get(i + 1).getAmount())) {
                         lowestFare = fares.get(i);
                     } else {
-                        lowestFare = fares.get(i+1);
+                        lowestFare = fares.get(i + 1);
                     }
                 }
             }
         }
-        
+
         return lowestFare;
     }
-    
+
     @Override
-    public FareEntity retrieveHighestFare(FlightScheduleEntity schedule, CabinClassTypeEnum type) {
+    public FareEntity retrieveHighestFareUnmanaged(FlightScheduleEntity schedule, CabinClassTypeEnum type) {
         schedule = entityManager.find(FlightScheduleEntity.class, schedule.getScheduleId());
         schedule.getSeatsInventoryEntitys().size();
         List<SeatsInventoryEntity> seats = schedule.getSeatsInventoryEntitys();
         FareEntity highestFare = null;
-        
-        for(SeatsInventoryEntity seat:seats) {
-            if(seat.getCabinClass().getType().equals(type)) {
+
+        for (SeatsInventoryEntity seat : seats) {
+            if (seat.getCabinClass().getType().equals(type)) {
                 seat.getCabinClass().getFareEntitys().size();
                 List<FareEntity> fares = seat.getCabinClass().getFareEntitys();
-                
-                for(int i = 0; i < fares.size() - 1; i++) {
-                    
-                    if(Long.parseLong(fares.get(i).getAmount()) >= Long.parseLong(fares.get(i + 1).getAmount())) {
+
+                for (int i = 0; i < fares.size() - 1; i++) {
+
+                    if (Long.parseLong(fares.get(i).getAmount()) >= Long.parseLong(fares.get(i + 1).getAmount())) {
                         highestFare = fares.get(i);
                     } else {
-                        highestFare = fares.get(i+1);
+                        highestFare = fares.get(i + 1);
                     }
                 }
             }
         }
-        
+
+        entityManager.detach(highestFare);
+        entityManager.detach(highestFare.getCabinClass());
+        entityManager.detach(highestFare.getFlightSchedulePlan());
+
+        List<BookingTicketEntity> tickets = highestFare.getBookingTicketEntitys();
+        for (BookingTicketEntity ticket : tickets) {
+            entityManager.detach(ticket);
+        }
+
         return highestFare;
     }
-    
+
     @Override
     public List<FareEntity> retrieveFareBySchedulePlan(FlightSchedulePlanEntity schedule) {
         schedule = entityManager.find(FlightSchedulePlanEntity.class, schedule.getSchedulePlanId());
-        
+
         schedule.getFareEntitys().size();
-        
-        return  schedule.getFareEntitys();
+
+        return schedule.getFareEntitys();
     }
-    
+
     @Override
     public void setReturnFare(FlightSchedulePlanEntity outboundPlan, FlightSchedulePlanEntity returnPlan) {
         outboundPlan = entityManager.find(FlightSchedulePlanEntity.class, outboundPlan.getSchedulePlanId());
         returnPlan = entityManager.find(FlightSchedulePlanEntity.class, returnPlan.getSchedulePlanId());
-        
+
         List<FareEntity> fares = outboundPlan.getFareEntitys();
-        
+
         returnPlan.setFareEntitys(fares);
     }
-    
+
     @Override
     public void setNewValueFare(String newValue, FareEntity fare) {
         fare = entityManager.find(FareEntity.class, fare.getFareId());
-        
+
         fare.setAmount(newValue);
     }
 }
