@@ -90,6 +90,32 @@ public class FareEntitySessionBean implements FareEntitySessionBeanRemote, FareE
     }
     
     @Override
+    public FareEntity retrieveHighestFare(FlightScheduleEntity schedule, CabinClassTypeEnum type) {
+        schedule = entityManager.find(FlightScheduleEntity.class, schedule.getScheduleId());
+        schedule.getSeatsInventoryEntitys().size();
+        List<SeatsInventoryEntity> seats = schedule.getSeatsInventoryEntitys();
+        FareEntity highestFare = null;
+        
+        for(SeatsInventoryEntity seat:seats) {
+            if(seat.getCabinClass().getType().equals(type)) {
+                seat.getCabinClass().getFareEntitys().size();
+                List<FareEntity> fares = seat.getCabinClass().getFareEntitys();
+                
+                for(int i = 0; i < fares.size() - 1; i++) {
+                    
+                    if(Long.parseLong(fares.get(i).getAmount()) >= Long.parseLong(fares.get(i + 1).getAmount())) {
+                        highestFare = fares.get(i);
+                    } else {
+                        highestFare = fares.get(i+1);
+                    }
+                }
+            }
+        }
+        
+        return highestFare;
+    }
+    
+    @Override
     public List<FareEntity> retrieveFareBySchedulePlan(FlightSchedulePlanEntity schedule) {
         schedule = entityManager.find(FlightSchedulePlanEntity.class, schedule.getSchedulePlanId());
         

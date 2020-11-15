@@ -36,4 +36,6 @@ public interface FareEntitySessionBeanRemote {
     
     public void setNewValueFare(String newValue, FareEntity fare);
     
+    public FareEntity retrieveHighestFare(FlightScheduleEntity schedule, CabinClassTypeEnum type);
+    
 }
