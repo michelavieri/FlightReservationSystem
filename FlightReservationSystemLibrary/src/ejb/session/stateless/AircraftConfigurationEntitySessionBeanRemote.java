@@ -26,6 +26,8 @@ public interface AircraftConfigurationEntitySessionBeanRemote {
     AircraftConfigurationEntity retrieveAircraftTypeByCode(String code) throws AircraftConfigurationNotFoundException;
 
     List<FlightEntity> getFlightEntities(AircraftConfigurationEntity aircraftConfig);
-    
+
     List<CabinClassConfigurationEntity> getCabinClassConfig(AircraftConfigurationEntity aircraftConfig);
+
+    public List<CabinClassConfigurationEntity> getCabinClassConfigUnmanaged(AircraftConfigurationEntity aircraftConfig);
 }

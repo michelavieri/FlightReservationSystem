@@ -28,4 +28,6 @@ public interface aircraftConfigurationEntitySessionBeanLocal {
     List<FlightEntity> getFlightEntities(AircraftConfigurationEntity aircraftConfig);
 
     List<CabinClassConfigurationEntity> getCabinClassConfig(AircraftConfigurationEntity aircraftConfig);
+
+    public List<CabinClassConfigurationEntity> getCabinClassConfigUnmanaged(AircraftConfigurationEntity aircraftConfig);
 }

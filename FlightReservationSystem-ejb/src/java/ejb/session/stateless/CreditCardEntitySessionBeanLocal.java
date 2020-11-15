@@ -16,4 +16,6 @@ import javax.ejb.Local;
 public interface CreditCardEntitySessionBeanLocal {
     public CreditCardEntity createCreditCard(CreditCardEntity card);
     
+    public CreditCardEntity createCreditCardUnmanaged(CreditCardEntity card);
+    
 }

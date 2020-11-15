@@ -24,4 +24,7 @@ public interface SeatEntitySessionBeanLocal {
 
     public SeatEntity randomAvailableSeat(long scheduleId, CabinClassTypeEnum classType, HashSet<SeatEntity> bookedSeats) throws InvalidClassException;
 
+    public SeatEntity retrieveSeatUnmanaged(int seatNumber, String seatLetter, long seatsInventoryId);
+
+    public SeatEntity randomAvailableSeatUnmanaged(long scheduleId, CabinClassTypeEnum classType, HashSet<SeatEntity> bookedSeats) throws InvalidClassException;
 }

@@ -26,4 +26,15 @@ public class CreditCardEntitySessionBean implements CreditCardEntitySessionBeanR
         em.flush();
         return card;
     }
+    
+    @Override
+    public CreditCardEntity createCreditCardUnmanaged(CreditCardEntity card) {
+        em.persist(card);
+        em.flush();
+        em.detach(card);
+        if (card.getReservation() != null) {
+            em.detach(card.getReservation());
+        }
+        return card;
+    }
 }
