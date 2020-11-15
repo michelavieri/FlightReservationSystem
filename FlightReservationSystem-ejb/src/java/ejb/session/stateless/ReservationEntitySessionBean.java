@@ -11,6 +11,7 @@ import entity.CreditCardEntity;
 import entity.CustomerEntity;
 import entity.FlightRouteEntity;
 import entity.FlightScheduleEntity;
+import entity.PartnerEntity;
 import entity.ReservationEntity;
 import entity.SeatEntity;
 import entity.SeatsInventoryEntity;
@@ -69,7 +70,7 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
             seatsInventory.setReservedSeatsSize(reservedSeats);
             ticket.setReservationEntity(newReservation);
         }
-        
+
         newReservation.setCreditCardEntity(card);
         card.setReservation(newReservation);
         customer = entityManager.find(CustomerEntity.class, customer.getCustomerId());
@@ -83,6 +84,64 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
     }
 
     @Override
+    public ReservationEntity createNewReservationPartner(PartnerEntity partner, CreditCardEntity card, ReservationEntity newReservation) {
+        partner = entityManager.find(PartnerEntity.class, partner.getPartnerId());
+        entityManager.persist(newReservation);
+        partner.getReservationsEntitys().size();
+        partner.getReservationsEntitys().add(newReservation);
+        newReservation.setPartner(partner);
+        entityManager.persist(card);
+
+        newReservation.getTickets().size();
+        List<BookingTicketEntity> tickets = newReservation.getTickets();
+        for (BookingTicketEntity ticket : tickets) {
+            entityManager.persist(ticket);
+            entityManager.persist(ticket.getPassenger());
+            SeatEntity seat = ticket.getSeat();
+            seat = entityManager.find(SeatEntity.class, seat.getSeatId());
+            seat.setBooked(true);
+            SeatsInventoryEntity seatsInventory = entityManager.find(SeatsInventoryEntity.class, seat.getSeatsInventory().getInventoryId());
+            int reservedSeats = seatsInventory.getReservedSeatsSize();
+            int balanceSeats = seatsInventory.getBalanceSeatsSize();
+            balanceSeats--;
+            reservedSeats++;
+            seatsInventory.setBalanceSeatsSize(balanceSeats);
+            seatsInventory.setReservedSeatsSize(reservedSeats);
+            ticket.setReservationEntity(newReservation);
+        }
+
+        newReservation.setCreditCardEntity(card);
+        card.setReservation(newReservation);
+        partner = entityManager.find(PartnerEntity.class, partner.getPartnerId());
+        partner.getReservationsEntitys().size();
+        List<ReservationEntity> reservations = partner.getReservationsEntitys();
+        reservations.add(newReservation);
+
+        entityManager.flush();
+
+        return newReservation;
+    }
+
+    @Override
+    public ReservationEntity createNewReservationPartnerUnmanaged(PartnerEntity partner, CreditCardEntity card, ReservationEntity newReservation) {
+        ReservationEntity reservation = createNewReservationPartner(partner, card, newReservation);
+        entityManager.detach(reservation);
+        reservation.getTickets().size();
+        List<BookingTicketEntity> tickets = reservation.getTickets();
+        for (BookingTicketEntity ticket : tickets) {
+            entityManager.detach(ticket);
+        }
+
+        partner = reservation.getPartner();
+        entityManager.detach(partner);
+
+        card = reservation.getCreditCardEntity();
+        entityManager.detach(card);
+
+        return reservation;
+    }
+
+    @Override
     public List<ReservationEntity> retrieveFlightReservationsByCustomer(CustomerEntity cust) {
         cust = entityManager.find(CustomerEntity.class, cust.getCustomerId());
         cust.getReservationsEntitys().size();
@@ -92,6 +151,40 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
         cust.getReservationsEntitys().size();
         List<ReservationEntity> reservations = cust.getReservationsEntitys();
 
+        return reservations;
+    }
+
+    @Override
+    public List<ReservationEntity> retrieveFlightReservationsByPartner(PartnerEntity partner) {
+        partner = entityManager.find(PartnerEntity.class, partner.getPartnerId());
+        partner.getReservationsEntitys().size();
+        if (partner.getReservationsEntitys().isEmpty()) {
+            return new ArrayList<>();
+        }
+        partner.getReservationsEntitys().size();
+        List<ReservationEntity> reservations = partner.getReservationsEntitys();
+
+        return reservations;
+    }
+
+    @Override
+    public List<ReservationEntity> retrieveFlightReservationsByPartnerUnmanaged(PartnerEntity partner) {
+        List<ReservationEntity> reservations = retrieveFlightReservationsByPartner(partner);
+
+        for (ReservationEntity reservation : reservations) {
+            entityManager.detach(reservation);
+            reservation.getTickets().size();
+            List<BookingTicketEntity> tickets = reservation.getTickets();
+            for (BookingTicketEntity ticket : tickets) {
+                entityManager.detach(ticket);
+            }
+
+            partner = reservation.getPartner();
+            entityManager.detach(partner);
+
+            CreditCardEntity card = reservation.getCreditCardEntity();
+            entityManager.detach(card);
+        }
         return reservations;
     }
 
@@ -113,15 +206,69 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
     }
     
     @Override
+    public ReservationEntity retrieveReservationByReservationIdPartner(long reservationId, PartnerEntity partner) throws InvalidReservationId, NotMyReservationException {
+        Query query = entityManager.createQuery("SELECT r FROM ReservationEntity r WHERE r.reservationId = :id");
+        query.setParameter("id", reservationId);
+        ReservationEntity reservation = null;
+        try {
+            reservation = (ReservationEntity) query.getSingleResult();
+        } catch (NoResultException ex) {
+            throw new InvalidReservationId("The reservation Id is invalid!");
+        }
+
+        if (!reservation.getCustomer().equals(partner)) {
+            throw new NotMyReservationException("This reservation is not your reservation!");
+        }
+        return reservation;
+    }
+
+    @Override
+    public ReservationEntity retrieveReservationByReservationIdPartnerUnmanaged(long reservationId, PartnerEntity partner) 
+            throws InvalidReservationId, NotMyReservationException {
+        ReservationEntity reservation = retrieveReservationByReservationIdPartner(reservationId, partner);
+
+        entityManager.detach(reservation);
+        reservation.getTickets().size();
+        List<BookingTicketEntity> tickets = reservation.getTickets();
+        for (BookingTicketEntity ticket : tickets) {
+            entityManager.detach(ticket);
+        }
+
+        partner = reservation.getPartner();
+        entityManager.detach(partner);
+
+        CreditCardEntity card = reservation.getCreditCardEntity();
+        entityManager.detach(card);
+        
+        return reservation;
+    }
+
+    @Override
     public List<BookingTicketEntity> retrieveTickets(long reservationId) throws NoTicketException {
         Query query = entityManager.createQuery("SELECT t FROM BookingTicketEntity t WHERE t.reservationEntity.reservationId = :inId");
         query.setParameter("inId", reservationId);
-        
+
         try {
             return query.getResultList();
         } catch (NoResultException ex) {
             throw new NoTicketException("No tickets for this reservation!");
         }
+    }
+
+    @Override
+    public List<BookingTicketEntity> retrieveTicketsUnmanaged(long reservationId) throws NoTicketException {
+        List<BookingTicketEntity> tickets = retrieveTickets(reservationId);
+
+        for (BookingTicketEntity ticket : tickets) {
+            entityManager.detach(ticket);
+            entityManager.detach(ticket.getFlightSchedule());
+            entityManager.detach(ticket.getPassenger());
+            entityManager.detach(ticket.getFare());
+            entityManager.detach(ticket.getSeat());
+            entityManager.detach(ticket.getReservationEntity());
+        }
+
+        return tickets;
     }
 
     @Override
@@ -147,6 +294,43 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
         for (List<FlightScheduleEntity> schedules : copyTemp) {
             if (!schedules.get(0).getDepartureDateTime().substring(0, 10).equals(departureDateTime)) {
                 finalSchedule.remove(schedules);
+            }
+        }
+        return finalSchedule;
+    }
+
+    @Override
+    public List<List<FlightScheduleEntity>> searchConnectingFlightsUnmanaged(String departureAirport,
+            String destinationAirport, String departureDateTime, int numOfPassenger, int stopovers, CabinClassTypeEnum classType) {
+        List<List<FlightScheduleEntity>> finalSchedule
+                = searchConnectingFlights(departureAirport, destinationAirport, departureDateTime, numOfPassenger, stopovers, classType);
+
+        for (List<FlightScheduleEntity> list : finalSchedule) {
+
+            for (FlightScheduleEntity schedule : list) {
+
+                entityManager.detach(schedule);
+
+                entityManager.detach(schedule.getPlan());
+
+                if (schedule.getDepartureSchedule() != null) {
+                    entityManager.detach(schedule.getDepartureSchedule());
+                }
+
+                if (schedule.getReturnSchedule() != null) {
+                    entityManager.detach(schedule.getReturnSchedule());
+                }
+
+                schedule.getBookingTicketEntitys().size();
+                schedule.getSeatsInventoryEntitys().size();
+
+                for (BookingTicketEntity ticket : schedule.getBookingTicketEntitys()) {
+                    entityManager.detach(ticket);
+                }
+
+                for (SeatsInventoryEntity seat : schedule.getSeatsInventoryEntitys()) {
+                    entityManager.detach(seat);
+                }
             }
         }
         return finalSchedule;
@@ -190,9 +374,44 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
     }
 
     @Override
+    public List<List<FlightScheduleEntity>> searchConnectingFlightsBeforeUnmanaged(String departureAirport,
+            String destinationAirport, String departureDateTime, int numOfPassenger, int stopovers, CabinClassTypeEnum classType) {
+        List<List<FlightScheduleEntity>> finalSchedule
+                = searchConnectingFlightsBefore(departureAirport, destinationAirport, departureDateTime, numOfPassenger, stopovers, classType);
+        for (List<FlightScheduleEntity> list : finalSchedule) {
+
+            for (FlightScheduleEntity schedule : list) {
+
+                entityManager.detach(schedule);
+
+                entityManager.detach(schedule.getPlan());
+
+                if (schedule.getDepartureSchedule() != null) {
+                    entityManager.detach(schedule.getDepartureSchedule());
+                }
+
+                if (schedule.getReturnSchedule() != null) {
+                    entityManager.detach(schedule.getReturnSchedule());
+                }
+
+                schedule.getBookingTicketEntitys().size();
+                schedule.getSeatsInventoryEntitys().size();
+
+                for (BookingTicketEntity ticket : schedule.getBookingTicketEntitys()) {
+                    entityManager.detach(ticket);
+                }
+
+                for (SeatsInventoryEntity seat : schedule.getSeatsInventoryEntitys()) {
+                    entityManager.detach(seat);
+                }
+            }
+        }
+        return finalSchedule;
+    }
+
+    @Override
     public List<List<FlightScheduleEntity>> searchConnectingFlightsAfter(String departureAirport,
             String destinationAirport, String departureDateTime, int numOfPassenger, int stopovers, CabinClassTypeEnum classType) {
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         List<FlightScheduleEntity> availableSchedule = new ArrayList<>();
         List<List<FlightScheduleEntity>> finalSchedule = new ArrayList<>();
 
@@ -224,6 +443,42 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
             }
         }
 
+        return finalSchedule;
+    }
+
+    @Override
+    public List<List<FlightScheduleEntity>> searchConnectingFlightsAfterUnmanaged(String departureAirport,
+            String destinationAirport, String departureDateTime, int numOfPassenger, int stopovers, CabinClassTypeEnum classType) {
+        List<List<FlightScheduleEntity>> finalSchedule
+                = searchConnectingFlightsAfter(departureAirport, destinationAirport, departureDateTime, numOfPassenger, stopovers, classType);
+        for (List<FlightScheduleEntity> list : finalSchedule) {
+
+            for (FlightScheduleEntity schedule : list) {
+
+                entityManager.detach(schedule);
+
+                entityManager.detach(schedule.getPlan());
+
+                if (schedule.getDepartureSchedule() != null) {
+                    entityManager.detach(schedule.getDepartureSchedule());
+                }
+
+                if (schedule.getReturnSchedule() != null) {
+                    entityManager.detach(schedule.getReturnSchedule());
+                }
+
+                schedule.getBookingTicketEntitys().size();
+                schedule.getSeatsInventoryEntitys().size();
+
+                for (BookingTicketEntity ticket : schedule.getBookingTicketEntitys()) {
+                    entityManager.detach(ticket);
+                }
+
+                for (SeatsInventoryEntity seat : schedule.getSeatsInventoryEntitys()) {
+                    entityManager.detach(seat);
+                }
+            }
+        }
         return finalSchedule;
     }
 
@@ -278,7 +533,6 @@ public class ReservationEntitySessionBean implements ReservationEntitySessionBea
                                     List<FlightScheduleEntity> scheduleTemp = new ArrayList<>(availableSchedule);
                                     scheduleTemp.add(allSchedules.get(i));
                                     finalSchedule.add(scheduleTemp);
-//                                    System.out.println("ttttt");
                                     continue;
                                 }
                             }

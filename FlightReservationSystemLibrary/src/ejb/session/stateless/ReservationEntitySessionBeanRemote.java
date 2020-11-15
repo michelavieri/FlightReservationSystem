@@ -10,6 +10,7 @@ import entity.BookingTicketEntity;
 import entity.CreditCardEntity;
 import entity.CustomerEntity;
 import entity.FlightScheduleEntity;
+import entity.PartnerEntity;
 import entity.ReservationEntity;
 import java.util.List;
 import javax.ejb.Remote;
@@ -45,4 +46,27 @@ public interface ReservationEntitySessionBeanRemote {
 
     public FlightScheduleEntity retrieveFlightScheduleById(Long id);
 
+    public List<List<FlightScheduleEntity>> searchConnectingFlightsAfterUnmanaged(String departureAirport,
+            String destinationAirport, String departureDateTime, int numOfPassenger, int stopovers, CabinClassTypeEnum classType);
+
+    public List<List<FlightScheduleEntity>> searchConnectingFlightsBeforeUnmanaged(String departureAirport,
+            String destinationAirport, String departureDateTime, int numOfPassenger, int stopovers, CabinClassTypeEnum classType);
+
+    public List<List<FlightScheduleEntity>> searchConnectingFlightsUnmanaged(String departureAirport,
+            String destinationAirport, String departureDateTime, int numOfPassenger, int stopovers, CabinClassTypeEnum classType);
+
+    public ReservationEntity createNewReservationPartnerUnmanaged(PartnerEntity partner, CreditCardEntity card, ReservationEntity newReservation);
+
+    public ReservationEntity createNewReservationPartner(PartnerEntity partner, CreditCardEntity card, ReservationEntity newReservation);
+    
+    public List<BookingTicketEntity> retrieveTicketsUnmanaged(long reservationId) throws NoTicketException;
+    
+    public List<ReservationEntity> retrieveFlightReservationsByPartnerUnmanaged(PartnerEntity partner);
+    
+    public List<ReservationEntity> retrieveFlightReservationsByPartner(PartnerEntity partner);
+    
+    public ReservationEntity retrieveReservationByReservationIdPartner(long reservationId, PartnerEntity partner) 
+            throws InvalidReservationId, NotMyReservationException;
+    
+    public ReservationEntity retrieveReservationByReservationIdPartnerUnmanaged(long reservationId, PartnerEntity partner) throws InvalidReservationId, NotMyReservationException;
 }
