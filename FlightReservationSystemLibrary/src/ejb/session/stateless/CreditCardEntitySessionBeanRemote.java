@@ -16,4 +16,6 @@ import javax.ejb.Remote;
 public interface CreditCardEntitySessionBeanRemote {
     public CreditCardEntity createCreditCard(CreditCardEntity card);
     
+    public CreditCardEntity createCreditCardUnmanaged(CreditCardEntity card);
+    
 }

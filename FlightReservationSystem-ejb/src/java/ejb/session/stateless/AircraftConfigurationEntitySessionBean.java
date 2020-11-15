@@ -8,7 +8,9 @@ package ejb.session.stateless;
 import entity.AircraftConfigurationEntity;
 import entity.AircraftTypeEntity;
 import entity.CabinClassConfigurationEntity;
+import entity.FareEntity;
 import entity.FlightEntity;
+import entity.SeatsInventoryEntity;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -96,6 +98,27 @@ public class AircraftConfigurationEntitySessionBean implements AircraftConfigura
         aircraftConfig.getCabinClassConfigurationEntitys().size();
         List<CabinClassConfigurationEntity> classes = aircraftConfig.getCabinClassConfigurationEntitys();
         return classes;
+    }
+
+    @Override
+    public List<CabinClassConfigurationEntity> getCabinClassConfigUnmanaged(AircraftConfigurationEntity aircraftConfig) {
+        List<CabinClassConfigurationEntity> cabinClasses = getCabinClassConfig(aircraftConfig);
+        for (CabinClassConfigurationEntity c : cabinClasses) {
+            entityManager.detach(c);
+            entityManager.detach(c.getAircraftConfig());
+            c.getSeatsInventoryEntities().size();
+            c.getFareEntitys().size();
+            List<SeatsInventoryEntity> seatsInventory = c.getSeatsInventoryEntities();
+            List<FareEntity> fareEntity = c.getFareEntitys();
+
+            for (SeatsInventoryEntity s : seatsInventory) {
+                entityManager.detach(s);
+            }
+            for (FareEntity f : fareEntity) {
+                entityManager.detach(f);
+            }
+        }
+        return cabinClasses;
     }
 
 }

@@ -63,7 +63,7 @@ public class SeatsInventoryEntitySessionBean implements SeatsInventoryEntitySess
         return schedule.getSeatsInventoryEntitys();
 
     }
-    
+
     @Override
     public SeatsInventoryEntity retrieveSeatsInventoryByScheduleIdClass(Long scheduleId, CabinClassTypeEnum cabinClass) throws NoCabinClassException, FlightScheduleNotFoundException {
 
@@ -79,9 +79,9 @@ public class SeatsInventoryEntitySessionBean implements SeatsInventoryEntitySess
         }
         schedule.getSeatsInventoryEntitys().size();
         List<SeatsInventoryEntity> seats = schedule.getSeatsInventoryEntitys();
-        
+
         SeatsInventoryEntity seatsInventory = null;
-        for (SeatsInventoryEntity seat: seats) {
+        for (SeatsInventoryEntity seat : seats) {
             if (seat.getCabinClass().getType().equals(cabinClass)) {
                 seatsInventory = seat;
             }
@@ -91,6 +91,21 @@ public class SeatsInventoryEntitySessionBean implements SeatsInventoryEntitySess
         }
         return seatsInventory;
 
+    }
+
+    @Override
+    public SeatsInventoryEntity retrieveSeatsInventoryByScheduleIdClassUnmanaged(Long scheduleId, CabinClassTypeEnum cabinClass) throws NoCabinClassException, FlightScheduleNotFoundException {
+        SeatsInventoryEntity seatsInventoryEntity = retrieveSeatsInventoryByScheduleIdClass(scheduleId, cabinClass);
+        entityManager.detach(seatsInventoryEntity);
+        entityManager.detach(seatsInventoryEntity.getCabinClass());
+        entityManager.detach(seatsInventoryEntity.getFlightSchedule());
+        seatsInventoryEntity.getSeats().size();
+        List<SeatEntity> seats = seatsInventoryEntity.getSeats();
+        for (SeatEntity s : seats) {
+            entityManager.detach(s);
+        }
+
+        return seatsInventoryEntity;
     }
 
     @Override
@@ -108,7 +123,7 @@ public class SeatsInventoryEntitySessionBean implements SeatsInventoryEntitySess
 
         for (int i = startNumber + 1; i <= startNumber + numRow; i++) {
             char initial = 'A';
-           for (int j = 0; j < numAbreast; j++) {
+            for (int j = 0; j < numAbreast; j++) {
 
                 SeatEntity seat = new SeatEntity(i, Character.toString(initial), false);
                 seat = seatEntitySessionBean.createNewSeat(seat);
@@ -122,9 +137,9 @@ public class SeatsInventoryEntitySessionBean implements SeatsInventoryEntitySess
 
         return endNumSeat;
     }
-    
+
     @Override
-    public List<SeatEntity> retrieveSeats (SeatsInventoryEntity seatsInventory) {
+    public List<SeatEntity> retrieveSeats(SeatsInventoryEntity seatsInventory) {
         seatsInventory = entityManager.find(SeatsInventoryEntity.class, seatsInventory.getInventoryId());
         seatsInventory.getSeats().size();
         return seatsInventory.getSeats();

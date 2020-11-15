@@ -290,6 +290,35 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
     }
 
     @Override
+    public FlightScheduleEntity retrieveFlightScheduleByIdUnmanaged(Long id) throws FlightScheduleNotFoundException {
+        FlightScheduleEntity schedule = retrieveFlightScheduleById(id);
+        entityManager.detach(schedule);
+
+        entityManager.detach(schedule.getPlan());
+
+        if (schedule.getDepartureSchedule() != null) {
+            entityManager.detach(schedule.getDepartureSchedule());
+        }
+
+        if (schedule.getReturnSchedule() != null) {
+            entityManager.detach(schedule.getReturnSchedule());
+        }
+
+        schedule.getBookingTicketEntitys().size();
+        schedule.getSeatsInventoryEntitys().size();
+
+        for (BookingTicketEntity ticket : schedule.getBookingTicketEntitys()) {
+            entityManager.detach(ticket);
+        }
+
+        for (SeatsInventoryEntity seat : schedule.getSeatsInventoryEntitys()) {
+            entityManager.detach(seat);
+        }
+
+        return schedule;
+    }
+
+    @Override
     public FlightScheduleEntity retrieveReturnSchedule(FlightScheduleEntity schedule
     ) {
         schedule = entityManager.find(FlightScheduleEntity.class, schedule.getScheduleId());

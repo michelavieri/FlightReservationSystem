@@ -29,4 +29,6 @@ public interface SeatsInventoryEntitySessionBeanRemote {
     public List<SeatEntity> retrieveSeats(SeatsInventoryEntity seatsInventory);
 
     public SeatsInventoryEntity retrieveSeatsInventoryByScheduleIdClass(Long scheduleId, CabinClassTypeEnum cabinClass) throws NoCabinClassException, FlightScheduleNotFoundException;
+
+    public SeatsInventoryEntity retrieveSeatsInventoryByScheduleIdClassUnmanaged(Long scheduleId, CabinClassTypeEnum cabinClass) throws NoCabinClassException, FlightScheduleNotFoundException;
 }

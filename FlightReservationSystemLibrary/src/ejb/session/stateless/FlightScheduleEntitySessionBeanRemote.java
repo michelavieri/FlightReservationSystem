@@ -70,4 +70,6 @@ public interface FlightScheduleEntitySessionBeanRemote {
     public List<NestedList> searchDirectFlightsBeforeUnmanaged(String departureAirport, String destinationAirport, String departureDateTime, int numOfPassenger, CabinClassTypeEnum classType);
 
     public List<NestedList> searchDirectFlightsUnmanaged(String departureAirport, String destinationAirport, String departureDate, int numOfPassenger, CabinClassTypeEnum classType);
+
+    public FlightScheduleEntity retrieveFlightScheduleByIdUnmanaged(Long id) throws FlightScheduleNotFoundException;
 }

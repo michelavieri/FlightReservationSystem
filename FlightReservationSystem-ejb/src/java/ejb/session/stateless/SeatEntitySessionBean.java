@@ -49,6 +49,15 @@ public class SeatEntitySessionBean implements SeatEntitySessionBeanRemote, SeatE
     }
 
     @Override
+    public SeatEntity retrieveSeatUnmanaged(int seatNumber, String seatLetter, long seatsInventoryId) {
+        SeatEntity seat = retrieveSeat(seatNumber, seatLetter, seatsInventoryId);
+        entityManager.detach(seat);
+        entityManager.detach(seat.getSeatsInventory());
+        entityManager.detach(seat.getBookingTicketEntity());
+        return seat;
+    }
+
+    @Override
     public SeatEntity randomAvailableSeat(long scheduleId, CabinClassTypeEnum classType, HashSet<SeatEntity> bookedSeats) throws InvalidClassException {
         FlightScheduleEntity schedule = entityManager.find(FlightScheduleEntity.class, scheduleId);
 
@@ -66,13 +75,13 @@ public class SeatEntitySessionBean implements SeatEntitySessionBeanRemote, SeatE
         if (currentInventory == null) {
             throw new InvalidClassException("This flight does not have the class type preference you picked!");
         }
-        
+
         currentInventory = entityManager.find(SeatsInventoryEntity.class, currentInventory.getInventoryId());
         currentInventory.getSeats().size();
         List<SeatEntity> seats = currentInventory.getSeats();
         for (SeatEntity seat : seats) {
             if (!seat.isBooked()) {
-                for (SeatEntity s: bookedSeats) {
+                for (SeatEntity s : bookedSeats) {
                     if (s.equals(seat)) {
                         continue;
                     }
@@ -82,5 +91,14 @@ public class SeatEntitySessionBean implements SeatEntitySessionBeanRemote, SeatE
             }
         }
         throw new InvalidClassException("All of the seats for this class has been booked!!!");
+    }
+
+    @Override
+    public SeatEntity randomAvailableSeatUnmanaged(long scheduleId, CabinClassTypeEnum classType, HashSet<SeatEntity> bookedSeats) throws InvalidClassException {
+        SeatEntity seat = randomAvailableSeat(scheduleId, classType, bookedSeats);
+        entityManager.detach(seat);
+        entityManager.detach(seat.getSeatsInventory());
+        entityManager.detach(seat.getBookingTicketEntity());
+        return seat;
     }
 }

@@ -17,11 +17,14 @@ import util.exception.InvalidClassException;
  */
 @Remote
 public interface SeatEntitySessionBeanRemote {
+
+    public SeatEntity createNewSeat(SeatEntity newSeat);
+
+    public SeatEntity retrieveSeat(int seatNumber, String seatLetter, long seatsInventoryId);
+
+    public SeatEntity randomAvailableSeat(long scheduleId, CabinClassTypeEnum classType, HashSet<SeatEntity> bookedSeats) throws InvalidClassException;
+
+    public SeatEntity retrieveSeatUnmanaged(int seatNumber, String seatLetter, long seatsInventoryId);
     
-     public SeatEntity createNewSeat(SeatEntity newSeat);
-    
-     public SeatEntity retrieveSeat(int seatNumber, String seatLetter, long seatsInventoryId);
-     
-     public SeatEntity randomAvailableSeat(long scheduleId, CabinClassTypeEnum classType, HashSet<SeatEntity> bookedSeats) throws InvalidClassException;
-    
+    public SeatEntity randomAvailableSeatUnmanaged(long scheduleId, CabinClassTypeEnum classType, HashSet<SeatEntity> bookedSeats) throws InvalidClassException;
 }
